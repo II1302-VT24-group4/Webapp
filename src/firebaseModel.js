@@ -9,14 +9,21 @@ import {
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// exports for google auth
-export const auth = getAuth(app);
-
 // initialize the firebase app
 const app = initializeApp(firebaseConfig);
 
 // initialize the database
 const db = getFirestore()
+
+// exports for google auth
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+export {auth, provider};
+
+
+
+
+
 
 
 
