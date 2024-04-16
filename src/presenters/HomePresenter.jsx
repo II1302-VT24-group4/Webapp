@@ -1,7 +1,7 @@
-import MainContentView from "../views/mainContentView";
+import MainContentView from "../views/homeView";
 import { observer } from "mobx-react-lite";
 
-export default function mainContentPresenter(props) {
+export default function HomePresenter(props) {
   if (!props.model.searchDone.done) {
     window.location.hash = "#/";
   }

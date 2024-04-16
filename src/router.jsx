@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router"; //Ska vara i REACT!
 import FavouritesPresenter from "/src/presenters/favouritesPresenter.jsx";
-import MainContentPresenter from "/src/presenters/mainContentPresenter";
+import MainContentPresenter from "/src/presenters/HomePresenter";
 import mainWelcomeView from "/src/views/mainWelcomeView.jsx";
 
 export default function makeRouter(model) {

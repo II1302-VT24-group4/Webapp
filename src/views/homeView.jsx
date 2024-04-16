@@ -1,6 +1,6 @@
 import { renderCategory } from "./RoomCategoryRenderer";
 
-export default function mainContentView(props) {
+export default function homeView(props) {
   let roomListButtonText = "Lägg i favoriter";
   let viewedButtonText = "Öppna artikel";
   let lastTextId = props.pages + "text";
