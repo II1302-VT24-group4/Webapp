@@ -5,7 +5,7 @@ export default observer( function Welcome(props){
     return (
         <div>
             {<WelcomeView
-                
+
             />}
         </div>
     );

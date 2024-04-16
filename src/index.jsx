@@ -36,32 +36,3 @@ createRoot(document.getElementById("root")).render(
 window.myModel = reactiveModel;
 
 //updateFirebase(reactiveModel,reaction);
-
-/*function ProjectApplication(props) {
-  return (
-    <div class="container">
-      <header class="header">
-        <h1>
-          <span class="part-one-header">Meeting </span>
-          <span class="part-two-header">Planner</span>
-        </h1>{" "}
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/115/115902.png"
-          alt="Hemsidans logga"
-        />
-      </header>
-      <div class="nav">
-        <navViewPresenter model={reactiveModel} />
-      </div>
-      <div class="main">
-        <RouterView></RouterView>
-      </div>
-      <footer class="footer">
-        <h4>
-          © Leo Andersson, Seema Fatima Bashir, Christoffer Franzen, Carl-Anton
-          Grandelius, Erik Heiskanen, Hein Lee, Andreas Westberg
-        </h4>
-      </footer>
-    </div>
-  );
-}*/
