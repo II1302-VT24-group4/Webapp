@@ -2,7 +2,7 @@
 
 import { renderCategory } from "./RoomCategoryRenderer";
 
-export default function roomListView(props) {
+export default function RoomFavouriteListView(props) {
   const roomListButtonText = "Ta bort från favoriter";
   const viewedButtonText = "Öppna artikel";
 
