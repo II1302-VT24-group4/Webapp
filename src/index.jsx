@@ -3,6 +3,7 @@ import React from "react";
 //import {updateFirebase} from "./firebaseM.js";
 import { observable, configure } from "mobx";
 import projectModel from "./projectModel.js";
+import userModel from "./projectModel.js";
 import "/src/styles/style.css";
 import model from "/src/projectModel.js"; //TA BORT DENNA NÄR ALLA FUNKTIONER ÄR IMPLEMENTERADE I UserModel
 //import firebaseModel from "/src/firebaseModel.js";
@@ -13,7 +14,7 @@ import model from "/src/projectModel.js"; //TA BORT DENNA NÄR ALLA FUNKTIONER �
 
 configure({ enforceActions: "never" }); // we don't use Mobx actions
 
-export const reactiveModel = observable(projectModel);
+export const reactiveModel = observable(userModel);
 
 import { createElement } from "react";
 window.React = { createElement: createElement };
