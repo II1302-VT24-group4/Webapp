@@ -1,4 +1,4 @@
-import MainContentView from "../views/homeView";
+import HomeView from "../views/homeView";
 import { observer } from "mobx-react-lite";
 
 export default function HomePresenter(props) {
@@ -24,7 +24,7 @@ export default function HomePresenter(props) {
 
   if (props.model.searchResultsPromiseState.data) props.model.getRooms();
   return (
-    <MainContentView
+    <HomeView
       onModifyroomList={addToFavoritesACB}
       images={props.model.imageHolder}
       rooms={props.model.typeList}
