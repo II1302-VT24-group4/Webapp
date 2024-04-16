@@ -1,6 +1,6 @@
 import { renderCategory } from "./RoomCategoryRenderer";
 
-export default function homeView(props) {
+export default function HomeView(props) {
   let roomListButtonText = "Lägg i favoriter";
   let viewedButtonText = "Öppna artikel";
   let lastTextId = props.pages + "text";
@@ -34,9 +34,9 @@ export default function homeView(props) {
 
   function generateButton() {
     return (
-      <div class="scroll-to-new-results">
+      <div className="scroll-to-new-results">
         <h3>Se nyladdade resultat med ett knapptryck</h3>
-        <div class="buttons-scroll-to-new-results">
+        <div className="buttons-scroll-to-new-results">
           <button onClick={() => scrollToCategoryRoom(lastTextId)}>
             <h5>Text</h5>
           </button>
@@ -47,9 +47,9 @@ export default function homeView(props) {
 
   return (
     <main>
-      <div class="Alert_content">
+      <div className="Alert_content">
         {props.showAlert?.alert && (
-          <div class="alert-box">
+          <div className="alert-box">
             <p>{props.alertMessage.message}</p>
           </div>
         )}

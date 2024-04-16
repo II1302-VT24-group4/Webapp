@@ -1,7 +1,7 @@
-import roomListView from "/src/views/roomListView.jsx";
+import RoomFavouriteListView from "/src/views/roomFavouriteListView.jsx";
 import { observer } from "mobx-react-lite";
 
-export default function roomListPresenter(props) {
+export default observer( function RoomFavouriteList(props) {
   if (!props.model.roomListDone.done) {
     window.location.hash = "#/";
   }
@@ -18,13 +18,15 @@ export default function roomListPresenter(props) {
     );
   else {
     return (
-      <roomListView
-        onModifyroomList={removeFromFavoritesACB}
-        images={props.model.favHistimageHolder}
-        rooms={props.model.favHistTypeList}
-        alertMessage={props.model.isalertMessage}
-        showAlert={props.model.isshowAlert}
-      />
+      <div>
+        {<RoomFavouriteListView
+          onModifyroomList={removeFromFavoritesACB}
+          images={props.model.favHistimageHolder}
+          rooms={props.model.favHistTypeList}
+          alertMessage={props.model.isalertMessage}
+          showAlert={props.model.isshowAlert}
+        />}
+      </div>
     );
   }
-}
+});
