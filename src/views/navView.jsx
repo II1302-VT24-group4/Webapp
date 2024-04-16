@@ -1,10 +1,14 @@
 import React from "react";
 
 export default function NavView(props) {
+  // Event Handlers
+
+  // Handles changes in the search input
   const handleSearchACB = (event) => {
     props.onSearchQuery(event.target.value);
   };
 
+  // Handles search action when Enter key is pressed
   const handleSearchDoingACB = (event) => {
     if (event.key === "Enter") {
       props.onSearchButton();
@@ -12,10 +16,12 @@ export default function NavView(props) {
     }
   };
 
+  // Handles navigation to the welcome page
   const handleResetButtonClick = () => {
     window.location.hash = "#/";
   };
 
+  // Handles showing more search results
   const handleMoreSearchACB = () => {
     if (window.location.hash !== "#/search") {
       window.location.hash = "#/search";
@@ -23,16 +29,19 @@ export default function NavView(props) {
     props.onMoreSearch();
   };
 
+  // Handles search icon click
   const onSearchIconClick = () => {
     props.onSearchButton();
     window.location.hash = "#/search";
   };
 
+  // Handles room list item click
   const onHandleroomListClickedACB = () => {
     window.location.hash = "#/roomList";
     props.onHandleroomListClicked();
   };
 
+  // Renders additional search-related elements if search has been performed
   const renderMoreSearch = () => {
     if (props.hasSearched) {
       return (
@@ -51,6 +60,7 @@ export default function NavView(props) {
     }
   };
 
+  // Renders logged-in user information or login button
   const renderLoggedInContent = () => {
     if (props.isLoggedIn) {
       return (
@@ -79,8 +89,11 @@ export default function NavView(props) {
     }
   };
 
+  // Component Rendering
+
   return (
     <nav className="nav">
+      {/* Search Section */}
       <ul className="nav-section" id="search-nav-section">
         <li>
           <h3>Sök</h3>
@@ -99,6 +112,7 @@ export default function NavView(props) {
         {renderMoreSearch()}
       </ul>
 
+      {/* Links Section */}
       <ul className="nav-section" id="links-nav-section">
         <li>
           <h3>Delsidor</h3>
@@ -139,6 +153,7 @@ export default function NavView(props) {
         )}
       </ul>
 
+      {/* Log-in Section */}
       <ul className="nav-section" id="log-in-nav-section">
         <li>
           <h3>Inloggning</h3>
