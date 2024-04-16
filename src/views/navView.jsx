@@ -127,10 +127,7 @@ export default function navView(props) {
                   </p>
                 </li>
                 <li>
-                  <img
-                    src={props.user.photoURL}
-                    alt="Användarens profilGöteborg"
-                  />
+                  <img src={props.user.photoURL} alt="Användarens profil" />
                 </li>
                 <li>
                   <button onClick={handleLogInOutACB}>

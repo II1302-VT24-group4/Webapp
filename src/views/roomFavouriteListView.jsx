@@ -1,3 +1,5 @@
+//EVENTUELLT EGEN SIDA FÖR FAVORITMARKERADE RUM!
+
 import { renderCategory } from "./RoomCategoryRenderer";
 
 export default function roomListView(props) {
