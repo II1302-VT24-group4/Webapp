@@ -1,4 +1,4 @@
-import MyCalendarView from "../views/myCalendarView";
+import MyCalendarView from "../views/MyCalendarView";
 import { observer } from "mobx-react-lite";
 
 export default observer(function MyCalendarPresenter(props) {

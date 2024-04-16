@@ -1,4 +1,4 @@
-import HeaderView from "../views/headerView.jsx";
+import HeaderView from "../views/HeaderView.jsx";
 import { observer } from "mobx-react-lite";
 
 export default observer(function Header(props) {

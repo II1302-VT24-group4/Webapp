@@ -1,4 +1,4 @@
-export default function navView(props) {
+export default function NavView(props) {
   function IconActive() {
     props.SearchIconActive.active = true;
 
@@ -63,110 +63,112 @@ export default function navView(props) {
   }
 
   return (
-    <aside>
-      <nav>
-        <ul class="nav-section" id="search-nav-section">
-          <li>
-            <h3>Sök</h3>
-          </li>
-          <li>
-            <input
-              type="text"
-              value={props.query}
-              onChange={handleSearchACB}
-              onKeyDown={handleSearchDoingACB}
-              placeholder="Sök"
-              class="search-input"
-            />
-            <li onClick={onSearchIconClick} class="search-icon search"></li>
-          </li>
-          {props.hasSearched && (
-            <>
-              <li>
-                <button
-                  onClick={handleMoreSearchACB}
-                  disabled={!props.searchAvailable}
-                >
-                  <h5>Visa ytterligare en sida</h5>
-                </button>
-              </li>
-              <li>
-                <p>Totalt {props.hasSearched.totalItems} resultat</p>
-                <p>{props.moreSearchAmount}</p>
-              </li>
-            </>
-          )}
-        </ul>
-
-        <ul class="nav-section" id="links-nav-section">
-          <li>
-            <h3>Delsidor</h3>
-          </li>
-          <li>
-            <button onClick={handleResetButtonClick}>
-              <h4>Välkomstsida</h4>
-            </button>
-          </li>
-          {props.doneSearch.done && (
-            <>
-              <li>
-                <button onClick={onHandleSearchClickedACB}>
-                  <h4>Söksida</h4>
-                </button>
-              </li>
-              <li>
-                <button onClick={routeToHomeACB}>Home</button>
-              </li>
-              <li>
-                <button onClick={routeToMyCalendarACB}>My Calendar</button>
-              </li>
-              <li>
-                <button onClick={routeToRoomFavoritesListACB}>
-                  Room Favorites List
-                </button>
-              </li>
-            </>
-          )}
-          {props.isLoggedIn && (
-            <>
-              <li>
-                <button onClick={onHandleroomListClickedACB}>
-                  <h4>Favoriter</h4>
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
-
-        <ul class="nav-section" id="log-in-nav-section">
-          <li>
-            <h3>Inloggning</h3>
-          </li>
-          {props.isLoggedIn ? (
-            <>
-              <li>
-                <p>
-                  Inloggad som: {props.user.displayName}, {props.user.email}
-                </p>
-              </li>
-              <li>
-                <img src={props.user.photoURL} alt="Användarens profil" />
-              </li>
-              <li>
-                <button onClick={handleLogInOutACB}>
-                  <h5>Logga ut</h5>
-                </button>
-              </li>
-            </>
-          ) : (
+    <nav class="nav">
+      <ul class="nav-section" id="search-nav-section">
+        <li>
+          <h3>Sök</h3>
+        </li>
+        <li>
+          <input
+            type="text"
+            value={props.query}
+            onChange={handleSearchACB}
+            onKeyDown={handleSearchDoingACB}
+            placeholder="Sök"
+            className="search-input"
+          />
+        </li>
+        <li onClick={onSearchIconClick} className="search-icon search"></li>
+        {props.hasSearched && (
+          <>
             <li>
-              <button onClick={handleLogInOutACB}>
-                <h5>Logga in med Google</h5>
+              <button
+                onClick={handleMoreSearchACB}
+                disabled={!props.searchAvailable}
+              >
+                <h5>Visa ytterligare en sida</h5>
               </button>
             </li>
-          )}
-        </ul>
-      </nav>
-    </aside>
+            <li>
+              <p>Totalt {props.hasSearched.totalItems} resultat</p>
+              <p>{props.moreSearchAmount}</p>
+            </li>
+          </>
+        )}
+      </ul>
+
+      <ul class="nav-section" id="links-nav-section">
+        <li>
+          <h3>Delsidor</h3>
+        </li>
+        <li>
+          <button onClick={handleResetButtonClick}>
+            <h4>Välkomstsida</h4>
+          </button>
+        </li>
+        <li>
+          <button onClick={routeToHomeACB}>
+            <h4>Home</h4>
+          </button>
+        </li>
+        <li>
+          <button onClick={routeToMyCalendarACB}>
+            <h4>My Calendar</h4>
+          </button>
+        </li>
+        <li>
+          <button onClick={routeToRoomFavoritesListACB}>
+            <h4>Room Favorites List</h4>
+          </button>
+        </li>
+        {props.doneSearch.done && (
+          <>
+            <li>
+              <button onClick={onHandleSearchClickedACB}>
+                <h4>Söksida</h4>
+              </button>
+            </li>
+          </>
+        )}
+        {props.isLoggedIn && (
+          <>
+            <li>
+              <button onClick={onHandleroomListClickedACB}>
+                <h4>Favoriter</h4>
+              </button>
+            </li>
+          </>
+        )}
+      </ul>
+
+      <ul class="nav-section" id="log-in-nav-section">
+        <li>
+          <h3>Inloggning</h3>
+        </li>
+        {props.isLoggedIn ? (
+          <>
+            <li>
+              <p>
+                Inloggad som: {props.user.displayName}, {props.user.email}
+              </p>
+            </li>
+            <li>
+              <img src={props.user.photoURL} alt="Användarens profil" />
+            </li>
+            <li>
+              <button onClick={handleLogInOutACB}>
+                <h5>Logga ut</h5>
+              </button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <button onClick={handleLogInOutACB}>
+              <h5>Logga in med Google</h5>
+            </button>
+          </li>
+        )}
+      </ul>
+    </nav>
   );
 }
