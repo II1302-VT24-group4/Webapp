@@ -65,7 +65,7 @@ export default function navView(props) {
   return (
     <aside>
       <nav>
-        <ul className="nav-section" id="search-nav-section">
+        <ul class="nav-section" id="search-nav-section">
           <li>
             <h3>Sök</h3>
           </li>
@@ -76,9 +76,9 @@ export default function navView(props) {
               onChange={handleSearchACB}
               onKeyDown={handleSearchDoingACB}
               placeholder="Sök"
-              className="search-input"
+              class="search-input"
             />
-            <li onClick={onSearchIconClick} className="search-icon search"></li>
+            <li onClick={onSearchIconClick} class="search-icon search"></li>
           </li>
           {props.hasSearched && (
             <>
@@ -98,7 +98,7 @@ export default function navView(props) {
           )}
         </ul>
 
-        <ul className="nav-section" id="links-nav-section">
+        <ul class="nav-section" id="links-nav-section">
           <li>
             <h3>Delsidor</h3>
           </li>
@@ -138,7 +138,7 @@ export default function navView(props) {
           )}
         </ul>
 
-        <ul className="nav-section" id="log-in-nav-section">
+        <ul class="nav-section" id="log-in-nav-section">
           <li>
             <h3>Inloggning</h3>
           </li>

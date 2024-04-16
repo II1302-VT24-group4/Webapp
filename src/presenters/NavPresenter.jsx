@@ -35,24 +35,25 @@ export default function navViewPresenter(props) {
       return true;
     else return false;
   }
-
   return (
-    <navView
-      onSearchQuery={handleSearchQueryACB}
-      onSearchButton={handleSearchButtonACB}
-      onLogInLogOut={handleLogInOutACB}
-      onMoreSearch={handleMoreSearchACB}
-      isLoggedIn={props.model.userState.isLoggedIn}
-      user={props.model.userState.user}
-      query={props.model.searchParams.q}
-      moreSearchAmount={getMoreSearchAmount()}
-      searchAvailable={checkSearchAvailable()}
-      hasSearched={props.model.searchResultsPromiseState.data}
-      onHandleroomListClicked={handleroomListClicked}
-      rooms={props.model.typeList}
-      navOpen={props.model.isnavOpen}
-      SearchIconActive={props.model.isSearchIconActive}
-      doneSearch={props.model.searchDone}
-    />
+    <nav>
+      <navView
+        onSearchQuery={handleSearchQueryACB}
+        onSearchButton={handleSearchButtonACB}
+        onLogInLogOut={handleLogInOutACB}
+        onMoreSearch={handleMoreSearchACB}
+        isLoggedIn={props.model.userState.isLoggedIn}
+        user={props.model.userState.user}
+        query={props.model.searchParams.q}
+        moreSearchAmount={getMoreSearchAmount()}
+        searchAvailable={checkSearchAvailable()}
+        hasSearched={props.model.searchResultsPromiseState.data}
+        onHandleroomListClicked={handleroomListClicked}
+        rooms={props.model.typeList}
+        navOpen={props.model.isnavOpen}
+        SearchIconActive={props.model.isSearchIconActive}
+        doneSearch={props.model.searchDone}
+      />
+    </nav>
   );
 }
