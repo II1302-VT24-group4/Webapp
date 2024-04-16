@@ -59,12 +59,12 @@ export default function NavView(props) {
   }
 
   function onHandleSearchClickedACB() {
-    window.location.hash = "#/search";
+    //window.location.hash = "#/search";
   }
 
   return (
-    <nav class="nav">
-      <ul class="nav-section" id="search-nav-section">
+    <nav className="nav">
+      <ul className="nav-section" id="search-nav-section">
         <li>
           <h3>Sök</h3>
         </li>
@@ -97,7 +97,7 @@ export default function NavView(props) {
         )}
       </ul>
 
-      <ul class="nav-section" id="links-nav-section">
+      <ul className="nav-section" id="links-nav-section">
         <li>
           <h3>Delsidor</h3>
         </li>
@@ -122,26 +122,22 @@ export default function NavView(props) {
           </button>
         </li>
         {props.doneSearch.done && (
-          <>
-            <li>
-              <button onClick={onHandleSearchClickedACB}>
-                <h4>Söksida</h4>
-              </button>
-            </li>
-          </>
+          <li>
+            <button onClick={onHandleSearchClickedACB}>
+              <h4>Söksida</h4>
+            </button>
+          </li>
         )}
         {props.isLoggedIn && (
-          <>
-            <li>
-              <button onClick={onHandleroomListClickedACB}>
-                <h4>Favoriter</h4>
-              </button>
-            </li>
-          </>
+          <li>
+            <button onClick={onHandleroomListClickedACB}>
+              <h4>Favoriter</h4>
+            </button>
+          </li>
         )}
       </ul>
 
-      <ul class="nav-section" id="log-in-nav-section">
+      <ul className="nav-section" id="log-in-nav-section">
         <li>
           <h3>Inloggning</h3>
         </li>

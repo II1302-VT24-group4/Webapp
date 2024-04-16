@@ -1,4 +1,4 @@
-import NavView from "../views/NavView.jsx";
+import NavView from "../views/navView.jsx";
 import { observer } from "mobx-react-lite";
 
 export default function navViewPresenter(props) {

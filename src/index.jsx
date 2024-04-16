@@ -3,7 +3,7 @@ import React from "react";
 //import {updateFirebase} from "./firebaseM.js";
 import { observable, configure } from "mobx";
 import projectModel from "./projectModel.js";
-import userModel from "./projectModel.js";
+import userModel from "./UserModel.js";
 import "/src/styles/style.css";
 import model from "/src/projectModel.js"; //TA BORT DENNA NÄR ALLA FUNKTIONER ÄR IMPLEMENTERADE I UserModel
 //import firebaseModel from "/src/firebaseModel.js";

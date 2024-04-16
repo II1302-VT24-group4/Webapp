@@ -17,7 +17,7 @@ export default function RoomFavouriteListView(props) {
   return (
     <main>
       {props.showAlert?.alert && (
-        <div class="alert-box">
+        <div className="alert-box">
           <h2>{props.alertMessage.message}</h2>
         </div>
       )}
