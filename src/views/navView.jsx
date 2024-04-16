@@ -1,96 +1,7 @@
+// NavView.jsx
 import React from "react";
 
 export default function NavView(props) {
-  // Event Handlers
-
-  // Handles changes in the search input
-  const handleSearchACB = (event) => {
-    props.onSearchQuery(event.target.value);
-  };
-
-  // Handles search action when Enter key is pressed
-  const handleSearchDoingACB = (event) => {
-    if (event.key === "Enter") {
-      props.onSearchButton();
-      window.location.hash = "#/search";
-    }
-  };
-
-  // Handles navigation to the welcome page
-  const handleResetButtonClick = () => {
-    window.location.hash = "#/";
-  };
-
-  // Handles showing more search results
-  const handleMoreSearchACB = () => {
-    if (window.location.hash !== "#/search") {
-      window.location.hash = "#/search";
-    }
-    props.onMoreSearch();
-  };
-
-  // Handles search icon click
-  const onSearchIconClick = () => {
-    props.onSearchButton();
-    window.location.hash = "#/search";
-  };
-
-  // Handles room list item click
-  const onHandleroomListClickedACB = () => {
-    window.location.hash = "#/roomList";
-    props.onHandleroomListClicked();
-  };
-
-  // Renders additional search-related elements if search has been performed
-  const renderMoreSearch = () => {
-    if (props.hasSearched) {
-      return (
-        <>
-          <li>
-            <button onClick={handleMoreSearchACB} disabled={!props.searchAvailable}>
-              <h5>Visa ytterligare en sida</h5>
-            </button>
-          </li>
-          <li>
-            <p>Totalt {props.hasSearched.totalItems} resultat</p>
-            <p>{props.moreSearchAmount}</p>
-          </li>
-        </>
-      );
-    }
-  };
-
-  // Renders logged-in user information or login button
-  const renderLoggedInContent = () => {
-    if (props.isLoggedIn) {
-      return (
-        <>
-          <li>
-            <p>Inloggad som: {props.user.displayName}, {props.user.email}</p>
-          </li>
-          <li>
-            <img src={props.user.photoURL} alt="Användarens profil" />
-          </li>
-          <li>
-            <button onClick={props.onLogInLogOut}>
-              <h5>Logga ut</h5>
-            </button>
-          </li>
-        </>
-      );
-    } else {
-      return (
-        <li>
-          <button onClick={props.onLogInLogOut}>
-            <h5>Logga in med Google</h5>
-          </button>
-        </li>
-      );
-    }
-  };
-
-  // Component Rendering
-
   return (
     <nav className="nav">
       {/* Search Section */}
@@ -102,14 +13,14 @@ export default function NavView(props) {
           <input
             type="text"
             value={props.query}
-            onChange={handleSearchACB}
-            onKeyDown={handleSearchDoingACB}
+            onChange={(event) => props.onSearchQuery(event.target.value)}
+            onKeyDown={(event) => props.onSearchButton(event)}
             placeholder="Sök"
             className="search-input"
           />
         </li>
-        <li onClick={onSearchIconClick} className="search-icon search"></li>
-        {renderMoreSearch()}
+        <li onClick={props.onSearchButton} className="search-icon search"></li>
+        {props.renderMoreSearch && props.renderMoreSearch()}
       </ul>
 
       {/* Links Section */}
@@ -118,7 +29,7 @@ export default function NavView(props) {
           <h3>Delsidor</h3>
         </li>
         <li>
-          <button onClick={handleResetButtonClick}>
+          <button onClick={props.handleResetButtonClick}>
             <h4>Välkomstsida</h4>
           </button>
         </li>
@@ -146,7 +57,7 @@ export default function NavView(props) {
         )}
         {props.isLoggedIn && (
           <li>
-            <button onClick={onHandleroomListClickedACB}>
+            <button onClick={props.onHandleroomListClicked}>
               <h4>Favoriter</h4>
             </button>
           </li>
@@ -158,7 +69,7 @@ export default function NavView(props) {
         <li>
           <h3>Inloggning</h3>
         </li>
-        {renderLoggedInContent()}
+        {props.renderLoggedInContent && props.renderLoggedInContent()}
       </ul>
     </nav>
   );
