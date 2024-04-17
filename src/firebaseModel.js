@@ -21,12 +21,23 @@ const provider = new GoogleAuthProvider();
 export {auth, provider};
 
 export function googleSignInOut(model) {
+  console.log(model.user)
+  console.log(model.isLoggedIn)
   signInWithPopup(auth,new GoogleAuthProvider())
   .then(successfulLoginACB)
 
+  
+
   function successfulLoginACB(fbUserChunk){
-      model.user_ID = fbUserChunk.user.uid;
-      model.userState = true;
+    //console.log(model.userState.isLoggedIn)
+
+      
+      //model.user_ID = fbUserChunk.user.uid;
+      //model.userState = true;
+
+      model.user = fbUserChunk.user.uid;
+      model.isLoggedIn = true;
+      console.log(model)
       window.location.hash="#/home";
       //console.log("Successful login! Welcome "+auth.currentUser.email);
   }

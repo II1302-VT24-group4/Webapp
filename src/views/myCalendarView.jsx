@@ -6,6 +6,7 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 
 export default function MyCalendarView(props) {
+  console.log(props)
   const calendarRef = useRef(null);
 
   function createEvent(calendar, title, fullDay, startDate, endDate, date){
