@@ -1,9 +1,8 @@
 import { renderCategory } from "./RoomCategoryRenderer";
 
 export default function HomeView(props) {
-  let roomListButtonText = "Lägg i favoriter";
-  let viewedButtonText = "Öppna artikel";
-  let lastTextId = props.pages + "text";
+  let roomListButtonText = "Add to my rooms";
+  let viewedButtonText = "Open this room";
 
   function scrollToCategoryRoom(categoryId) {
     const element = document.getElementById(categoryId);
@@ -29,16 +28,50 @@ export default function HomeView(props) {
   }
 
   function totalRoomsCount() {
-    return props.rooms.text.length;
+    return Object.values(props.rooms).reduce(
+      (total, category) => total + category.length,
+      0
+    );
   }
-
   function generateButton() {
     return (
-      <div className="scroll-to-new-results">
+      <div class="scroll-to-new-results">
         <h3>Se nyladdade resultat med ett knapptryck</h3>
-        <div className="buttons-scroll-to-new-results">
-          <button onClick={() => scrollToCategoryRoom(lastTextId)}>
-            <h5>Text</h5>
+        <div class="buttons-scroll-to-new-results">
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "office1")}
+          >
+            <h5>Stockholm</h5>
+          </button>
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "office2")}
+          >
+            <h5>Göteborg</h5>
+          </button>
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "office3")}
+          >
+            <h5>Malmö</h5>
+          </button>
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "office4")}
+          >
+            <h5>Uppsala</h5>
+          </button>
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "office5")}
+          >
+            <h5>Västerås</h5>
+          </button>
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "office6")}
+          >
+            <h5>Örebro</h5>
+          </button>
+          <button
+            onClick={() => scrollToCategoryArticle(props.pages + "other")}
+          >
+            <h5>Other offices</h5>
           </button>
         </div>
       </div>
