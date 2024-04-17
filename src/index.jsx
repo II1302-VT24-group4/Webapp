@@ -2,7 +2,6 @@ import React from "react";
 //import {reaction} from "mobx";
 //import {updateFirebase} from "./firebaseM.js";
 import { observable, configure } from "mobx";
-import projectModel from "./projectModel.js";
 import userModel from "./UserModel.js";
 import "/src/styles/style.css";
 //import firebaseModel from "/src/firebaseModel.js";
