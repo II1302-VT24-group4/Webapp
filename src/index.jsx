@@ -5,12 +5,7 @@ import { observable, configure } from "mobx";
 import projectModel from "./projectModel.js";
 import userModel from "./UserModel.js";
 import "/src/styles/style.css";
-import model from "/src/projectModel.js"; //TA BORT DENNA NÄR ALLA FUNKTIONER ÄR IMPLEMENTERADE I UserModel
 //import firebaseModel from "/src/firebaseModel.js";
-//import navView from "./views/navView";
-//import navViewPresenter from "./presenters/navViewPresenter";
-//import router from "./router";                //GÖR ISTÄLLET EN REACT-lösning
-//import { RouterView } from "vue-router";      //GÖR ISTÄLLET EN REACT-lösning
 
 configure({ enforceActions: "never" }); // we don't use Mobx actions
 
