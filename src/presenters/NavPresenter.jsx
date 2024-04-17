@@ -1,7 +1,7 @@
 // NavPresenter.jsx
 import React from "react";
 import { observer } from "mobx-react-lite";
-import NavView from "../views/NavView";
+import NavView from "../views/navView";
 
 const NavPresenter = observer(({ model }) => {
   const handleRoomListClicked = () => {
