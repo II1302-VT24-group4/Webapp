@@ -30,7 +30,7 @@ export default function NavView(props) {
         </li>
         <li>
           <button onClick={props.handleResetButtonClick}>
-            <h4>Välkomstsida</h4>
+            <h4>Welcome page</h4>
           </button>
         </li>
 
@@ -45,7 +45,7 @@ export default function NavView(props) {
           <>
             <li>
               <button onClick={props.onHandleroomListClicked}>
-                <h4>Favoriter</h4>
+                <h4>Favourites</h4>
               </button>
             </li>
             <li>
