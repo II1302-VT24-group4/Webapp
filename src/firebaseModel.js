@@ -47,7 +47,7 @@ export function googleSignInOut(model) {
       //create a new user entry in database
       
       const userRef = doc(db, 'users', model.user);
-      setDoc(userRef, {email: fbUserChunk.user.email, RFID: 4321}, { merge: true });
+      setDoc(userRef, {email: fbUserChunk.user.email}, { merge: true });
 
       
   }
