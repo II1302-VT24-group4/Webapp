@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 export default observer(function MyCalendarPresenter(props) {    
 
   const insertMeeting = async (event) => {
-    console.log(event);
     const meetings = await props.model.firebaseRead('users', props.model.userState.user, 'meetings');
     const newID = meetings?.length || 0;
 
