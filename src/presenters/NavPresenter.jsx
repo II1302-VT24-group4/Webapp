@@ -48,29 +48,6 @@ const NavPresenter = observer(({ model }) => {
     }
   };
 
-  const renderMoreSearch = () => {
-    if (model.searchResultsPromiseState?.data) {
-      return (
-        <>
-          <li>
-            <button
-              onClick={handleMoreSearchACB}
-              disabled={!model.getMaxResults()}
-            >
-              <h5>Load in one page more of results</h5>
-            </button>
-          </li>
-          <li>
-            <p>
-              In total {model.searchResultsPromiseState.data.totalItems} results
-            </p>
-            <p>{model.getMaxResults()} pages not yet loaded</p>
-          </li>
-        </>
-      );
-    }
-  };
-
   const setSearchQuery = (value) => {
     model.setSearchQuery(value);
   }
@@ -89,7 +66,6 @@ const NavPresenter = observer(({ model }) => {
       query={model.searchParams.q}
       doneSearch={model.searchDone}
       renderLoggedInContent={renderLoggedInContent}
-      renderMoreSearch={renderMoreSearch}
     />
   );
 });

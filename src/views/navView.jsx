@@ -1,10 +1,8 @@
-// NavView.jsx
 import React from "react";
 
 export default function NavView(props) {
   return (
     <nav className="nav">
-      {/* Search Section */}
       <ul className="nav-section" id="search-nav-section">
         <li>
           <h3>Find room</h3>
@@ -14,16 +12,15 @@ export default function NavView(props) {
             type="text"
             value={props.query}
             onChange={(event) => props.onSearchQuery(event.target.value)}
-            onKeyDown={(event) => props.onSearchButton(event)}
+            onKeyDown={(event) =>
+              event.key === "Enter" && props.onSearchButton()
+            }
             placeholder="Find Room"
             className="search-input"
           />
         </li>
-        <li onClick={props.onSearchButton} className="search-icon search"></li>
-        {props.renderMoreSearch && props.renderMoreSearch()}
       </ul>
 
-      {/* Links Section */}
       <ul className="nav-section" id="links-nav-section">
         <li>
           <h3>Delsidor</h3>

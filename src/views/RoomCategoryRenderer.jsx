@@ -11,16 +11,7 @@ export function renderCategory({
   loggedIn,
 }) {
   function getCategoryDisplayName(categoryName) {
-    const nameMap = {
-      office1: "Stockholm",
-      office2: "Göteborg",
-      office3: "Malmö",
-      office4: "Uppsala",
-      office5: "Västerås",
-      office6: "Örebro",
-      other: "Other offices",
-    };
-    return nameMap[categoryName] || categoryName;
+    return categoryName; // Already in correct format
   }
 
   const displayName = getCategoryDisplayName(categoryName);
@@ -28,12 +19,12 @@ export function renderCategory({
   return (
     <>
       <h3>{displayName}</h3>
-      <div class="rooms" id={categoryName.toLowerCase()}>
+      <div className="rooms" id={categoryName.toLowerCase()}>
         {rooms.length > 0 ? (
           rooms.map((room) => (
             <RoomComponent
               room={room}
-              onModifyroomList={onModifyRoomListACB}
+              onModifyRoomList={onModifyRoomListACB}
               images={images}
               roomListButtonText={roomListButtonText}
               alertMessage={alertMessage}
@@ -42,7 +33,7 @@ export function renderCategory({
             />
           ))
         ) : (
-          <p>Du saknar rum inom byggnaden {displayName}.</p>
+          <p>No rooms in the office {displayName}.</p>
         )}
       </div>
     </>

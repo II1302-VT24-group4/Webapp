@@ -2,7 +2,7 @@ import { renderCategory } from "./RoomCategoryRenderer";
 
 export default function HomeView(props) {
   let roomListButtonText = "Add to my rooms";
-  let viewedButtonText = "Open this room";
+  let viewButtonText = "Open this room";
 
   function scrollToCategoryRoom(categoryId) {
     const element = document.getElementById(categoryId);
@@ -23,7 +23,6 @@ export default function HomeView(props) {
   }
 
   function onViewACB(room) {
-    //SKA DET VARA EN ACB?
     window.open(room.meetingLink, "_blank");
   }
 
@@ -33,46 +32,20 @@ export default function HomeView(props) {
       0
     );
   }
+
   function generateButton() {
     return (
-      <div class="scroll-to-new-results">
-        <h3>Se nyladdade resultat med ett knapptryck</h3>
-        <div class="buttons-scroll-to-new-results">
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "office1")}
-          >
-            <h5>Stockholm</h5>
-          </button>
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "office2")}
-          >
-            <h5>Göteborg</h5>
-          </button>
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "office3")}
-          >
-            <h5>Malmö</h5>
-          </button>
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "office4")}
-          >
-            <h5>Uppsala</h5>
-          </button>
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "office5")}
-          >
-            <h5>Västerås</h5>
-          </button>
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "office6")}
-          >
-            <h5>Örebro</h5>
-          </button>
-          <button
-            onClick={() => scrollToCategoryArticle(props.pages + "other")}
-          >
-            <h5>Other offices</h5>
-          </button>
+      <div className="scroll-to-new-results">
+        <h3>Scroll to a specific office</h3>
+        <div className="buttons-scroll-to-new-results">
+          {Object.keys(props.rooms).map((officeKey) => (
+            <button
+              key={officeKey}
+              onClick={() => scrollToCategoryRoom(officeKey)}
+            >
+              <h5>{officeKey.replace("office", "")}</h5>
+            </button>
+          ))}
         </div>
       </div>
     );
@@ -88,25 +61,28 @@ export default function HomeView(props) {
         )}
       </div>
 
-      <h2>Söksida</h2>
+      <h2>Search page</h2>
       <h3>
-        Sökning "{props.query}", sidan visar {totalRoomsCount()} textartiklar
+        Search for "{props.query}". Showing {totalRoomsCount()} rooms
       </h3>
       {generateButton()}
 
-      {props.rooms.text.length > 0 &&
-        renderCategory({
-          rooms: props.rooms.text,
-          categoryName: "text",
-          roomListButtonText,
-          viewedButtonText,
-          showAlert: props.showAlert,
-          alertMessage: props.alertMessage,
-          images: props.images,
-          onViewACB,
-          onModifyroomListACB,
-          loggedIn: props.loggedIn,
-        })}
+      {Object.entries(props.rooms).map(
+        ([categoryName, rooms]) =>
+          rooms.length > 0 &&
+          renderCategory({
+            rooms,
+            categoryName,
+            roomListButtonText,
+            viewButtonText,
+            showAlert: props.showAlert,
+            alertMessage: props.alertMessage,
+            images: props.images,
+            onViewACB,
+            onModifyroomListACB,
+            loggedIn: props.loggedIn,
+          })
+      )}
 
       <button onClick={scrollToTop} className="scroll-to-top-button">
         ↑

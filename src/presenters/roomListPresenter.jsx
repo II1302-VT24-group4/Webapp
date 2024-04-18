@@ -8,7 +8,7 @@ export default function roomListPresenter(props) {
 
   //Hela promise-delen kanske inte är relevant då detta handlar om lokalt lagrade favoriter? - Jo, men de hämtas från firebase
   function removeFromFavoritesACB(room) {
-    props.model.removeFromroomList(room);
+    props.model.removeFromFavourites(room);
   }
   if (!props.model.favHistReady.ready)
     return (
@@ -21,9 +21,9 @@ export default function roomListPresenter(props) {
       <roomListView
         onModifyroomList={removeFromFavoritesACB}
         images={props.model.favHistimageHolder}
-        rooms={props.model.favHistTypeList}
-        alertMessage={props.model.isalertMessage}
-        showAlert={props.model.isshowAlert}
+        rooms={props.model.favHistOfficeList}
+        alertMessage={props.model.isAlertMessage}
+        showAlert={props.model.isShowAlert}
       />
     );
   }

@@ -5,7 +5,6 @@ export default observer(function HomePresenter(props) {
   /*if (!props.model.searchDone.done) {
     window.location.hash = "#/";
   }*/
-  console.log(props.model.rooms)
   function addToFavoritesACB(room) {
     props.model.saveToroomList(room);
   }
@@ -28,12 +27,12 @@ export default observer(function HomePresenter(props) {
     <HomeView
       onModifyroomList={addToFavoritesACB}
       images={props.model.imageHolder}
-      rooms={props.model.typeList}
+      rooms={props.model.officeList}
       query={props.model.currentQuery}
-      alertMessage={props.model.isalertMessage}
-      showAlert={props.model.isshowAlert}
-      pages={props.model.amountOfPages}
+      alertMessage={props.model.isAlertMessage}
+      showAlert={props.model.isShowAlert}
       loggedIn={props.model.userState.isLoggedIn}
+      office={props.model.office}
     />
   );
 });

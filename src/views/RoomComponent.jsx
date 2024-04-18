@@ -1,7 +1,7 @@
 function RoomComponent({
   room,
-  onModifyroomList,
-  image,
+  onModifyRoomList,
+  images,
   roomListButtonText,
   alertMessage,
   showAlert,
@@ -40,17 +40,17 @@ function RoomComponent({
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        showAlertWithMessage(`${citationStyle}-citering kopierad!`);
+        showAlertWithMessage(`${citationStyle} copied!`);
       })
       .catch((err) => {
-        showAlertWithMessage("Text kopierades inte ");
+        showAlertWithMessage("Text was not copied");
       });
   }
 
   function addToroomList(room) {
-    onModifyroomList(room);
-    showAlertWithMessage(roomListButtonText + " har genomförts!");
-  } 
+    onModifyRoomList(room);
+    showAlertWithMessage(`${roomListButtonText} performed!`);
+  }
 
   function closePopup() {
     var popup = document.getElementById("popup-menu");
@@ -114,109 +114,24 @@ function RoomComponent({
     }
     return citation;
   }
-
-  return room.id !== "Page Number" ? ( //För flera sidor med rum.
-    <div class="room">
-      <div class="room-front-page">
-        <room class={"id" + room.idNoLink}>
-          <div class={room.id}></div>
-          <style>
-            {`.id${room.idNoLink} {
-              background-office3: url(${image[room.id]});
-              background-size: 90% 90%; 
-              background-position: center center; 
-              background-repeat: no-repeat; 
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
-            }`}
-          </style>
-          <h4 class="room-header">
-            <span class="title">{truncateString(room.title, 40)}</span>
-            {room.author && (
-              <span class="author-nonFormattedDate">
-                <span>{truncateString(room.author, 20)}</span>
-                {room.nonFormattedDate && (
-                  <span>{" " + room.nonFormattedDate}</span>
-                )}
-              </span>
-            )}
-          </h4>
-        </room>
-      </div>
-      <div class="description">
-        <div>
-          {loggedInVal && (
-            <button onClick={() => addToroomList(room)}>
-              <h5>{roomListButtonText}</h5>
-            </button>
-          )}
-          <button onClick={openPopup}>
-            <h5>Boka</h5>
+  return (
+    <div className="room">
+      <div className="room-front-page">
+        <img
+          src={images[room.id]}
+          alt={`Bild för ${room.name}`}
+          style={{ maxWidth: "100%" }}
+        />
+        <h4 className="room-header">{room.name}</h4>
+        {loggedInVal && (
+          <button onClick={() => addToroomList(room)}>
+            {roomListButtonText}
           </button>
-        </div>
-        <div>
-          <div class="description-text">
-            {room.title && <div>{"Room number: " + room.title}</div>}
-            {room.summary && <div>{"Sammanfattning: " + room.summary}</div>}
-          </div>
-        </div>
+        )}
       </div>
-      <div id="popup-menu" class="popup-menu" style={{ display: "none" }}>
-        <div class="popup-header"></div>
-        <div class="popup-content-wrapper">
-          <div class="popup-content">
-            <button class="close-button" onClick={closePopup}>
-              ✖
-            </button>
-            <h2>Boka</h2>
-
-            <div class="citation-style">
-              <h3>Style1</h3>
-              <p>{renderCitation("Style1")}</p>
-              <button
-                class="copy-button"
-                onClick={() =>
-                  copyToClipboard(renderCitation("Style1"), "Style1")
-                }
-              >
-                <p>Kopiera</p>
-              </button>
-            </div>
-            <div class="citation-style">
-              <h3>Style2</h3>
-              <p>{renderCitation("Style2")}</p>
-              <button
-                class="copy-button"
-                onClick={() =>
-                  copyToClipboard(renderCitation("Style2"), "Style2")
-                }
-              >
-                <p>Kopiera</p>
-              </button>
-            </div>
-            <div class="citation-style">
-              <h3>Style3</h3>
-              <p>{renderCitation("Style3")}</p>
-              <button
-                class="copy-button"
-                onClick={() =>
-                  copyToClipboard(renderCitation("Style3"), "Style3")
-                }
-              >
-                <p>Kopiera</p>
-              </button>
-            </div>
-            {showAlert.value && (
-              <div class="alert-box">
-                <h1>{alertMessage.value}</h1>
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="description">
+        <p>{room.description}</p>
       </div>
-    </div>
-  ) : (
-    <div class="result-box" id={room.idNoLink}>
-      <h4>← Slut på sida. Sida {room.title} →</h4>
     </div>
   );
 }
