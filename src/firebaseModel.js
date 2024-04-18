@@ -16,6 +16,13 @@ export const app = initializeApp(firebaseConfig);
 // initialize the database
 export const db = getFirestore();
 
+// Get all meeting rooms from databse
+const roomsRef = collection(db, "rooms");
+const roomsData = await getDocs(roomsRef)
+export const dbRooms = roomsData.docs.map((doc) => ({id: doc.id, ...doc.data()}))
+
+
+
 // Adding documents test
 // Add a new document in collection "cities"
 

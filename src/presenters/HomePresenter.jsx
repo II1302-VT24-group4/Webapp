@@ -5,7 +5,7 @@ export default observer(function HomePresenter(props) {
   /*if (!props.model.searchDone.done) {
     window.location.hash = "#/";
   }*/
-
+  console.log(props.model.rooms)
   function addToFavoritesACB(room) {
     props.model.saveToroomList(room);
   }

@@ -1,7 +1,9 @@
 import { resolvePromise } from "/src/resolvePromise.js";
 import React, { useEffect } from "react";
 import { googleSignInOut } from "./firebaseModel.js";
+import { dbRooms } from "./firebaseModel.js";
 const defaultLimit = 400;
+const rooms = await dbRooms;
 
 export default {
   queryBeforeLogin: "",
@@ -9,6 +11,9 @@ export default {
   userState: { user: null, isLoggedIn: false }, //logged in user
   searchResultsPromiseState: {},
   searchDone: { done: false },
+  rooms: rooms,
+
+ 
 
   logInOrOutWithGoogle() {
     //logs in or out using google
