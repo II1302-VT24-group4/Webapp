@@ -1,9 +1,11 @@
 import { resolvePromise } from "/src/resolvePromise.js";
 import React, { useEffect } from "react";
 import { googleSignInOut } from "./firebaseModel.js";
-import { dbRooms } from "./firebaseModel.js";
+import {useState} from "react";
+import { dbRooms, db } from "./firebaseModel.js";
 const defaultLimit = 400;
 const rooms = await dbRooms;
+
 
 export default {
   queryBeforeLogin: "",
@@ -18,6 +20,7 @@ export default {
   logInOrOutWithGoogle() {
     //logs in or out using google
     this.queryBeforeLogin = this.searchParams.q;
+    
     googleSignInOut(this.userState);
   },
 

@@ -33,10 +33,16 @@ const provider = new GoogleAuthProvider();
 export {auth, provider};
 
 export function googleSignInOut(model) {
-  //console.log(model.user)
+  
   //console.log(model.isLoggedIn)
-  signInWithPopup(auth,new GoogleAuthProvider())
+  if(!model.user) {signInWithPopup(auth,new GoogleAuthProvider())
   .then(successfulLoginACB)
+  } else {
+    model.user = null
+    model.isLoggedIn = false
+    window.location.hash="#/";
+    console.log(model)
+  }
 
   
 
