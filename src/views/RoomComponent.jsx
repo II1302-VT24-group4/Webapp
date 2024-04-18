@@ -50,7 +50,7 @@ function RoomComponent({
   function addToroomList(room) {
     onModifyroomList(room);
     showAlertWithMessage(roomListButtonText + " har genomförts!");
-  }
+  } 
 
   function closePopup() {
     var popup = document.getElementById("popup-menu");

@@ -21,7 +21,7 @@ export default function RoomFavouriteListView(props) {
           <h2>{props.alertMessage.message}</h2>
         </div>
       )}
-      <h2>Favoriter</h2>
+      <h2>Favourites</h2>
       {Object.entries(props.rooms).map(([categoryName, rooms]) =>
         renderCategory({
           rooms,

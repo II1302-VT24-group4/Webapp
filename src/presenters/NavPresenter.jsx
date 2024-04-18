@@ -22,14 +22,17 @@ const NavPresenter = observer(({ model }) => {
       return (
         <>
           <li>
-            <p>Inloggad som: {model.userState.user.displayName}, {model.userState.user.email}</p>
+            <p>
+              Logged in as: {model.userState.user.displayName},{" "}
+              {model.userState.user.email}
+            </p>
           </li>
           <li>
-            <img src={model.userState.user.photoURL} alt="Användarens profil" />
+            <img src={model.userState.user.photoURL} alt="User profile" />
           </li>
           <li>
             <button onClick={handleLogInOutACB}>
-              <h5>Logga ut</h5>
+              <h5>Log out</h5>
             </button>
           </li>
         </>
@@ -38,7 +41,7 @@ const NavPresenter = observer(({ model }) => {
       return (
         <li>
           <button onClick={handleLogInOutACB}>
-            <h5>Logga in med Google</h5>
+            <h5>Log in with Google</h5>
           </button>
         </li>
       );
@@ -50,24 +53,37 @@ const NavPresenter = observer(({ model }) => {
       return (
         <>
           <li>
-            <button onClick={handleMoreSearchACB} disabled={!model.getMaxResults()}>
-              <h5>Visa ytterligare en sida</h5>
+            <button
+              onClick={handleMoreSearchACB}
+              disabled={!model.getMaxResults()}
+            >
+              <h5>Load in one page more of results</h5>
             </button>
           </li>
           <li>
-            <p>Totalt {model.searchResultsPromiseState.data.totalItems} resultat</p>
-            <p>{model.getMaxResults()} sidor återstår att visas</p>
+            <p>
+              In total {model.searchResultsPromiseState.data.totalItems} results
+            </p>
+            <p>{model.getMaxResults()} pages not yet loaded</p>
           </li>
         </>
       );
     }
   };
 
+  const setSearchQuery = (value) => {
+    model.setSearchQuery(value);
+  }
+
+  const doSearch = (value) => {
+    model.doSearch(value);
+  }
+
   return (
     <NavView
-      onSearchQuery={model.setSearchQuery}
-      onSearchButton={model.doSearch}
-      handleResetButtonClick={() => window.location.hash = "#/"}
+      onSearchQuery={setSearchQuery}
+      onSearchButton={doSearch}
+      handleResetButtonClick={() => (window.location.hash = "#/")}
       onHandleroomListClicked={handleRoomListClicked}
       isLoggedIn={model.userState.isLoggedIn}
       query={model.searchParams.q}
