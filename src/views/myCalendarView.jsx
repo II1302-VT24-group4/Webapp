@@ -14,30 +14,21 @@ export default function MyCalendarView(props) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [allDay, setAllDay] = useState(false);
+  const [calendarInitialized, setCalendarInitialized] = useState(false); // New state to track calendar initialization
 
-  function populateCalendar() {
-    for (const event of props.events) {
-      title = event.title;
-      var allDayy = false;
-      startDate = convertTime(event.startTime);
-      endDate = convertTime(event.endTime);
-      createEvent(calendar, title, allDayy, startDate, endDate);
+  async function populateCalendar() {
+    const meetings = await props.getMeetings();
+    for (const meeting of meetings) {
+      const title = meeting.title;
+      const startDate = meeting.startDate.toDate();
+      const endDate = meeting.endDate.toDate();
+      createEvent(title, startDate, endDate);
     }
   }
 
-  function createEvent(calendar, title, allDay, startDate, endDate){
-    //console.log(calendar, title, allDay, startDate, endDate);
-    const eventData = {
-      title: title,
-      startDate: startDate,
-      endDate: endDate
-    };
-
-    props.addEvent(eventData);
-
+  function createEvent(title, startDate, endDate){
     calendar.addEvent({
       title: title,
-      allDay: allDay,
       start: startDate,
       end: endDate
     });
@@ -46,12 +37,21 @@ export default function MyCalendarView(props) {
   }
 
   const handleSaveEvent = () => {
+    const startDate = convertTime(selectedInfo, startTime);
+    const endDate = convertTime(selectedInfo, endTime);
+
+    const eventData = {
+      title: eventTitle,
+      startDate: startDate,
+      endDate: endDate
+    };
+
+    props.addMeeting(eventData);
+
     createEvent(
-      calendar,
       eventTitle,
-      allDay,
-      convertTime(selectedInfo, startTime),
-      convertTime(selectedInfo, endTime)
+      startDate,
+      endDate
     );
     setSelectedInfo(null); // Close the popup after saving the event
   };
@@ -79,14 +79,22 @@ export default function MyCalendarView(props) {
         right: "dayGridMonth,timeGridWeek,listWeek",
       },
     });
-    newCalendar.render();
     setCalendar(newCalendar); // Set the calendar instance in the state
+    newCalendar.render();
+    setCalendarInitialized(true);
 
     // Cleanup function to destroy the calendar when the component unmounts
     return () => {
       newCalendar.destroy();
     };
   }, []); // Empty dependency array to ensure the effect runs only once after component mounting
+
+    // Check if the calendar is initialized before populating it with events
+    useEffect(() => {
+      if (calendarInitialized) {
+        populateCalendar();
+      }
+    }, [calendarInitialized]);
 
   // Initialize startTime and endTime with the times from selectedInfo, if available
   useEffect(() => {

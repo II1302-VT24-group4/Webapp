@@ -126,7 +126,7 @@ function connectToFirebase(model){
     model.userState.isLoggedIn = false
   }
 
-  console.log(model.userState)
+  //console.log(model.userState)
 
  
 }

@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 export default observer(function MyCalendarPresenter(props) {    
 
   const insertMeeting = async (event) => {
+    console.log(event);
     const meetings = await props.model.firebaseRead('users', props.model.userState.user, 'meetings');
     const newID = meetings?.length || 0;
 
@@ -13,11 +14,20 @@ export default observer(function MyCalendarPresenter(props) {
     }
   }
 
+  const getDBMeetings = async () => {
+    while (props.model.userState.user === null) {
+      // Wait for a short period before checking again
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    return await props.model.firebaseRead('users', props.model.userState.user, 'meetings');
+  }
+
     return (
       <div>
         {<MyCalendarView
           user = {props.model.userState}
-          addEvent = {insertMeeting}
+          addMeeting = {insertMeeting}
+          getMeetings = {getDBMeetings}
         />}
       </div>
     );

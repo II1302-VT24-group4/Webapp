@@ -1,4 +1,5 @@
 # Webapp
 
-pull and then npm install
-test123
+npm install
+npm install fullcalendar
+npm install reactjs-popup
