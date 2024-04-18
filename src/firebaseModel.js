@@ -32,14 +32,47 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 export {auth, provider};
 
-export function dbInsert(column, row, attribute, data, merge){
-  const userRef = doc(db, column, row);
-  setDoc(userRef, {[attribute]: data}, { merge: merge });
+export async function dbInsert(coll, entity, subColl, subEntity, attribute, data, merge){
+  //console.log("hey now", coll, entity, subColl, subEntity, attribute, data, merge);
+  const userRef = doc(db, coll, entity);
+  //console.log("userRef:", userRef); // Add this line to log userRef
+  if(subColl === null || subColl === undefined || subEntity === null || subEntity === undefined ){
+    await setDoc(userRef, {[attribute]: data}, { merge: merge });
+  }
+  else{
+    console.log("subEntity:", subEntity); // Add this line to log subEntity
+    const subcollectionRef = collection(userRef, subColl);
+    const docRef = doc(subcollectionRef, subEntity);
+    console.log("docRef:", docRef); // Add this line to log docRef
+    await setDoc(docRef, { [attribute]: data }, { merge: merge });
+  }
 }
 
-export async function dbRead(coll){
-  const data = await getDocs(collection(db, coll));
-  return data.docs.map((doc) => ({id: doc.id, ...doc.data()}));
+export async function dbRead(coll, entity, subColl, subEntity) {
+  let query = collection(db, coll);
+  let docs = true;
+
+  if (entity) {
+    docs = false;
+    query = doc(query, entity);
+    if (subColl) {
+      docs = true;
+      query = collection(query, subColl);
+      if (subEntity) {
+        docs = false;
+        query = doc(query, subEntity);
+      }
+    }
+  }
+
+  if(docs){
+    let data = await getDocs(query);
+    return data.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  }
+  else{
+    let data = await getDoc(query);
+    return { id: data.id, ...data.data() };
+  }
 }
 
 export function googleSignInOut(model) {

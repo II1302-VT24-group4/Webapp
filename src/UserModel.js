@@ -13,12 +13,12 @@ export default {
   searchDone: { done: false },
   rooms: rooms,
 
-  firebaseInsert(column, row, attribute, data, merge) {
-    dbInsert(column, row, attribute, data, merge);
+  firebaseInsert(collection, entity, subCollection, subEntity, attribute, data, merge){
+    dbInsert(collection, entity, subCollection, subEntity, attribute, data, merge);
   },
 
-  firebaseRead(collection) {
-    return dbRead(collection);
+  firebaseRead(collection, entity, subCollection, subEntity){
+    return dbRead(collection, entity, subCollection, subEntity);
   },
 
   logInOrOutWithGoogle() {

@@ -25,13 +25,21 @@ export default function MyCalendarView(props) {
     }
   }
 
-  function createEvent(calendar, title, allDay, startDate, endDate) {
+  function createEvent(calendar, title, allDay, startDate, endDate){
     //console.log(calendar, title, allDay, startDate, endDate);
+    const eventData = {
+      title: title,
+      startDate: startDate,
+      endDate: endDate
+    };
+
+    props.addEvent(eventData);
+
     calendar.addEvent({
       title: title,
       allDay: allDay,
       start: startDate,
-      end: endDate,
+      end: endDate
     });
     // Rerender the calendar to display the new event
     calendar.render();
