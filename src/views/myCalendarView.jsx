@@ -15,23 +15,24 @@ export default function MyCalendarView(props) {
   const [endTime, setEndTime] = useState('');
   const [allDay, setAllDay] = useState(false);
 
+  function populateCalendar(){
+    for(const event of props.events){
+      title = event.title;
+      var allDayy = false; 
+      startDate = convertTime(event.startTime);
+      endDate = convertTime(event.endTime);  
+      createEvent(calendar, title, allDayy, startDate, endDate)
+    }
+  }
+
   function createEvent(calendar, title, allDay, startDate, endDate){
     //console.log(calendar, title, allDay, startDate, endDate);
-    if(allDay){
-      calendar.addEvent({
-        title: title,
-        allDay: allDay,
-        start: startDate
-      });
-    }
-    else{
-      calendar.addEvent({
-        title: title,
-        allDay: allDay,
-        start: startDate,
-        end: endDate
-      });
-    }
+    calendar.addEvent({
+      title: title,
+      allDay: allDay,
+      start: startDate,
+      end: endDate
+    });
     // Rerender the calendar to display the new event
     calendar.render();
   }
@@ -48,6 +49,7 @@ export default function MyCalendarView(props) {
   };
 
   function convertTime(info, time){
+    console.log("info", info);
     var date = new Date(info.startStr);
     var [hours, minutes] = time.split(':').map(Number);
     date.setHours(hours, minutes);

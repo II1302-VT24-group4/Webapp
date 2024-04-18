@@ -32,6 +32,16 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 export {auth, provider};
 
+export function dbInsert(column, row, attribute, data, merge){
+  const userRef = doc(db, column, row);
+  setDoc(userRef, {[attribute]: data}, { merge: merge });
+}
+
+export async function dbRead(coll){
+  const data = await getDocs(collection(db, coll));
+  return data.docs.map((doc) => ({id: doc.id, ...doc.data()}));
+}
+
 export function googleSignInOut(model) {
   
   //console.log(model.isLoggedIn)

@@ -31,3 +31,9 @@ createRoot(document.getElementById("root")).render(
 window.myModel = reactiveModel;
 
 //updateFirebase(reactiveModel,reaction);
+
+//How inserts work
+//userModel.firebaseInsert('users', '123', 'RFID', 123, true);
+
+//How read works
+//userModel.firebaseRead('users');
