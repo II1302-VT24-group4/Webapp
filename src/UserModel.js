@@ -2,7 +2,7 @@ import { resolvePromise } from "/src/resolvePromise.js";
 import React, { useEffect } from "react";
 import { googleSignInOut } from "./firebaseModel.js";
 import {useState} from "react";
-import { dbRooms, db } from "./firebaseModel.js";
+import { dbRooms, db , dbInsert, dbRead} from "./firebaseModel.js";
 const defaultLimit = 400;
 const rooms = await dbRooms;
 
@@ -15,7 +15,13 @@ export default {
   searchDone: { done: false },
   rooms: rooms,
 
- 
+  firebaseInsert(column, row, attribute, data, merge){
+    dbInsert(column, row, attribute, data, merge);
+  },
+
+  firebaseRead(collection){
+    return dbRead(collection);
+  },
 
   logInOrOutWithGoogle() {
     //logs in or out using google
