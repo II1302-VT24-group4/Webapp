@@ -57,7 +57,6 @@ export default function MyCalendarView(props) {
   };
 
   function convertTime(info, time) {
-    console.log("info", info);
     var date = new Date(info.startStr);
     var [hours, minutes] = time.split(":").map(Number);
     date.setHours(hours, minutes);

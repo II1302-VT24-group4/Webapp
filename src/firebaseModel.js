@@ -33,17 +33,13 @@ const provider = new GoogleAuthProvider();
 export {auth, provider};
 
 export async function dbInsert(coll, entity, subColl, subEntity, attribute, data, merge){
-  //console.log("hey now", coll, entity, subColl, subEntity, attribute, data, merge);
   const userRef = doc(db, coll, entity);
-  //console.log("userRef:", userRef); // Add this line to log userRef
   if(subColl === null || subColl === undefined || subEntity === null || subEntity === undefined ){
     await setDoc(userRef, {[attribute]: data}, { merge: merge });
   }
   else{
-    console.log("subEntity:", subEntity); // Add this line to log subEntity
     const subcollectionRef = collection(userRef, subColl);
     const docRef = doc(subcollectionRef, subEntity);
-    console.log("docRef:", docRef); // Add this line to log docRef
     await setDoc(docRef, { [attribute]: data }, { merge: merge });
   }
 }
