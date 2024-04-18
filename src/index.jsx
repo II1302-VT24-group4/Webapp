@@ -4,6 +4,7 @@ import React from "react";
 import { observable, configure } from "mobx";
 import userModel from "./UserModel.js";
 import "/src/styles/style.css";
+import connectToFirebase from "./firebaseModel.js";
 //import firebaseModel from "/src/firebaseModel.js";
 
 configure({ enforceActions: "never" }); // we don't use Mobx actions
@@ -31,3 +32,4 @@ createRoot(document.getElementById("root")).render(
 window.myModel = reactiveModel;
 
 //updateFirebase(reactiveModel,reaction);
+connectToFirebase(reactiveModel);

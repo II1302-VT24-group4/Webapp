@@ -38,10 +38,11 @@ export function googleSignInOut(model) {
   if(!model.user) {signInWithPopup(auth,new GoogleAuthProvider())
   .then(successfulLoginACB)
   } else {
+    signOut(auth)
     model.user = null
     model.isLoggedIn = false
     window.location.hash="#/";
-    console.log(model)
+    console.log(auth)
   }
 
   
@@ -49,11 +50,11 @@ export function googleSignInOut(model) {
   function successfulLoginACB(fbUserChunk){
       //model.user_ID = fbUserChunk.user.uid;
       //model.userState = true;
-      console.log(fbUserChunk)
+      //console.log(fbUserChunk)
 
       model.user = fbUserChunk.user.uid;
       model.isLoggedIn = true;
-      //§console.log(model)
+      //console.log(model)
       window.location.hash="#/home";
       //console.log("Successful login! Welcome "+auth.currentUser.email);
 
@@ -65,6 +66,35 @@ export function googleSignInOut(model) {
       
   }
 }
+
+function connectToFirebase(model){
+
+  onAuthStateChanged(auth, loginOrOutACB);
+ 
+  
+
+  function loginOrOutACB(user){
+    //console.log(user.uid)
+  
+  if(user){
+    model.userState.user = user.uid
+    model.userState.isLoggedIn = true
+      
+  }
+
+  if(!user){
+    model.userState.user = null
+    model.userState.isLoggedIn = false
+  }
+
+  console.log(model.userState)
+
+ 
+}
+  
+}
+
+export default connectToFirebase;
 
 
 
