@@ -72,7 +72,7 @@ export default function NavView(props) {
       {/* Log-in Section */}
       <ul className="nav-section" id="log-in-nav-section">
         <li>
-          <h3>Inloggning</h3>
+          <h3>Log in</h3>
         </li>
         {props.renderLoggedInContent && props.renderLoggedInContent()}
       </ul>
