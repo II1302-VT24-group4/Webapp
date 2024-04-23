@@ -19,7 +19,7 @@ export default observer(function RoomFavouriteList(props) {
   else {
     return (
       <RoomFavouriteListView
-        onModifyroomList={removeFromFavoritesACB}
+        onModifyRoomList={removeFromFavoritesACB}
         images={props.model.favHistimageHolder}
         rooms={props.model.favHistOfficeList}
         alertMessage={props.model.isAlertMessage}

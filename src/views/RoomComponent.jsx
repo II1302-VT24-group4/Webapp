@@ -48,6 +48,7 @@ function RoomComponent({
   }
 
   function addToroomList(room) {
+    console.log("Adding to room list:", room);
     onModifyRoomList(room);
     showAlertWithMessage(`${roomListButtonText} performed!`);
   }

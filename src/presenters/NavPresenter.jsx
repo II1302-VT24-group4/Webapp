@@ -1,16 +1,15 @@
 // NavPresenter.jsx
-import React from "react";
 import { observer } from "mobx-react-lite";
 import NavView from "../views/navView";
-
+import React, { useEffect } from "react";
 const NavPresenter = observer(({ model }) => {
+  useEffect(() => {
+    // model.doSearch(); // Anropa doSearch för att utföra en initial sökning när komponenten laddas
+  }); // Beroendet [model] säkerställer att effekten körs om modellen ändras
+
   const handleRoomListClicked = () => {
     model.roomListDone.done = true;
-    model.getInfoOfArray(model.mediaroomList);
-  };
-
-  const handleMoreSearchACB = () => {
-    model.doMoreSearch();
+    model.getInfoOfArray(model.mediaRoomList);
   };
 
   const handleLogInOutACB = () => {
@@ -50,11 +49,11 @@ const NavPresenter = observer(({ model }) => {
 
   const setSearchQuery = (value) => {
     model.setSearchQuery(value);
-  }
+  };
 
   const doSearch = (value) => {
     model.doSearch(value);
-  }
+  };
 
   return (
     <NavView

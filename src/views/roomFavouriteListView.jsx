@@ -7,7 +7,7 @@ export default function RoomFavouriteListView(props) {
   const viewButtonText = "Öppna artikel";
 
   function onModifyRoomListACB(room) {
-    props.onModifyroomList(room);
+    props.onModifyRoomList(room);
   }
 
   function onModifyViewedACB(room) {

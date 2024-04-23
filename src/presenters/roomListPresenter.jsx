@@ -10,6 +10,9 @@ export default function roomListPresenter(props) {
   function removeFromFavoritesACB(room) {
     props.model.removeFromFavourites(room);
   }
+  function removeFromFavoritesACB(room) {
+    props.model.modifyFavourites(room, false);
+  }
   if (!props.model.favHistReady.ready)
     return (
       <div class="loading-bar-image">
@@ -19,7 +22,7 @@ export default function roomListPresenter(props) {
   else {
     return (
       <roomListView
-        onModifyroomList={removeFromFavoritesACB}
+        onModifyRoomList={removeFromFavoritesACB}
         images={props.model.favHistimageHolder}
         rooms={props.model.favHistOfficeList}
         alertMessage={props.model.isAlertMessage}

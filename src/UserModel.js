@@ -13,11 +13,27 @@ export default {
   searchDone: { done: false },
   rooms: rooms,
 
-  firebaseInsert(collection, entity, subCollection, subEntity, attribute, data, merge){
-    dbInsert(collection, entity, subCollection, subEntity, attribute, data, merge);
+  firebaseInsert(
+    collection,
+    entity,
+    subCollection,
+    subEntity,
+    attribute,
+    data,
+    merge
+  ) {
+    dbInsert(
+      collection,
+      entity,
+      subCollection,
+      subEntity,
+      attribute,
+      data,
+      merge
+    );
   },
 
-  firebaseRead(collection, entity, subCollection, subEntity){
+  firebaseRead(collection, entity, subCollection, subEntity) {
     return dbRead(collection, entity, subCollection, subEntity);
   },
 
@@ -57,9 +73,26 @@ export default {
 
   //Searches for the query in searchParams and saves it to searchResultsPromiseState.data
   doSearch() {
-    this.currentQuery = this.searchParams.q;
+    this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
 
-    this.searchResultsPromiseState.data = { items: rooms };
+    this.currentQuery = this.searchParams.q; // Genomför en tom sökning för att initialisera
+
+    // Kontrollera om söksträngen är tom
+    if (!this.currentQuery && !this.searchParams.office) {
+      this.searchResultsPromiseState.data = { items: this.rooms }; // Om inga sökparametrar är angivna, returnera alla rum
+    } else {
+      // Sökparametrar för att filtrera rum
+      const filteredRooms = this.rooms.filter((room) => {
+        const nameMatch = room.name
+          .toLowerCase()
+          .includes(this.currentQuery.toLowerCase());
+        const officeMatch = room.office.toString() === this.searchParams.office;
+        return nameMatch || officeMatch;
+      });
+
+      this.searchResultsPromiseState.data = { items: filteredRooms }; // Spara filtrerade resultat
+    }
+
     this.searchDone.done = true;
     /*
     this.currentQuery = this.searchParams.q;
@@ -90,17 +123,19 @@ export default {
     this.officeList[officeKey].push(mappedRoom);
     console.log(`Added room to ${officeKey}:`, this.officeList[officeKey]);
   },
-  //Takes an array of ids Favourite and saves the data to the favHistOfficeList and images to favHistImageHolder
   getInfoOfArray(favHistArray) {
     this.favHistReady.ready = false;
     this.favHistImageHolder = {};
     this.favHistOfficeList = this.initializeOffices();
 
-    let completeItems = 0;
-    if (favHistArray.length === 0) this.favHistReady.ready = true;
+    if (!Array.isArray(favHistArray) || favHistArray.length === 0) {
+      this.favHistReady.ready = true;
+      return;
+    }
 
+    let completeItems = 0;
     favHistArray.forEach((id) => {
-      const room = rooms.find((room) => room.id === id);
+      const room = this.rooms.find((room) => room.id === id);
       if (room) {
         this.sortIntoOffice(room);
         this.favHistImageHolder[room.id] =
@@ -113,10 +148,14 @@ export default {
     });
   },
 
-  saveToFavourites(room) {
+  modifyFavourites(room, add) {
     if (!this.mediaFavourites.includes(room.id)) {
-      this.mediaFavourites.push(room.id);
-      this.sortIntoOffice(room);
+      if (add === true) {
+        this.mediaFavourites.push(room.id);
+      } else {
+        this.mediaFavourites.pop(room.id);
+      }
+      console.log("Updated favourites list:", this.mediaFavourites);
     }
   },
 

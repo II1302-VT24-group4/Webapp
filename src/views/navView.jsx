@@ -3,27 +3,29 @@ import React from "react";
 export default function NavView(props) {
   return (
     <nav className="nav">
-      <ul className="nav-section" id="search-nav-section">
-        <li>
-          <h3>Find room</h3>
-        </li>
-        <li>
+      {props.isLoggedIn && (
+        <ul className="nav-section" id="search-nav-section">
+          <li>
+            <h3>Find room</h3>
+          </li>
           <input
             type="text"
             value={props.query}
             onChange={(event) => props.onSearchQuery(event.target.value)}
-            onKeyDown={(event) =>
-              event.key === "Enter" && props.onSearchButton()
-            }
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                window.location.hash = "#/bookableRooms";
+                props.onSearchButton();
+              }
+            }}
             placeholder="Find Room"
             className="search-input"
           />
-        </li>
-      </ul>
-
+        </ul>
+      )}
       <ul className="nav-section" id="links-nav-section">
         <li>
-          <h3>Delsidor</h3>
+          <h3>Pages</h3>
         </li>
         <li>
           <button onClick={props.handleResetButtonClick}>
@@ -33,18 +35,17 @@ export default function NavView(props) {
 
         {props.doneSearch.done && (
           <li>
-            <button onClick={() => (window.location.hash = "#/search")}>
-              <h4>Söksida</h4>
+            <button
+              onClick={() => {
+                window.location.hash = "#/bookableRooms";
+              }}
+            >
+              <h4>Bookable rooms</h4>
             </button>
           </li>
         )}
         {props.isLoggedIn && (
           <>
-            <li>
-              <button onClick={props.onHandleroomListClicked}>
-                <h4>Favourites</h4>
-              </button>
-            </li>
             <li>
               <button onClick={() => (window.location.hash = "#/home")}>
                 <h4>Home</h4>
@@ -57,7 +58,10 @@ export default function NavView(props) {
             </li>
             <li>
               <button
-                onClick={() => (window.location.hash = "#/roomFavoritesList")}
+                onClick={() => {
+                  window.location.hash = "#/roomFavoritesList";
+                  props.onHandleroomListClicked();
+                }}
               >
                 <h4>Room Favorites List</h4>
               </button>
@@ -65,7 +69,6 @@ export default function NavView(props) {
           </>
         )}
       </ul>
-
       {/* Log-in Section */}
       <ul className="nav-section" id="log-in-nav-section">
         <li>
