@@ -188,10 +188,10 @@ export default {
       console.log("Processing item:", item);
       this.sortIntoOffice(item);
     });
-    console.log(
+    /*console.log(
       "Processed office list:",
       JSON.stringify(this.officeList, null, 2)
-    );
+    );*/
   },
 
   //Used to extract usable data from the result
