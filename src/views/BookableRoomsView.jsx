@@ -65,6 +65,8 @@ export default function BookableRoomsView(props) {
       </h3>
       {generateButton()}
 
+
+
       {Object.entries(props.rooms).map(
         ([categoryName, rooms]) =>
           rooms.length > 0 &&

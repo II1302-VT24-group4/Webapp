@@ -9,7 +9,7 @@ const NavPresenter = observer(({ model }) => {
 
   const handleRoomListClicked = () => {
     model.roomListDone.done = true;
-    model.getInfoOfArray(model.mediaRoomList);
+    model.getInfoOfArray(model.mediaFavourites);
   };
 
   const handleLogInOutACB = () => {
@@ -60,7 +60,7 @@ const NavPresenter = observer(({ model }) => {
       onSearchQuery={setSearchQuery}
       onSearchButton={doSearch}
       handleResetButtonClick={() => (window.location.hash = "#/")}
-      onHandleroomListClicked={handleRoomListClicked}
+      onRoomListClicked={handleRoomListClicked}
       isLoggedIn={model.userState.isLoggedIn}
       query={model.searchParams.q}
       doneSearch={model.searchDone}

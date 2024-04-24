@@ -33,17 +33,6 @@ export default function NavView(props) {
           </button>
         </li>
 
-        {props.doneSearch.done && (
-          <li>
-            <button
-              onClick={() => {
-                window.location.hash = "#/bookableRooms";
-              }}
-            >
-              <h4>Bookable rooms</h4>
-            </button>
-          </li>
-        )}
         {props.isLoggedIn && (
           <>
             <li>
@@ -59,11 +48,20 @@ export default function NavView(props) {
             <li>
               <button
                 onClick={() => {
-                  window.location.hash = "#/roomFavoritesList";
-                  props.onHandleroomListClicked();
+                  window.location.hash = "#/bookableRooms";
                 }}
               >
-                <h4>Room Favorites List</h4>
+                <h4>Bookable rooms</h4>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  window.location.hash = "#/roomFavouritesList";
+                  props.onRoomListClicked();
+                }}
+              >
+                <h4>Room Favourites List</h4>
               </button>
             </li>{" "}
           </>

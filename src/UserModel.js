@@ -6,7 +6,7 @@ const defaultLimit = 400;
 const rooms = await dbRooms;
 
 export default {
-  roomListDone: { roomListDone: false },
+  roomListDone: { done: false },
   queryBeforeLogin: "",
   searchParams: { q: "" },
   userState: { user: null, isLoggedIn: false }, //logged in user
@@ -69,7 +69,6 @@ export default {
     this.searchParams.office = office;
   },
   searchDone: { done: false },
-  favouritesDone: { done: false },
 
   //Searches for the query in searchParams and saves it to searchResultsPromiseState.data
 

@@ -3,9 +3,6 @@
 import { renderCategory } from "./RoomCategoryRenderer";
 
 export default function RoomFavouriteListView(props) {
-  const roomListButtonText = "Remove from my rooms";
-  const viewButtonText = "Open schedule";
-
   function onModifyRoomListACB(room) {
     props.onModifyRoomList(room);
   }
@@ -22,18 +19,21 @@ export default function RoomFavouriteListView(props) {
         </div>
       )}
       <h2>Favourites</h2>
-      {Object.entries(props.rooms).map(([categoryName, rooms]) =>
-        renderCategory({
-          rooms,
-          categoryName,
-          roomListButtonText,
-          viewButtonText,
-          showAlert: props.showAlert,
-          alertMessage: props.alertMessage,
-          images: props.images,
-          onModifyViewedACB,
-          onModifyRoomListACB,
-        })
+      {Object.entries(props.rooms).map(
+        ([categoryName, rooms]) =>
+          rooms.length > 0 &&
+          renderCategory({
+            rooms,
+            categoryName,
+            roomListButtonText: "Remove from my rooms",
+            viewButtonText: "Open schedule",
+            showAlert: props.showAlert,
+            alertMessage: props.alertMessage,
+            images: props.images,
+            onModifyViewedACB,
+            onModifyRoomListACB,
+            loggedIn: props.loggedIn,
+          })
       )}
     </main>
   );

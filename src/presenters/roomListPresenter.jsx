@@ -6,13 +6,10 @@ export default function roomListPresenter(props) {
     window.location.hash = "#/";
   }
 
-  //Hela promise-delen kanske inte är relevant då detta handlar om lokalt lagrade favoriter? - Jo, men de hämtas från firebase
-  function removeFromFavoritesACB(room) {
+  function removeFromFavouritesACB(room) {
     props.model.removeFromFavourites(room);
   }
-  function removeFromFavoritesACB(room) {
-    props.model.modifyFavourites(room, false);
-  }
+
   if (!props.model.favHistReady.ready)
     return (
       <div class="loading-bar-image">
@@ -22,7 +19,7 @@ export default function roomListPresenter(props) {
   else {
     return (
       <roomListView
-        onModifyRoomList={removeFromFavoritesACB}
+        onModifyRoomList={removeFromFavouritesACB}
         images={props.model.favHistimageHolder}
         rooms={props.model.favHistOfficeList}
         alertMessage={props.model.isAlertMessage}
