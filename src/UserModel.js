@@ -72,29 +72,41 @@ export default {
   favouritesDone: { done: false },
 
   //Searches for the query in searchParams and saves it to searchResultsPromiseState.data
+
   doSearch() {
-    this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
+    if (this.currentQuery != this.searchParams.q) {
+      this.officeList = []; // Rensa tidigare sökresultat
+      this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
+      this.currentQuery = this.searchParams.q;
+      if (!this.currentQuery && !this.searchParams.office) {
+        this.searchResultsPromiseState.data = { items: this.rooms }; // Om inga sökparametrar är angivna, returnera alla rum
+      } else {
+        // Sökparametrar för att filtrera rum
+        const filteredRooms = this.rooms.filter((room) => {
+          const queryLower = this.currentQuery.toLowerCase();
+          const nameMatch =
+            room.name && room.name.toLowerCase().includes(queryLower);
 
-    this.currentQuery = this.searchParams.q; // Genomför en tom sökning för att initialisera
+          const officeMatch =
+            room.office &&
+            String(room.office).toLowerCase().includes(queryLower); // Säkerställ att office är en sträng innan konvertering till lowercase
 
-    // Kontrollera om söksträngen är tom
-    if (!this.currentQuery && !this.searchParams.office) {
-      this.searchResultsPromiseState.data = { items: this.rooms }; // Om inga sökparametrar är angivna, returnera alla rum
-    } else {
-      // Sökparametrar för att filtrera rum
-      const filteredRooms = this.rooms.filter((room) => {
-        const nameMatch = room.name
-          .toLowerCase()
-          .includes(this.currentQuery.toLowerCase());
-        const officeMatch = room.office.toString() === this.searchParams.office;
-        return nameMatch || officeMatch;
-      });
+          const match = nameMatch || officeMatch; // Matchningen kontrollerar både namn och kontor oberoende av om de är satta eller inte
 
-      this.searchResultsPromiseState.data = { items: filteredRooms }; // Spara filtrerade resultat
+          return (
+            (!this.currentQuery || match) &&
+            (!this.searchParams.office || officeMatch)
+          );
+        });
+
+        this.searchResultsPromiseState.data = { items: filteredRooms }; // Spara filtrerade resultat
+      }
+
+      this.searchDone.done = true;
     }
+  },
 
-    this.searchDone.done = true;
-    /*
+  /*
     this.currentQuery = this.searchParams.q;
     let filteredRooms = rooms.filter((room) =>
       room.name.includes(this.currentQuery)
@@ -109,10 +121,10 @@ export default {
     this.searchResultsPromiseState.data = { items: filteredRooms };
     this.searchDone.done = true;
     */
-  },
+
   sortIntoOffice(item) {
     // Anta att 'office' är ett nummer och vi behöver mappa det till en strängbaserad nyckel
-    const officeKey = `office${item.office}`;
+    const officeKey = `Office ${item.office}`;
 
     // Kontrollera att en lista existerar för detta kontor i officeList
     if (!this.officeList[officeKey]) {
@@ -203,16 +215,7 @@ export default {
       available: item.available,
       office: item.office,
     };
-
     //imageHolder[item.id] = "https://i.ibb.co/NyzjMQh/room-placeholder.webp";
-
     return itemInfo;
-  },
-
-  searchRoomsByString(searchParams) {
-    //Search after rooms by name, office etc.
-  },
-  searchRoomsById(idLink) {
-    //Search after a specific room by id
   },
 };

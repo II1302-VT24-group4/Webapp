@@ -3,8 +3,8 @@
 import { renderCategory } from "./RoomCategoryRenderer";
 
 export default function RoomFavouriteListView(props) {
-  const roomListButtonText = "Ta bort från favoriter";
-  const viewButtonText = "Öppna artikel";
+  const roomListButtonText = "Remove from my rooms";
+  const viewButtonText = "Open schedule";
 
   function onModifyRoomListACB(room) {
     props.onModifyRoomList(room);
@@ -17,7 +17,7 @@ export default function RoomFavouriteListView(props) {
   return (
     <main>
       {props.showAlert?.alert && (
-        <div className="alert-box">
+        <div class="alert-box">
           <h2>{props.alertMessage.message}</h2>
         </div>
       )}
@@ -27,6 +27,7 @@ export default function RoomFavouriteListView(props) {
           rooms,
           categoryName,
           roomListButtonText,
+          viewButtonText,
           showAlert: props.showAlert,
           alertMessage: props.alertMessage,
           images: props.images,

@@ -2,9 +2,9 @@ import React from "react";
 
 export default function NavView(props) {
   return (
-    <nav className="nav">
+    <nav class="nav">
       {props.isLoggedIn && (
-        <ul className="nav-section" id="search-nav-section">
+        <ul class="nav-section" id="search-nav-section">
           <li>
             <h3>Find room</h3>
           </li>
@@ -19,11 +19,11 @@ export default function NavView(props) {
               }
             }}
             placeholder="Find Room"
-            className="search-input"
+            class="search-input"
           />
         </ul>
       )}
-      <ul className="nav-section" id="links-nav-section">
+      <ul class="nav-section" id="links-nav-section">
         <li>
           <h3>Pages</h3>
         </li>
@@ -70,7 +70,7 @@ export default function NavView(props) {
         )}
       </ul>
       {/* Log-in Section */}
-      <ul className="nav-section" id="log-in-nav-section">
+      <ul class="nav-section" id="log-in-nav-section">
         <li>
           <h3>Log in</h3>
         </li>

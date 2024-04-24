@@ -9,6 +9,7 @@ export function renderCategory({
   images,
   onModifyRoomListACB,
   loggedIn,
+  viewButtonText,
 }) {
   function getCategoryDisplayName(categoryName) {
     return categoryName; // Already in correct format
@@ -19,7 +20,7 @@ export function renderCategory({
   return (
     <>
       <h3>{displayName}</h3>
-      <div className="rooms" id={categoryName.toLowerCase()}>
+      <div class="rooms" id={categoryName.toLowerCase()}>
         {rooms.length > 0 ? (
           rooms.map((room) => (
             <RoomComponent
@@ -27,6 +28,7 @@ export function renderCategory({
               onModifyRoomList={onModifyRoomListACB}
               images={images}
               roomListButtonText={roomListButtonText}
+              viewButtonText={viewButtonText}
               alertMessage={alertMessage}
               showAlert={showAlert}
               loggedIn={loggedIn}

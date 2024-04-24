@@ -1,8 +1,8 @@
 export default function WelcomeView(props) {
   return (
-    <main className="main-welcome">
+    <main class="main-welcome">
       <h2>Welcome page</h2>
-      <div className="welcome-view">
+      <div class="welcome-view">
         <h3>Welcome!</h3>
         <p>
           Meeting Planner is a comprehensive system designed to streamline the

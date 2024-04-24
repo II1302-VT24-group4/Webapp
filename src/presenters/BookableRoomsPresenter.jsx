@@ -25,7 +25,7 @@ export default observer(function BookableRoomsPresenter(props) {
   ) {
     //window.location.hash = "#/home"; // Omdirigera till Home
     return (
-      <div className="loading-bar-image">
+      <div class="loading-bar-image">
         <img src="https://i.ibb.co/BCtKCSK/loading-bar.gif" alt="Loading" />
       </div>
     );

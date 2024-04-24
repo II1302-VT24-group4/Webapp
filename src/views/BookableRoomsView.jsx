@@ -2,9 +2,6 @@ import { renderCategory } from "./RoomCategoryRenderer";
 import BookableRoomsPresenter from "/src/presenters/BookableRoomsPresenter";
 
 export default function BookableRoomsView(props) {
-  let roomListButtonText = "Add to my rooms";
-  let viewButtonText = "Open this room";
-
   function scrollToCategoryRoom(categoryId) {
     const element = document.getElementById(categoryId);
     if (element) {
@@ -36,9 +33,9 @@ export default function BookableRoomsView(props) {
 
   function generateButton() {
     return (
-      <div className="scroll-to-new-results">
+      <div class="scroll-to-new-results">
         <h3>Scroll to a specific office</h3>
-        <div className="buttons-scroll-to-new-results">
+        <div class="buttons-scroll-to-new-results">
           {Object.keys(props.rooms).map((officeKey) => (
             <button
               key={officeKey}
@@ -54,9 +51,9 @@ export default function BookableRoomsView(props) {
 
   return (
     <main>
-      <div className="Alert_content">
+      <div class="Alert_content">
         {props.showAlert?.alert && (
-          <div className="alert-box">
+          <div class="alert-box">
             <p>{props.alertMessage.message}</p>
           </div>
         )}
@@ -74,8 +71,8 @@ export default function BookableRoomsView(props) {
           renderCategory({
             rooms,
             categoryName,
-            roomListButtonText,
-            viewButtonText,
+            roomListButtonText: "Add to my rooms",
+            viewButtonText: "Open Schedule",
             showAlert: props.showAlert,
             alertMessage: props.alertMessage,
             images: props.images,
@@ -85,7 +82,7 @@ export default function BookableRoomsView(props) {
           })
       )}
 
-      <button onClick={scrollToTop} className="scroll-to-top-button">
+      <button onClick={scrollToTop} class="scroll-to-top-button">
         ↑
       </button>
     </main>

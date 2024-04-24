@@ -1,8 +1,11 @@
+import MyCalendarView from "./myCalendarView";
+
 function RoomComponent({
   room,
   onModifyRoomList,
   images,
   roomListButtonText,
+  viewButtonText,
   alertMessage,
   showAlert,
   loggedIn,
@@ -27,7 +30,12 @@ function RoomComponent({
       popup.style.display = "block";
     }
   }
-
+  function closePopup() {
+    var popup = document.getElementById("popup-menu");
+    if (popup) {
+      popup.style.display = "none";
+    }
+  }
   function truncateString(str, num) {
     if (str && str.length > num) {
       return str.slice(0, num) + "...";
@@ -47,28 +55,23 @@ function RoomComponent({
       });
   }
 
-  function addToroomList(room) {
+  function addToRoomList(room) {
     console.log("Adding to room list:", room);
     onModifyRoomList(room);
-    showAlertWithMessage(`${roomListButtonText} performed!`);
+    showAlertWithMessage(roomListButtonText + " performed!");
   }
 
-  function closePopup() {
-    var popup = document.getElementById("popup-menu");
-    if (popup) {
-      popup.style.display = "none";
-    }
-  }
   function renderCitation(style) {
     //Inbjudan till en bokning
     let citation = "";
     const currentDate = new Date();
-    const formattedDate =
-      currentDate.getFullnonFormattedDate() +
-      "-" +
-      ("0" + (currentDate.getMonth() + 1)).slice(-2) +
-      "-" +
-      ("0" + currentDate.getDate()).slice(-2);
+    const formattedDate = "1 februari";
+    //const formattedDate =
+    //  currentDate.getFullnonFormattedDate() +
+    //  "-" +
+    //  ("0" + (currentDate.getMonth() + 1)).slice(-2) +
+    //  "-" +
+    //  ("0" + currentDate.getDate()).slice(-2);
 
     const authorText = room.author || "Okänd författare";
     switch (style) {
@@ -111,27 +114,65 @@ function RoomComponent({
           room.meetingLink;
         break;
       default:
-        citation = "Inbjudningsstil ej vald";
+        citation = "Invitation style not selected";
     }
     return citation;
   }
   return (
-    <div className="room">
-      <div className="room-front-page">
+    <div class="room">
+      <div class="room-front-page">
         <img
           src={images[room.id]}
           alt={`Bild för ${room.name}`}
           style={{ maxWidth: "100%" }}
         />
-        <h4 className="room-header">{room.name}</h4>
+        <h4 class="room-header">{room.name}</h4>
         {loggedInVal && (
-          <button onClick={() => addToroomList(room)}>
-            {roomListButtonText}
-          </button>
+          <>
+            <button onClick={() => addToRoomList(room)}>
+              <h5>{roomListButtonText}</h5>
+            </button>
+            <button onClick={openPopup}>
+              <h5>{viewButtonText}</h5>{" "}
+            </button>
+          </>
         )}
       </div>
-      <div className="description">
-        <p>{room.description}</p>
+      <div id="popup-menu" class="popup-menu" style={{ display: "none" }}>
+        <div class="popup-header"></div>
+        <div class="popup-content-wrapper">
+          <div class="popup-content">
+            <button class="close-button" onClick={closePopup}>
+              ✖
+            </button>
+            <MyCalendarView></MyCalendarView>
+
+            <h2>Copy the invitation to booked time</h2>
+            <div class="citation-style">
+              <h3>Booking</h3>
+              <p>{renderCitation("Harvard")}</p>
+              <button
+                class="copy-button"
+                onClick={() =>
+                  copyToClipboard(renderCitation("Harvard"), "Harvard")
+                }
+              >
+                <p>Copy</p>
+              </button>
+            </div>
+            {showAlert.value && (
+              <div class="alert-box">
+                <h1>{alertMessage.value}</h1>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <p>ID: {room.id}</p>
+      <p>Seats: {room.seats}</p>
+      <p>Available: {room.available}</p>
+      <div class="description">
+        <MyCalendarView></MyCalendarView>
       </div>
     </div>
   );
