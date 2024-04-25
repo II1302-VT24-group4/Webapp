@@ -220,6 +220,7 @@ export default {
   },
 
   getRooms() {
+    this.searchDone.done = false;
     this.searchResultsPromiseState.data.items.forEach((item) => {
         const officeKey = `Office ${item.office}`;
         if (!this.officeList[officeKey]) {

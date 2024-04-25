@@ -3,11 +3,6 @@ import BookableRoomsView from "/src/views/BookableRoomsView";
 import { useEffect } from "react";
 
 export default observer(function BookableRoomsPresenter(props) {
-  useEffect(() => {
-    if (!props.model.searchDone) {
-      props.model.doSearch("");
-    }
-  }, [props.model]);
 
   useEffect(() => {
     if (props.model.searchResultsPromiseState.data) {
