@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { googleSignInOut } from "./firebaseModel.js";
 import { useState } from "react";
-import { dbRooms, db, dbInsert, dbRead } from "./firebaseModel.js";
+import { dbRooms, db, dbInsert, dbRead, dbDelete } from "./firebaseModel.js";
 const defaultLimit = 400;
 const rooms = await dbRooms;
 
@@ -35,6 +35,10 @@ export default {
 
   firebaseRead(collection, entity, subCollection, subEntity) {
     return dbRead(collection, entity, subCollection, subEntity);
+  },
+
+  firebaseDelete(collection, entity, subCollection, subEntity) {
+    dbDelete(collection, entity, subCollection, subEntity);
   },
 
   logInOrOutWithGoogle() {

@@ -15,6 +15,8 @@ import {
   updateDoc,
   getDocs,
   getDoc,
+  deleteDoc,
+  deleteField
 } from "firebase/firestore";
 
 // initialize the firebase app
@@ -88,6 +90,31 @@ export async function dbRead(coll, entity, subColl, subEntity) {
     return { id: data.id, ...data.data() };
   }
 }
+
+export async function dbDelete(coll, entity, subColl, subEntity) {
+  let query = collection(db, coll);
+  let docs = true;
+
+  if (entity) {
+    docs = false;
+    query = doc(query, entity);
+    if (subColl) {
+      docs = true;
+      query = collection(query, subColl);
+      if (subEntity) {
+        docs = false;
+        query = doc(query, subEntity);
+      }
+    }
+  }
+
+  if (docs) {
+    await deleteField(query);
+  } else {
+    await deleteDoc(query);
+  }
+}
+
 
 export function googleSignInOut(model) {
   //console.log(model.isLoggedIn)

@@ -7,6 +7,7 @@ import Home from "./presenters/HomePresenter.jsx";
 import BookableRoomsView from "./presenters/BookableRoomsPresenter";
 import RoomFavouriteListView from "./presenters/RoomFavouriteListPresenter";
 import MyCalendar from "./presenters/MyCalendarPresenter.jsx";
+import MultiRoomCalendar from "./presenters/MultiRoomCalendarPresenter.jsx";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
@@ -28,7 +29,7 @@ function makeRouter(model) {
     { path: "/bookableRooms", element: <BookableRoomsView model={model} /> },
     {
       path: "/myCalendar",
-      element: <MyCalendar model={model} />,
+      element: <MultiRoomCalendar model={model} />,
     },
     {
       path: "/roomFavouritesList",

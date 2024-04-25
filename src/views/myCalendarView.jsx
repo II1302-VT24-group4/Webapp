@@ -1,9 +1,3 @@
-/*Ska man kunna boka möten i ens egna kalender? hur ska man då välja rum? känns som att man isf bara hade
-tagits till kalendern för rummet och då känns det meningslöst att kunna boka i egen kalender? alternativt, boka rumfritt?
-
-Hur lägger vi till flera användare?
- */
-
 import React, { useRef, useEffect, useState } from "react";
 import { Calendar } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
