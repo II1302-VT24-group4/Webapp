@@ -12,18 +12,15 @@ export default observer(function RoomFavouriteListPresenter(props) {
     props.model.removeFromFavourites(room);
   }
 
-  useEffect(() => {
-    //if (!props.model.searchDone) {
-    //  props.model.doSearch("");
-    //}
-  }, [props.model]);
 
   useEffect(() => {
-    if (props.model.searchResultsPromiseState.data) {
-      props.model.getRooms();
+    if (!props.model.favHistReady.ready) {
+      //props.model.getFavourites(); 
     }
-  }, [props.model.searchResultsPromiseState.data]);
+  }, [props.model.favHistReady.ready]);
+  
 
+  
   if (!props.model.roomListDone) {
     return (
       <div class="loading-bar-image">
@@ -35,7 +32,7 @@ export default observer(function RoomFavouriteListPresenter(props) {
     <RoomFavouriteListView
       onModifyRoomList={removeFromFavouritesACB}
       images={props.model.imageHolder}
-      rooms={props.model.officeList}
+      rooms={props.model.mediaFavourites}
       query={props.model.currentQuery}
       alertMessage={props.model.isAlertMessage}
       showAlert={props.model.isShowAlert}
@@ -44,3 +41,7 @@ export default observer(function RoomFavouriteListPresenter(props) {
     />
   );
 });
+
+
+
+

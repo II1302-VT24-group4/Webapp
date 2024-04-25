@@ -14,8 +14,8 @@ export default function NavView(props) {
             onChange={(event) => props.onSearchQuery(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                window.location.hash = "#/bookableRooms";
                 props.onSearchButton();
+                window.location.hash = "#/bookableRooms";
               }
             }}
             placeholder="Find Room"
@@ -49,6 +49,7 @@ export default function NavView(props) {
               <button
                 onClick={() => {
                   window.location.hash = "#/bookableRooms";
+                  props.onSearchButton();
                 }}
               >
                 <h4>Bookable rooms</h4>

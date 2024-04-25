@@ -145,7 +145,7 @@ function RoomComponent({
             <button class="close-button" onClick={closePopup}>
               ✖
             </button>
-            <MyCalendarView></MyCalendarView>
+        {/*<MyCalendarView></MyCalendarView>*/}
 
             <h2>Copy the invitation to booked time</h2>
             <div class="citation-style">
@@ -172,7 +172,7 @@ function RoomComponent({
       <p>Seats: {room.seats}</p>
       <p>Available: {room.available}</p>
       <div class="description">
-        <MyCalendarView></MyCalendarView>
+        {/*<MyCalendarView></MyCalendarView>*/}
       </div>
     </div>
   );

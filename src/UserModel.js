@@ -50,7 +50,7 @@ export default {
 
   currentQuery: "",
   searchResultsPromiseState: {},
-  mediaFavourites: [],
+  mediaFavourites: {},
   userState: { user: null, isLoggedIn: false }, //logged in user
   ready: true, //the state of the model compared to firebase
   office: [], //an array of all offices to choose from. Populated automatically
@@ -72,30 +72,45 @@ export default {
     //Search for specific building
     this.searchParams.office = office;
   },
-  searchDone: { done: false },
+  firstSearch: true,
 
   //Searches for the query in searchParams and saves it to searchResultsPromiseState.data
-
   doSearch() {
-    if (this.currentQuery != this.searchParams.q) {
+    let shouldSearch = this.currentQuery !== this.searchParams?.q; // Kontrollera om sökparametrarna har ändrats
+    if (this.firstSearch) {
+      shouldSearch = true;
+      this.firstSearch = false; 
+    }
+    for (const key in this.officeList) {
+      if (
+        this.officeList.hasOwnProperty(key) &&
+        Array.isArray(this.officeList[key]) &&
+        this.officeList[key].length === 0
+      ) {
+        shouldSearch = true; 
+      }
+    }
+
+    if (shouldSearch) {
+      //this.searchDone.done = false;
+      console.log("Gör sökning");
       this.officeList = []; // Rensa tidigare sökresultat
       this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
       this.currentQuery = this.searchParams.q;
+
       if (!this.currentQuery && !this.searchParams.office) {
         this.searchResultsPromiseState.data = { items: this.rooms }; // Om inga sökparametrar är angivna, returnera alla rum
       } else {
-        // Sökparametrar för att filtrera rum
+        const queryLower = this.currentQuery
+          ? this.currentQuery.toLowerCase()
+          : "";
         const filteredRooms = this.rooms.filter((room) => {
-          const queryLower = this.currentQuery.toLowerCase();
           const nameMatch =
             room.name && room.name.toLowerCase().includes(queryLower);
-
           const officeMatch =
             room.office &&
-            String(room.office).toLowerCase().includes(queryLower); // Säkerställ att office är en sträng innan konvertering till lowercase
-
-          const match = nameMatch || officeMatch; // Matchningen kontrollerar både namn och kontor oberoende av om de är satta eller inte
-
+            String(room.office).toLowerCase().includes(queryLower);
+          const match = nameMatch || officeMatch; // Matchning kontrollerar både namn och kontor
           return (
             (!this.currentQuery || match) &&
             (!this.searchParams.office || officeMatch)
@@ -105,7 +120,6 @@ export default {
         this.searchResultsPromiseState.data = { items: filteredRooms }; // Spara filtrerade resultat
       }
 
-      this.searchDone.done = true;
     }
   },
 
@@ -164,15 +178,26 @@ export default {
   },
 
   modifyFavourites(room, add) {
-    if (!this.mediaFavourites.includes(room.id)) {
-      if (add === true) {
-        this.mediaFavourites.push(room.id);
-      } else {
-        this.mediaFavourites.pop(room.id);
-      }
-      console.log("Updated favourites list:", this.mediaFavourites);
+    const officeKey = `Office ${room.office}`;
+    if (!this.mediaFavourites[officeKey]) {
+        this.mediaFavourites[officeKey] = []; 
     }
-  },
+
+    const roomIndex = this.mediaFavourites[officeKey].findIndex(fav => fav.id === room.id);
+
+    if (add && roomIndex === -1) {
+        this.mediaFavourites[officeKey].push(room); 
+    } else if (!add && roomIndex !== -1) {
+        this.mediaFavourites[officeKey].splice(roomIndex, 1); 
+        if (this.mediaFavourites[officeKey].length === 0) {
+            delete this.mediaFavourites[officeKey]; 
+        }
+    }
+    console.log("Updated favourites list:", this.mediaFavourites);
+},
+
+  
+  
 
   removeFromFavourites(room) {
     const index = this.mediaFavourites.indexOf(room.id);
@@ -195,19 +220,17 @@ export default {
   },
 
   getRooms() {
-    console.log(
-      "Original data items:",
-      this.searchResultsPromiseState.data.items
-    );
     this.searchResultsPromiseState.data.items.forEach((item) => {
-      console.log("Processing item:", item);
-      this.sortIntoOffice(item);
+        const officeKey = `Office ${item.office}`;
+        if (!this.officeList[officeKey]) {
+            this.officeList[officeKey] = []; 
+        }
+        if (!this.officeList[officeKey].some(room => room.id === item.id)) {
+            this.sortIntoOffice(item);
+        }
     });
-    /*console.log(
-      "Processed office list:",
-      JSON.stringify(this.officeList, null, 2)
-    );*/
-  },
+    this.searchDone.done = true;
+},
 
   //Used to extract usable data from the result
   mapOfficeRooms(item, imageHolder) {

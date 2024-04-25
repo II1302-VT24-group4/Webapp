@@ -15,14 +15,14 @@ export default observer(function BookableRoomsPresenter(props) {
     }
   }, [props.model.searchResultsPromiseState.data]);
 
-  if (!props.model.searchDone) {
+
+  if (!props.model.searchDone.done) {
     return (
       <div class="loading-bar-image">
         <img src="https://i.ibb.co/BCtKCSK/loading-bar.gif" alt="Loading" />
       </div>
     );
   }
-
   function addToFavouritesACB(room) {
     props.model.modifyFavourites(room, true);
   }
