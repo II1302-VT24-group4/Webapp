@@ -1,0 +1,62 @@
+nav {
+    box-sizing: border-box;
+    background-color: black;
+    width: 100%;
+    padding: 10px 20px; /* Increased padding for better spacing */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 70px; /* Increased height for better visibility */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100; /* Ensure it's above other content */
+  }
+  
+  nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  nav li {
+    margin-right: 20px; /* Increased margin between items */
+  }
+  
+  nav li:last-child {
+    margin-right: 0;
+  }
+  
+  nav a {
+    color: white;
+    text-decoration: none;
+    padding-bottom: 5px; /* Adjusted padding for better spacing */
+    border-bottom: 2px solid transparent;
+  }
+  
+  nav a:last-child {
+    border-bottom: none;
+  }
+  
+  nav a:hover,
+  nav a.active {
+    border-bottom-color: white;
+  }
+  .nav {
+    box-sizing: border-box;
+    background-color: black;
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 70px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+  
