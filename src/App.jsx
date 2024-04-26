@@ -6,6 +6,7 @@ import Footer from "./presenters/FooterPresenter.jsx";
 import Home from "./presenters/HomePresenter.jsx";
 import BookableRoomsView from "./presenters/BookableRoomsPresenter";
 import RoomFavouriteListView from "./presenters/RoomFavouriteListPresenter";
+import MeetingView from "./presenters/MeetingPresenter";
 import MyCalendar from "./presenters/MyCalendarPresenter.jsx";
 import MultiRoomCalendar from "./presenters/MultiRoomCalendarPresenter.jsx";
 import { createHashRouter, RouterProvider } from "react-router-dom";
@@ -27,6 +28,7 @@ function makeRouter(model) {
     { path: "/", element: <Welcome model={model} /> },
     { path: "/home", element: <Home model={model} /> },
     { path: "/bookableRooms", element: <BookableRoomsView model={model} /> },
+    { path: "/meeting", element: <MeetingView model={model} /> },
     {
       path: "/myCalendar",
       element: <MultiRoomCalendar model={model} />,

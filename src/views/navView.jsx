@@ -64,7 +64,16 @@ export default function NavView(props) {
               >
                 <h4>Room Favourites List</h4>
               </button>
-            </li>{" "}
+            </li>
+            <li>
+              <button
+                onClick={() => {
+                  window.location.hash = "#/meeting";
+                }}
+              >
+                <h4>Hold a meeting</h4>
+              </button>
+            </li>
           </>
         )}
       </ul>

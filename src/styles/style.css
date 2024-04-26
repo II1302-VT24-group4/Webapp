@@ -619,3 +619,71 @@ button:hover {
   cursor: pointer;
   background-color: #61857e;
 }
+.meetingFacilitator .main-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.meetingFacilitator .welcome-view {
+  width: 80%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.meetingFacilitator form {
+  margin-bottom: 20px;
+}
+
+.meetingFacilitator input[type="text"],
+.meetingFacilitator input[type="number"] {
+  margin-right: 10px;
+  padding: 8px;
+}
+
+.meetingFacilitator button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.meetingFacilitator button:hover {
+  background-color: #0056b3;
+}
+
+.meetingFacilitator ul {
+  list-style: none;
+  padding: 0;
+}
+
+.meetingFacilitator li {
+  padding: 5px;
+  margin-top: 5px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.meetingFacilitator h4 {
+  font-size: 20px;
+  color: #333;
+}
+.meetingFacilitator li {
+  user-select: none; /* Standard HTML5 */
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  padding: 5px;
+  margin-top: 5px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+}
