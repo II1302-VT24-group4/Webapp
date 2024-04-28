@@ -1,14 +1,19 @@
-/*Current issue, the meetingID differs in the personal meeting compared to the room meeting,
- so deleting/updating it is a bit of an issue as we currently only send the room meeting id.
- Right now we get the meetings from each room(since we display each room) but it doesn't care
- about the user
-*/
-
-import MultiRoomCalendar from "../views/multiRoomCalendarView.jsx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from 'react';
+import SingleRoomColumnView from "../views/singleRoomColumnView.jsx";
+import TimeColumnView from "../views/timeColumnView.jsx";
 
 export default observer(function MultiRoomCalendarPresenter(props) {    
+  let timeColumn = null;
+  let calendars = null;
+  const [date, setDate] = useState(0);
+  
+  const previousDay = () => {
+    setDate(date - 1);
+  };
+  const nextDay = () => {
+    setDate(date + 1);
+  };
 
   const insertMeetingDB = async (event) => {
     const user = props.model.userState.user;
@@ -20,7 +25,9 @@ export default observer(function MultiRoomCalendarPresenter(props) {
       //The value of the given attribute
       const value = event[attribute];
       //Add to the users collection of meetings
-      props.model.firebaseInsert('users', user, 'meetings', newID, attribute, value, true);
+      if(attribute != "owner"){
+        props.model.firebaseInsert('users', user, 'meetings', newID, attribute, value, true);
+      }
       //Add to the rooms collection of meetings
       if(attribute != "room"){
         props.model.firebaseInsert('rooms', room, 'meetings', newID, attribute, value, true);
@@ -28,6 +35,7 @@ export default observer(function MultiRoomCalendarPresenter(props) {
     }
     //Add room owner to the meeting in the rooms db collection
     props.model.firebaseInsert('rooms', room, 'meetings', newID, "owner", user, true);
+    return newID;
   }
 
   const updateMeetingDB = async (event) => {
@@ -35,9 +43,11 @@ export default observer(function MultiRoomCalendarPresenter(props) {
     const meetingID = event.id;
     const room = event.room;
     for(const attribute of Object.keys(event)){
-      const value = event[attribute];
-      props.model.firebaseInsert('rooms', room, 'meetings', meetingID, attribute, value, true);
-      props.model.firebaseInsert('users', user, 'meetings', meetingID, attribute, value, true);
+      if(attribute != "room" && attribute != "id"){
+        const value = event[attribute];
+        props.model.firebaseInsert('rooms', room, 'meetings', meetingID, attribute, value, true);
+        props.model.firebaseInsert('users', user, 'meetings', meetingID, attribute, value, true);
+      }
     }
   }
 
@@ -72,16 +82,27 @@ export default observer(function MultiRoomCalendarPresenter(props) {
     return <div>Loading...</div>;
   }
   else{
+    timeColumn = <div style={{flex: "0 0 auto"}}><TimeColumnView date={date}/></div>;
+    calendars = rooms.slice(0, 5).map((room, index) => (
+      <div key={index} style={{ flex: "0 0 auto", minWidth: "100px" }}>
+        <SingleRoomColumnView
+          user={props.model.userState}
+          addMeeting={insertMeetingDB}
+          updateMeeting={updateMeetingDB}
+          deleteMeeting={deleteMeetingDB}
+          getMeetings={getMeetingsDB}
+          room={room.name}
+          date={date}
+        />
+      </div>
+    ))
+
     return (
-      <div>
-        {<MultiRoomCalendar
-          user = {props.model.userState}
-          addMeeting = {insertMeetingDB}
-          updateMeeting = {updateMeetingDB}
-          deleteMeeting = {deleteMeetingDB}
-          getMeetings = {getMeetingsDB}
-          rooms={rooms}
-        />}
+      <div style={{margin: '10px', display: "flex"}}>
+        {timeColumn}
+        {calendars}
+        <button onClick={previousDay} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}}>previous day</button>
+        <button onClick={nextDay} style={{backgroundColor: "transparent"}}>next day</button>
       </div>
     );
   }
