@@ -17,7 +17,7 @@ header img {
   position: relative;
   top: 0;
   left: 0;
-  width: 100% !important;
+  width: 100% ;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -286,19 +286,17 @@ room h4 {
 .welcome-view,
 room,
 button {
-  background-color: #94a7a3;
+  background-color: #eaedec;
 }
 room,
-button {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+
 button,
 button P {
   margin: 0;
   outline: 0;
 }
 .part-two-header {
-  color: #4a5351;
+  color: #feffff;
 }
 header {
   flex-direction: row;
@@ -346,10 +344,11 @@ ul {
 }
 .container {
   display: grid;
-  grid-template-areas: "header header" "main nav" "footer footer";
-  grid-template-columns: 80% 18.7%;
-  grid-template-rows: auto auto auto;
+  grid-template-areas: "main nav";
+  grid-template-columns: 90% 10%; /* Adjust column widths as needed */
+  grid-template-rows: auto; /* Only one row */
 }
+
 .header {
   grid-area: header;
   display: flex;
@@ -362,27 +361,34 @@ ul {
   justify-content: center;
   width: 80%;
 }
-.footer {
-  grid-area: footer;
-  align-items: center;
-}
-.nav {
-  grid-area: nav;
-  border-left: 1px solid #ccc;
+nav {
   position: fixed;
-  right: 0;
   top: 0;
-  bottom: 0;
-  z-index: 2;
-  width: 20%;
+  left: 0;
+  width: 100%;
+  background-color: #375c54; /* Adjust background color */
+  display: flex;
+  justify-content: space-between; /* Adjust alignment as needed */
+  align-items: center;
+  padding: 10px; /* Adjust padding as needed */
 }
-.nav ul {
-  list-style-office: none;
-  padding: 0;
+
+nav ul {
+  list-style: none;
+  display: flex;
 }
-.nav ul li {
-  margin-bottom: 10px;
+
+nav ul li {
+  margin-right: 10px; /* Adjust spacing between navigation items */
 }
+
+nav a {
+  text-decoration: none;
+  color: #fff; /* Adjust text color */
+  padding: 8px 12px; /* Adjust padding as needed */
+  border-radius: 4px;
+}
+
 .nav img {
   max-width: 50px;
 }
@@ -419,7 +425,7 @@ h3 {
   font-size: max(0.82vw, 14px);
 }
 h4 {
-  font-size: max(0.7vw, 14px) !important;
+  font-size: max(0.7vw, 14px) ;
 }
 h5 {
   margin: 0;
@@ -473,18 +479,16 @@ button P {
   margin-top: 2px;
 }
 .nav-section button {
-  width: 80% !important;
+  width: 80% ;
 }
 main button {
   align-items: center;
   margin: 1vw;
-  height: 30px !important;
+  height: 30px ;
 }
 button {
-  height: min-content !important;
-  border: 3px solid #fff;
-  padding: 0 !important;
-  background: #81a59c;
+  height: min-content ;
+
 }
 .description button {
   width: 10vw;
@@ -506,7 +510,7 @@ button {
 }
 .nav aside,
 .nav {
-  height: 100% !important;
+  height: 5% ;
 }
 button:hover {
   transform: scale(1.05);
@@ -522,8 +526,8 @@ button:hover {
 }
 @media (min-width: 862px) {
   main .rooms {
-    padding-right: 15vw !important;
-    padding-left: 15vw !important;
+    padding-right: 15vw ;
+    padding-left: 15vw;
   }
 }
 @media (max-width: 863px) {
@@ -533,7 +537,7 @@ button:hover {
     grid-template-columns: repeat(2, 1fr);
   }
   .popup-menu {
-    width: 90% !important;
+    width: 90% ;
     max-width: none;
     padding: 10px;
   }
@@ -550,7 +554,7 @@ button:hover {
   }
   .description {
     flex-direction: column;
-    width: 100vw !important;
+    width: 100vw ;
   }
   .welcome-view {
     padding: 15px;
@@ -565,12 +569,12 @@ button:hover {
     width: 100vw;
   }
   .header {
-    width: 100% !important;
+    width: 100% ;
   }
 }
 .popup-content-wrapper,
 .popup-menu {
-  height: 100% !important;
+  height: 100% ;
   z-index: 1000;
 }
 .copy-button {
@@ -591,7 +595,7 @@ button:hover {
 }
 .popup-menu,
 .sign-in-out-button button {
-  width: 100% !important;
+  width: 100% ;
 }
 .citation-style h3 {
   grid-area: 1/1/2/3;
