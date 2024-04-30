@@ -47,17 +47,12 @@ const NavPresenter = observer(({ model }) => {
     }
   };
 
-  const setSearchQuery = (value) => {
-    model.setSearchQuery(value);
-  };
-
   const doSearch = (value) => {
     model.doSearch(value);
   };
 
   return (
     <NavView
-      onSearchQuery={setSearchQuery}
       onSearchButton={doSearch}
       handleResetButtonClick={() => (window.location.hash = "#/")}
       onRoomListClicked={handleRoomListClicked}

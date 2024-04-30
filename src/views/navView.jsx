@@ -38,23 +38,6 @@ export default function NavView(props) {
         )}
       </div>
       <div className="nav-section log-in-nav-section">
-        {props.isLoggedIn && (
-          <>
-            <input
-              type="text"
-              value={props.query}
-              onChange={(event) => props.onSearchQuery(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  props.onSearchButton();
-                  window.location.hash = "#/bookableRooms";
-                }
-              }}
-              placeholder="Find Room"
-              className="search-input"
-            />
-          </>
-        )}
         <h3>Log in</h3>
         {props.renderLoggedInContent && props.renderLoggedInContent()}
       </div>
