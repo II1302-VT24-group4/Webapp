@@ -60,12 +60,11 @@ export default function BookableRoomsView(props) {
       </div>
 
       <h2>Search page</h2>
+
       <h3>
         Search for "{props.query}". Showing {totalRoomsCount()} rooms
       </h3>
       {generateButton()}
-
-
 
       {Object.entries(props.rooms).map(
         ([categoryName, rooms]) =>

@@ -3,13 +3,11 @@ import BookableRoomsView from "/src/views/BookableRoomsView";
 import { useEffect } from "react";
 
 export default observer(function BookableRoomsPresenter(props) {
-
   useEffect(() => {
     if (props.model.searchResultsPromiseState.data) {
       props.model.getRooms();
     }
   }, [props.model.searchResultsPromiseState.data]);
-
 
   if (!props.model.searchDone.done) {
     return (
@@ -21,9 +19,17 @@ export default observer(function BookableRoomsPresenter(props) {
   function addToFavouritesACB(room) {
     props.model.modifyFavourites(room, true);
   }
+  const setSearchQuery = (value) => {
+    model.setSearchQuery(value);
+  };
 
+  const doSearch = (value) => {
+    model.doSearch(value);
+  };
   return (
     <BookableRoomsView
+      onSearchQuery={setSearchQuery}
+      onSearchButton={doSearch}
       onModifyRoomList={addToFavouritesACB}
       images={props.model.imageHolder}
       rooms={props.model.officeList}

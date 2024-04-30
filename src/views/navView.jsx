@@ -2,13 +2,44 @@ import React from "react";
 
 export default function NavView(props) {
   return (
-    <nav>
-      {props.isLoggedIn && (
-        <ul>
-          <li>
-            Find room
-          </li>
-          <li>
+    <nav className="nav">
+      <div className="nav-section links-nav-section">
+        <button onClick={props.handleResetButtonClick}>
+          <h4>Welcome page</h4>
+        </button>
+        {props.isLoggedIn && (
+          <>
+            <button onClick={() => (window.location.hash = "#/home")}>
+              <h4>Home</h4>
+            </button>
+            <button onClick={() => (window.location.hash = "#/myCalendar")}>
+              <h4>My Calendar</h4>
+            </button>
+            <button
+              onClick={() => {
+                window.location.hash = "#/bookableRooms";
+                props.onSearchButton();
+              }}
+            >
+              <h4>Bookable rooms</h4>
+            </button>
+            <button
+              onClick={() => {
+                window.location.hash = "#/roomFavouritesList";
+                props.onRoomListClicked();
+              }}
+            >
+              <h4>Room Favourites List</h4>
+            </button>
+            <button onClick={() => (window.location.hash = "#/meeting")}>
+              <h4>Hold a meeting</h4>
+            </button>
+          </>
+        )}
+      </div>
+      <div className="nav-section log-in-nav-section">
+        {props.isLoggedIn && (
+          <>
             <input
               type="text"
               value={props.query}
@@ -20,70 +51,13 @@ export default function NavView(props) {
                 }
               }}
               placeholder="Find Room"
+              className="search-input"
             />
-          </li>
-        </ul>
-      )}
-      <ul>
-        <li>
-          Pages
-        </li>
-        <li>
-          <button onClick={props.handleResetButtonClick}>
-            Welcome page
-          </button>
-        </li>
-        {props.isLoggedIn && (
-          <>
-            <li>
-              <button onClick={() => (window.location.hash = "#/home")}>
-                Home
-              </button>
-            </li>
-            <li>
-              <button onClick={() => (window.location.hash = "#/myCalendar")}>
-                My Calendar
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  window.location.hash = "#/bookableRooms";
-                  props.onSearchButton();
-                }}
-              >
-                Bookable rooms
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  window.location.hash = "#/roomFavouritesList";
-                  props.onRoomListClicked();
-                }}
-              >
-                Room Favourites List
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => {
-                  window.location.hash = "#/meeting";
-                }}
-              >
-                Hold a meeting
-              </button>
-            </li>
           </>
         )}
-      </ul>
-      {/* Log-in Section */}
-      <ul>
-        <li>
-          Log in
-        </li>
+        <h3>Log in</h3>
         {props.renderLoggedInContent && props.renderLoggedInContent()}
-      </ul>
+      </div>
     </nav>
   );
 }
