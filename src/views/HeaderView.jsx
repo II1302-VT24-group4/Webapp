@@ -1,14 +1,15 @@
+import React from 'react';
+import mainIcon from '../styles/mainicon.png';
+
 export default function HeaderView(props) {
   return (
-    <header class="header">
+    <header className="header custom-header" style={{ height: '5px' }}>
       <h1>
-        <span class="part-one-header">Meeting </span>
-        <span class="part-two-header">Planner</span>
-      </h1>{" "}
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/115/115902.png"
-        alt="Hemsidans logga"
-      />
+        <span className="part-one-header">Meeting </span>
+        <span className="part-two-header">Planner</span>
+      </h1>
+      {/* Apply the header-icon class to the image element */}
+      <img src={mainIcon} alt="Official Icon" className="header-icon-icon" />
     </header>
   );
 }
