@@ -641,7 +641,7 @@ main button {
   height: 40px;
 }
 nav button {
-  min-width: max(0.1vw, 260px);
+  min-width: max(10vw, 20px);
   margin-left: 0.1vw;
   margin-right: 0.1vw;
 
