@@ -33,9 +33,9 @@ export default function BookableRoomsView(props) {
 
   function generateButton() {
     return (
-      <div class="scroll-to-new-results">
+      <div class="room scroll-to-specific-office">
         <h3>Scroll to a specific office</h3>
-        <div class="buttons-scroll-to-new-results">
+        <div class="description scroll-to-specific-office-desp">
           {Object.keys(props.rooms).map((officeKey) => (
             <button
               key={officeKey}

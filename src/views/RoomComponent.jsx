@@ -126,17 +126,15 @@ function RoomComponent({
           alt={`Bild för ${room.name}`}
           style={{ maxWidth: "100%" }}
         />
+
         <h4 class="room-header">{room.name}</h4>
-        {loggedInVal && (
-          <>
-            <button onClick={() => addToRoomList(room)}>
-              <h5>{roomListButtonText}</h5>
-            </button>
-            <button onClick={openPopup}>
-              <h5>{viewButtonText}</h5>{" "}
-            </button>
-          </>
-        )}
+
+        <button onClick={() => addToRoomList(room)}>
+          <h5>{roomListButtonText}</h5>
+        </button>
+        <button onClick={openPopup}>
+          <h5>{viewButtonText}</h5>{" "}
+        </button>
       </div>
       <div id="popup-menu" class="popup-menu" style={{ display: "none" }}>
         <div class="popup-header"></div>
@@ -145,7 +143,7 @@ function RoomComponent({
             <button class="close-button" onClick={closePopup}>
               ✖
             </button>
-        {/*<MyCalendarView></MyCalendarView>*/}
+            {/*<MyCalendarView></MyCalendarView>*/}
 
             <h2>Copy the invitation to booked time</h2>
             <div class="citation-style">
@@ -171,9 +169,7 @@ function RoomComponent({
       <p>ID: {room.id}</p>
       <p>Seats: {room.seats}</p>
       <p>Available: {room.available}</p>
-      <div class="description">
-        {/*<MyCalendarView></MyCalendarView>*/}
-      </div>
+      <div class="description">{/*<MyCalendarView></MyCalendarView>*/}</div>
     </div>
   );
 }

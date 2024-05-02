@@ -8,7 +8,6 @@ export default function HeaderView(props) {
         <span className="part-one-header">Meeting </span>
         <span className="part-two-header">Planner</span>
       </h1>
-      {/* Apply the header-icon class to the image element */}
       <img src={mainIcon} alt="Official Icon" className="header-icon-icon" />
     </header>
   );

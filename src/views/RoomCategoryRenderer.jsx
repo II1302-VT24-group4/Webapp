@@ -12,7 +12,7 @@ export function renderCategory({
   viewButtonText,
 }) {
   function getCategoryDisplayName(categoryName) {
-    return categoryName; // Already in correct format
+    return categoryName; 
   }
 
   const displayName = getCategoryDisplayName(categoryName);
