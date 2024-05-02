@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-
+//usestate returnerar tillståndsvärde och funktion som kan uppdatera det värdet
+//kan initialiseras useState(värde)
 export default function MeetingView(props) {
   const [participants, setParticipants] = useState([]);
   const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
@@ -12,7 +13,7 @@ export default function MeetingView(props) {
   const [tempSpeakerTimes, setTempSpeakerTimes] = useState({});
   const [showTimeTracker, setShowTimeTracker] = useState(true);
   const [timerActive, setTimerActive] = useState(false);
-  const [clearTimeOnSwitch, setClearTimeOnSwitch] = useState(false);
+  const [clearTimeOnSwitch, setClearTimeOnSwitch] = useState(true);
   const [countdown, setCountdown] = useState(3);
   const [displayCurrentSpeaker, setDisplayCurrentSpeaker] = useState(false);
   const [timerPaused, setTimerPaused] = useState(false); //
@@ -26,10 +27,10 @@ export default function MeetingView(props) {
       !timerPaused
     ) {
       intervalId = setInterval(() => {
-        setTimer((prevTimer) => {
-          const currentSpeaker = participants[currentSpeakerIndex];
+        setTimer((prevTimer) => { //passa in tidigare timer och uppdatera
+          const currentSpeaker = participants[currentSpeakerIndex]; //hämta korrekt participant
           const currentSpeakerTime = speakerTimes[currentSpeaker] || 15;
-          if (prevTimer < currentSpeakerTime) {
+          if (prevTimer < currentSpeakerTime) { //om tiden inte har nått gränsen
             setTotalTime((prevTotal) => prevTotal + 1);
             setIndividualTimes({
               ...individualTimes,
@@ -38,12 +39,12 @@ export default function MeetingView(props) {
             return prevTimer + 1;
           } else {
             nextSpeaker();
-            return 0;
+            return 0; //återställ timer
           }
         });
-      }, 1000);
+      }, 1000); //1000 ms = 1 s
     } else {
-      clearInterval(intervalId);
+      clearInterval(intervalId); //setInterval rensas direkt om någon av villkoren inte uppfylls. stoppas funktionskörning mitt i om villkor inte gäller???
     }
     return () => clearInterval(intervalId);
   }, [
@@ -101,15 +102,15 @@ export default function MeetingView(props) {
     const newPosition =
       (index + direction + participants.length) % participants.length;
     const newParticipants = [...participants];
-    const element = newParticipants.splice(index, 1)[0];
+    const element = newParticipants.splice(index, 1)[0]; //splice(startindex, antal att ta bort)[att lägga in istället (annars krymper listans längd)]
     newParticipants.splice(newPosition, 0, element);
-    setParticipants(newParticipants);
-    if (currentSpeakerIndex === index) {
+    setParticipants(newParticipants); //uppdatera med funktion som vi har fått av usestate hooken -> resulterar i omrendering
+    if (currentSpeakerIndex === index) { //om den som flyttades är nuvarande speaker 
       setCurrentSpeakerIndex(newPosition);
     }
   };
-
-  const handleAddParticipant = (event) => {
+//!!
+  const handleAddParticipant = (event) => { //texten i formuläret passas in
     event.preventDefault();
     const name = event.target.participantName.value.trim();
     if (name && !participants.includes(name)) {
@@ -136,7 +137,8 @@ export default function MeetingView(props) {
   };
 
   const removeParticipant = (participant) => {
-    const newParticipants = participants.filter((p) => p !== participant);
+    const newParticipants = participants.filter((p) => p !== participant); //filter-metoden går igenom varje element i listan och inkluderar det i den nya listan endast om det uppfyller det angivna villkoret.
+    //om p i listan inte är lika med den inpassande participant läggs den till i arrayen newParticipants. 
     setParticipants(newParticipants);
     if (currentSpeakerIndex >= participants.indexOf(participant)) {
       setCurrentSpeakerIndex((prevIndex) =>
@@ -244,7 +246,7 @@ export default function MeetingView(props) {
                   >
                     <h3>{participant}</h3>
                     <p>Speaking round: {speakingRounds[participant]}</p>
-                    <p>Total time spoken: {individualTimes[participant]}s</p>
+                    <p>Total time spoken: {Math.floor(individualTimes[participant]/60)} minutes</p>
                     <div className="set-speaking-time">
                       <p>Set time: </p>
                       <input
