@@ -289,17 +289,16 @@ header {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 80%;
   position: relative;
-  min-height: max(12vw, 100px);
+  min-height: max(8vw, 50px);
 }
 
 header img {
-  height: 80px; /* Set the desired height for the image */
+  height: 80px;
   opacity: 0.8;
-  position: absolute; /* Position the image absolutely */
-  right: 450px; /* Adjust the left position as needed */
-  top: 30px; /* Move the image 20px upwards (adjust as needed) */
+  position: absolute;
+  right: 450px;
+  top: 30px;
 }
 html {
   color: #000;
@@ -325,16 +324,10 @@ body {
   margin: 0;
   padding: 0;
 }
-ul {
+li {
   list-style: none;
 }
 
-.header {
-  width: 100% !important;
-  justify-content: center;
-  align-items: center;
-  min-height: max(12vw, 100px);
-}
 .description,
 .footer {
   display: flex;
@@ -490,21 +483,12 @@ button:hover {
   }
   .description {
     flex-direction: column;
-    width: 100vw !important;
   }
   .welcome-view {
     padding: 15px;
     background-color: #94a7a3;
     border-radius: 10px;
     box-shadow: 0 4px 8px #000;
-  }
-  .header,
-  .footer,
-  .nav {
-    width: 100vw;
-  }
-  .header {
-    width: 100% !important;
   }
 }
 .popup-content-wrapper,
@@ -571,9 +555,9 @@ button:hover {
   grid-area: nav;
   border-bottom: 1px solid #ccc;
   position: relative;
-  width: 100%;
   z-index: 2;
 }
+
 main {
   flex-direction: column;
 }
@@ -594,41 +578,33 @@ main {
   background-color: #386b6b;
   padding: 0.5rem 1rem;
   color: white;
-}
-
-.nav-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  position: relative;
+  min-height: max(4vw, 50px);
 }
 
 .links-nav-section {
-  flex: 2;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 .log-in-nav-section {
-  flex: 1;
+  display: flex;
+  align-items: center;
   justify-content: flex-end;
-}
-
-.search-nav-section {
-  display: none;
-  flex: 1;
-  width: 100%;
-  justify-content: center;
-  padding-top: 10px;
-}
-
-.search-nav-section {
-  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .search-input {
   padding: 0.5rem;
   border-radius: 4px;
   border: none;
-  width: 100%;
 }
 
 h3,
@@ -645,15 +621,6 @@ h4 {
     order: 3;
   }
 
-  .log-in-nav-section,
-  .search-nav-section {
-    width: 100%;
-  }
-
-  .search-nav-section {
-    order: 1;
-  }
-
   .log-in-nav-section {
     order: 2;
   }
@@ -663,9 +630,6 @@ h4 {
 .nav {
   display: block;
   background-color: #386b6b;
-}
-.nav {
-  width: 100vw !important;
 }
 
 .search-input {

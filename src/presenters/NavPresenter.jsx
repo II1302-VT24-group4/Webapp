@@ -22,8 +22,7 @@ const NavPresenter = observer(({ model }) => {
         <>
           <li>
             <p>
-              Logged in as: {model.userState.user.displayName},{" "}
-              {model.userState.user.email}
+              {model.userState.user.displayName}, {model.userState.user.email}
             </p>
           </li>
           <li>

@@ -51,7 +51,6 @@ export default {
   currentQuery: "",
   searchResultsPromiseState: {},
   mediaFavourites: {},
-  userState: { user: null, isLoggedIn: false }, //logged in user
   ready: true, //the state of the model compared to firebase
   office: [], //an array of all offices to choose from. Populated automatically
   isNavOpen: { open: false },

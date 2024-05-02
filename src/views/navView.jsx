@@ -2,8 +2,8 @@ import React from "react";
 
 export default function NavView(props) {
   return (
-    <nav className="nav">
-      <div className="nav-section links-nav-section">
+    <nav class="nav">
+      <div class="nav-section links-nav-section">
         <button onClick={props.handleResetButtonClick}>
           <h4>Welcome page</h4>
         </button>
@@ -37,8 +37,7 @@ export default function NavView(props) {
           </>
         )}
       </div>
-      <div className="nav-section log-in-nav-section">
-        <h3>Log in</h3>
+      <div class="nav-section log-in-nav-section">
         {props.renderLoggedInContent && props.renderLoggedInContent()}
       </div>
     </nav>
