@@ -14,7 +14,7 @@ export default function MyCalendarView(props) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [allDay, setAllDay] = useState(false);
-  const [calendarInitialized, setCalendarInitialized] = useState(false); // New state to track calendar initialization
+  const [file, setFile] = useState(null); // State to hold uploaded file
 
   async function populateCalendar() {
     const meetings = await props.getMeetings();
@@ -26,13 +26,12 @@ export default function MyCalendarView(props) {
     }
   }
 
-  function createEvent(title, startDate, endDate){
+  function createEvent(title, startDate, endDate) {
     calendar.addEvent({
       title: title,
       start: startDate,
       end: endDate
     });
-    // Rerender the calendar to display the new event
     calendar.render();
   }
 
@@ -43,7 +42,8 @@ export default function MyCalendarView(props) {
     const eventData = {
       title: eventTitle,
       startDate: startDate,
-      endDate: endDate
+      endDate: endDate,
+      file: file // Include file in the event data
     };
 
     props.addMeeting(eventData);
@@ -63,55 +63,48 @@ export default function MyCalendarView(props) {
     return date;
   }
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  };
+
   useEffect(() => {
     const calendarEl = calendarRef.current;
     const newCalendar = new Calendar(calendarEl, {
       plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
       initialView: "timeGridWeek",
-      selectable: true, // Enable selection
+      selectable: true,
       select: function (info) {
-        console.log("first", info);
-        if(!info.startStr.includes("T")){
+        if (!info.startStr.includes("T")) {
           info.startStr += "T13:00:00+02:00";
         }
-        if(!info.endStr.includes("T")){
+        if (!info.endStr.includes("T")) {
           info.endStr += "T14:00:00+02:00";
         }
         info.allDay = false;
-        console.log("second", info);
         setSelectedInfo(info);
       },
-      forceEventDuration: true, // Ensure events are displayed even without an end time
+      forceEventDuration: true,
       headerToolbar: {
         left: "prev,next today",
         center: "title",
         right: "dayGridMonth,timeGridWeek,listWeek",
       },
     });
-    setCalendar(newCalendar); // Set the calendar instance in the state
+    setCalendar(newCalendar);
     newCalendar.render();
-    setCalendarInitialized(true);
 
     // Cleanup function to destroy the calendar when the component unmounts
     return () => {
       newCalendar.destroy();
     };
-  }, []); // Empty dependency array to ensure the effect runs only once after component mounting
+  }, []);
 
-    // Check if the calendar is initialized before populating it with events
-    useEffect(() => {
-      if (calendarInitialized) {
-        populateCalendar();
-      }
-    }, [calendarInitialized]);
-
-  // Initialize startTime and endTime with the times from selectedInfo, if available
   useEffect(() => {
     if (selectedInfo) {
-      const startTimeStr = selectedInfo.startStr.split("T")[1].substring(0, 5); // Extracting time part from ISO string
+      const startTimeStr = selectedInfo.startStr.split("T")[1].substring(0, 5);
       setStartTime(startTimeStr);
 
-      // Calculate default end time as start time + 1 hour
       const endTimeStr = new Date(selectedInfo.startStr);
       endTimeStr.setHours(endTimeStr.getHours() + 1);
       setEndTime(
@@ -124,15 +117,15 @@ export default function MyCalendarView(props) {
   }, [selectedInfo]);
 
   return (
-    <div style={{width: '98%', margin: '5'}}>
+    <div style={{ width: "98%", margin: "5" }}>
       <div ref={calendarRef} />
       {selectedInfo && (
         <Popup
           open={selectedInfo !== null}
           onClose={() => {
             setSelectedInfo(null);
-            setEventTitle(""); // Reset event title input
-            setAllDay(false); // Reset all day checkbox
+            setEventTitle("");
+            setAllDay(false);
           }}
           modal
           closeOnDocumentClick
@@ -146,7 +139,7 @@ export default function MyCalendarView(props) {
           >
             <h2 style={{ marginBottom: "10px" }}>Create Event</h2>
             <input
-              office="text"
+              type="text"
               placeholder="Event Title"
               style={{ marginBottom: "10px", width: "100%" }}
               value={eventTitle}
@@ -155,28 +148,29 @@ export default function MyCalendarView(props) {
             <div style={{ marginBottom: "10px" }}>
               <label htmlFor="startTime">Start Time:</label>
               <input
-                office="time"
+                type="time"
                 id="startTime"
                 style={{ marginLeft: "10px" }}
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                disabled={allDay} // Disable input when allDay is true
+                disabled={allDay}
               />
             </div>
             <div style={{ marginBottom: "10px" }}>
               <label htmlFor="endTime">End Time:</label>
               <input
-                office="time"
+                type="time"
                 id="endTime"
                 style={{ marginLeft: "14px" }}
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                disabled={allDay} // Disable input when allDay is true
+                disabled={allDay}
               />
             </div>
+          
             <div style={{ marginBottom: "10px" }}>
               <input
-                office="checkbox"
+                type="checkbox"
                 id="allDay"
                 checked={allDay}
                 onChange={(e) => setAllDay(e.target.checked)}
@@ -184,6 +178,13 @@ export default function MyCalendarView(props) {
               <label htmlFor="allDay" style={{ marginLeft: "5px" }}>
                 All Day
               </label>
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              <input
+                type="file"
+                id="file"
+                onChange={handleFileChange}
+              />
             </div>
             <button
               style={{ marginRight: "10px", backgroundColor: "white" }}
