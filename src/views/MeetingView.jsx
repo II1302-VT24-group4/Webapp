@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 //usestate returnerar tillståndsvärde och funktion som kan uppdatera det värdet
 //kan initialiseras useState(värde)
+
 export default function MeetingView(props) {
   const [participants, setParticipants] = useState([]);
   const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
@@ -16,7 +17,8 @@ export default function MeetingView(props) {
   const [clearTimeOnSwitch, setClearTimeOnSwitch] = useState(true);
   const [countdown, setCountdown] = useState(3);
   const [displayCurrentSpeaker, setDisplayCurrentSpeaker] = useState(false);
-  const [timerPaused, setTimerPaused] = useState(false); //
+  const [timerPaused, setTimerPaused] = useState(false);
+  const [meetingHasBegun, setMeetingHasBegun] = useState(false);
 
   useEffect(() => {
     let intervalId = null;
@@ -27,10 +29,12 @@ export default function MeetingView(props) {
       !timerPaused
     ) {
       intervalId = setInterval(() => {
-        setTimer((prevTimer) => { //passa in tidigare timer och uppdatera
+        setTimer((prevTimer) => {
+          //passa in tidigare timer och uppdatera
           const currentSpeaker = participants[currentSpeakerIndex]; //hämta korrekt participant
           const currentSpeakerTime = speakerTimes[currentSpeaker] || 15;
-          if (prevTimer < currentSpeakerTime) { //om tiden inte har nått gränsen
+          if (prevTimer < currentSpeakerTime) {
+            //om tiden inte har nått gränsen
             setTotalTime((prevTotal) => prevTotal + 1); //använd funktionen prevTotal som inpassat värde som är en funktion som adderar med 1
             setIndividualTimes({
               ...individualTimes,
@@ -61,28 +65,86 @@ export default function MeetingView(props) {
   ]);
 
   const nextSpeaker = () => {
-    const nextSpeakerIndex = (currentSpeakerIndex + 1) % participants.length;
-    setCurrentSpeakerIndex(nextSpeakerIndex);
-    setPreviousSpeakerIndex(currentSpeakerIndex);
-    if (clearTimeOnSwitch) {
-      setTimer(0);
-    }
-    setDisplayCurrentSpeaker(true);
+    setTimerActive(false);
+    setCountdown(3);
+    let countdownInterval = setInterval(() => {
+      setCountdown((prevCountdown) => {
+        if (prevCountdown > 1) {
+          return prevCountdown - 1;
+        } else {
+          clearInterval(countdownInterval);
+          const nextSpeakerIndex =
+            (currentSpeakerIndex + 1) % participants.length;
+          setCurrentSpeakerIndex(nextSpeakerIndex);
+          setPreviousSpeakerIndex(currentSpeakerIndex);
+          if (clearTimeOnSwitch) {
+            setTimer(0);
+          }
+          setDisplayCurrentSpeaker(true);
+          setTimerActive(true);
+          return 0;
+        }
+      });
+    }, 1000);
   };
-
-  const startMeeting = () => {
-    if (participants.length >= 2) {
+  const activateTimerIfValid = () => {
+    const currentSpeaker = participants[currentSpeakerIndex];
+    const currentSpeakerTime = speakerTimes[currentSpeaker];
+    if (currentSpeakerTime > 0) {
       setTimerActive(true);
       setDisplayCurrentSpeaker(true);
+    } else {
+      setTimerActive(false);
+      setDisplayCurrentSpeaker(false);
+      nextSpeaker();
+    }
+  };
+  const startMeeting = () => {
+    if (participants.length >= 2) {
+      setTimerActive(false); // inaktivera timer under nedräkning
+      setCountdown(3);
+      let countdownInterval = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown > 1) {
+            return prevCountdown - 1;
+          } else {
+            clearInterval(countdownInterval); //stoppa nedräkning vid 0
+            const currentSpeaker = participants[currentSpeakerIndex];
+            const currentSpeakerTime = speakerTimes[currentSpeaker] || 0;
+            if (currentSpeakerTime > 0) {
+              setTimerActive(true); //aktivera timer om talare har giltig tid
+              setDisplayCurrentSpeaker(true);
+            } else {
+              alert(
+                "Current speaker does not have a valid time set. Please adjust time to start."
+              );
+            }
+            return 0;
+          }
+        });
+      }, 1000);
     }
   };
 
   const handleSpeakerSwitch = (index) => {
-    setCurrentSpeakerIndex(index);
-    if (clearTimeOnSwitch) {
-      setTimer(0);
-    }
-    setDisplayCurrentSpeaker(true);
+    setTimerActive(false);
+    setCountdown(3);
+    let countdownInterval = setInterval(() => {
+      setCountdown((prevCountdown) => {
+        if (prevCountdown > 1) {
+          return prevCountdown - 1;
+        } else {
+          clearInterval(countdownInterval);
+          setCurrentSpeakerIndex(index);
+          if (clearTimeOnSwitch) {
+            setTimer(0);
+          }
+          setDisplayCurrentSpeaker(true);
+          setTimerActive(true);
+          return 0;
+        }
+      });
+    }, 1000);
   };
 
   const switchBackToPreviousSpeaker = () => {
@@ -93,7 +155,7 @@ export default function MeetingView(props) {
 
   const handleTimeAdjustment = (participant, adjustment) => {
     const currentBaseTime = tempSpeakerTimes[participant] || 15;
-    const newTime = currentBaseTime + adjustment;
+    const newTime = Math.max(0, currentBaseTime + adjustment); //får ej vara under 0
     setSpeakerTimes({ ...speakerTimes, [participant]: newTime });
     setTempSpeakerTimes({ ...tempSpeakerTimes, [participant]: newTime });
   };
@@ -105,12 +167,14 @@ export default function MeetingView(props) {
     const element = newParticipants.splice(index, 1)[0]; //splice(startindex, antal att ta bort)[att lägga in istället (annars krymper listans längd)]
     newParticipants.splice(newPosition, 0, element);
     setParticipants(newParticipants); //uppdatera med funktion som vi har fått av usestate hooken -> resulterar i omrendering
-    if (currentSpeakerIndex === index) { //om den som flyttades är nuvarande speaker 
+    if (currentSpeakerIndex === index) {
+      //om den som flyttades är nuvarande speaker
       setCurrentSpeakerIndex(newPosition);
     }
   };
-//!!
-  const handleAddParticipant = (event) => { //texten i formuläret passas in
+
+  const handleAddParticipant = (event) => {
+    //texten i formuläret passas in
     event.preventDefault();
     const name = event.target.participantName.value.trim();
     if (name && !participants.includes(name)) {
@@ -124,7 +188,7 @@ export default function MeetingView(props) {
   };
 
   const handleTimeChange = (participant, value) => {
-    const newTime = parseInt(value, 10);
+    const newTime = Math.max(0, parseInt(value, 10)); //får inte vara under 0
     setTempSpeakerTimes({ ...tempSpeakerTimes, [participant]: newTime });
   };
 
@@ -138,7 +202,7 @@ export default function MeetingView(props) {
 
   const removeParticipant = (participant) => {
     const newParticipants = participants.filter((p) => p !== participant); //filter-metoden går igenom varje element i listan och inkluderar det i den nya listan endast om det uppfyller det angivna villkoret.
-    //om p i listan inte är lika med den inpassande participant läggs den till i arrayen newParticipants. 
+    //om p i listan inte är lika med den inpassande participant läggs den till i arrayen newParticipants.
     setParticipants(newParticipants);
     if (currentSpeakerIndex >= participants.indexOf(participant)) {
       setCurrentSpeakerIndex((prevIndex) =>
@@ -207,7 +271,8 @@ export default function MeetingView(props) {
             {timerActive && displayCurrentSpeaker ? (
               <>
                 <h3>
-                  This meeting has taken: {Math.floor(totalTime / 60)} minutes {/* and {totalTime-Math.floor(totalTime / 60)}s */}
+                  This meeting has taken: {Math.floor(totalTime / 60)} minutes{" "}
+                  {/* and {totalTime-Math.floor(totalTime / 60)}s */}
                 </h3>
                 <h3>
                   Current Speaker: "<b>{participants[currentSpeakerIndex]}</b>"
@@ -219,13 +284,21 @@ export default function MeetingView(props) {
                 </h3>
                 <button onClick={toggleTimerPause}>
                   {timerPaused ? "Resume Timer" : "Pause Timer"}
-                </button>{" "}
+                </button>
               </>
             ) : (
               <>
-                <h3>Countdown to next speaker: {countdown}s</h3>
+                <h3>
+                  {countdown > 0
+                    ? `Countdown for next speaker: ${countdown}s`
+                    : "No time left for current speaker"}
+                </h3>
                 <h4>
-                  <b> Meeting not yet started or waiting for next speaker</b>
+                  <b>
+                    {!timerActive && countdown === 0
+                      ? "Adjust time to continue"
+                      : "Meeting paused"}
+                  </b>
                 </h4>
               </>
             )}
@@ -245,8 +318,11 @@ export default function MeetingView(props) {
                     key={index}
                   >
                     <h3>{participant}</h3>
-                    <p>Speaking round: {speakingRounds[participant]}</p>
-                    <p>Total time spoken: {Math.floor(individualTimes[participant]/60)} minutes</p>
+                    {/* <p>Speaking round: {speakingRounds[participant]}</p>*/}
+                    <p>
+                      Total time spoken:{" "}
+                      {Math.floor(individualTimes[participant] / 60)} minutes
+                    </p>
                     <div className="set-speaking-time">
                       <p>Set time: </p>
                       <input
@@ -278,12 +354,12 @@ export default function MeetingView(props) {
                     >
                       Switch to this speaker
                     </button>
-                    <button
+                    {/*<button
                       className="switch-back-speaker-button"
                       onClick={switchBackToPreviousSpeaker}
                     >
                       Switch back to previous speaker
-                    </button>
+                    </button> */}
                     <div className="move-buttons">
                       <button
                         className="move-left-button"
@@ -301,42 +377,64 @@ export default function MeetingView(props) {
                   </div>
                 ))}
               </div>
-              <button className="start-meeting-button" onClick={startMeeting}>
-                Start meeting!
+              <button className="reset-times-button" onClick={resetTimes}>
+                Reset time
               </button>
+              {!meetingHasBegun && (
+                <>
+                  <button
+                    className="start-meeting-button"
+                    onClick={() => {
+                      setMeetingHasBegun(true);
+                      startMeeting();
+                    }}
+                  >
+                    Start meeting!
+                  </button>
+                </>
+              )}
             </div>
           )}
-          <h3 class="rubric"> Meeting configuration</h3>
-          <h4>Add participants</h4>
-          <form
-            className="add-participant-form"
-            onSubmit={handleAddParticipant}
-          >
-            <input
-              name="participantName"
-              type="text"
-              placeholder="Enter participant's name"
-              required
-            />
-            <button type="submit">Add Participant</button>
-          </form>
-          <h4>Remove specific participants</h4>
-          <ul className="participant-list">
-            {participants.map((participant, index) => (
-              <li key={participant}>
-                {participant}
-                <button
-                  className="remove-participant-button"
-                  onClick={() => removeParticipant(participant)}
-                >
-                  ✖
-                </button>
-              </li>
-            ))}
-          </ul>
-          <button className="reset-times-button" onClick={resetTimes}>
-            Reset all times in time tracker
-          </button>
+          <div class="meeting-config">
+            <h3 class="rubric"> Meeting configuration</h3>
+            <h4>Add participants</h4>
+            <form
+              className="add-participant-form"
+              onSubmit={handleAddParticipant}
+            >
+              <input
+                name="participantName"
+                type="text"
+                placeholder="Enter participant's name"
+                required
+              />
+              <button type="submit">Add Participant</button>
+            </form>
+            <h4>Remove specific participants</h4>
+            <ul className="participant-list">
+              {participants.map((participant, index) => (
+                <li key={participant}>
+                  {participant}
+                  <button
+                    className="remove-participant-button"
+                    onClick={() => removeParticipant(participant)}
+                  >
+                    ✖
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={clearTimeOnSwitch}
+                onChange={() => setClearTimeOnSwitch(!clearTimeOnSwitch)}
+              />
+              Clear remaining time of previous speaker when manually switching
+              to new speaker
+            </label>
+          </div>
         </div>
       )}
     </main>

@@ -605,10 +605,20 @@ h4 {
   padding-left: 0.1vw;
   padding-right: 0.1vw;
 }
-.meeting-facilitator .active-speaker {
-  border-color: #4caf50;
-  box-shadow: 0 0 10px #4caf50;
+.meeting-facilitator .participant-card.active-speaker {
+  background-color: #456a6b;
+  color: #ffffff;
+  font-size: 1.2em;
+  border: 2px solid #98a6a3;
+  box-shadow: 0 0 15px #98a6a3;
+  z-index: 1000;
 }
+
+.meeting-facilitator .participant-card.active-speaker h3,
+.meeting-facilitator .participant-card.active-speaker p {
+  font-weight: bold;
+}
+
 .citation-style button {
   grid-area: 2/2/3/3;
   display: flex;
