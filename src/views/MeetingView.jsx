@@ -31,7 +31,7 @@ export default function MeetingView(props) {
           const currentSpeaker = participants[currentSpeakerIndex]; //hämta korrekt participant
           const currentSpeakerTime = speakerTimes[currentSpeaker] || 15;
           if (prevTimer < currentSpeakerTime) { //om tiden inte har nått gränsen
-            setTotalTime((prevTotal) => prevTotal + 1);
+            setTotalTime((prevTotal) => prevTotal + 1); //använd funktionen prevTotal som inpassat värde som är en funktion som adderar med 1
             setIndividualTimes({
               ...individualTimes,
               [currentSpeaker]: (individualTimes[currentSpeaker] || 0) + 1,
@@ -44,7 +44,7 @@ export default function MeetingView(props) {
         });
       }, 1000); //1000 ms = 1 s
     } else {
-      clearInterval(intervalId); //setInterval rensas direkt om någon av villkoren inte uppfylls. stoppas funktionskörning mitt i om villkor inte gäller???
+      clearInterval(intervalId); //setInterval rensas direkt om någon av villkoren inte uppfylls, enbart med hjälp av clearInterval. stoppas funktionskörning mitt i om villkor inte gäller???
     }
     return () => clearInterval(intervalId);
   }, [
@@ -207,7 +207,7 @@ export default function MeetingView(props) {
             {timerActive && displayCurrentSpeaker ? (
               <>
                 <h3>
-                  This meeting has taken: {Math.floor(totalTime / 60)} minutes
+                  This meeting has taken: {Math.floor(totalTime / 60)} minutes {/* and {totalTime-Math.floor(totalTime / 60)}s */}
                 </h3>
                 <h3>
                   Current Speaker: "<b>{participants[currentSpeakerIndex]}</b>"
@@ -235,7 +235,7 @@ export default function MeetingView(props) {
           )}
           {participants.length > 1 && (
             <div className="dashboard-parent">
-              <h3>Meeting participants in speaking order</h3>
+              <h3 class="rubric">Meeting participants in speaking order</h3>
               <div className="dashboard">
                 {participants.map((participant, index) => (
                   <div
@@ -306,8 +306,8 @@ export default function MeetingView(props) {
               </button>
             </div>
           )}
-
-          <h3>Add participants</h3>
+          <h3 class="rubric"> Meeting configuration</h3>
+          <h4>Add participants</h4>
           <form
             className="add-participant-form"
             onSubmit={handleAddParticipant}
@@ -320,7 +320,7 @@ export default function MeetingView(props) {
             />
             <button type="submit">Add Participant</button>
           </form>
-          <h3>Remove specific participants</h3>
+          <h4>Remove specific participants</h4>
           <ul className="participant-list">
             {participants.map((participant, index) => (
               <li key={participant}>
