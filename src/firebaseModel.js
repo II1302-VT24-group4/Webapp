@@ -1,4 +1,6 @@
 import firebaseConfig from "/src/firebaseConfig";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 import {
   getAuth,
   signInWithPopup,
@@ -21,6 +23,27 @@ import {
 
 // initialize the firebase app
 export const app = initializeApp(firebaseConfig);
+
+const storage = getStorage();
+export async function uploadFileToStorage(file, fileName) {
+  console.log("File to upload:", file); // Logga filen som ska laddas upp
+  console.log("File name:", fileName); // Logga filnamnet
+
+  const storageRef = ref(storage, `documents/${fileName}`);
+  console.log("Storage reference:", storageRef); // Logga lagringsreferensen
+
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  try {
+    await uploadTask; // Vänta på att uppladdningen slutförs
+    const downloadURL = await getDownloadURL(storageRef);
+    console.log("File available at", downloadURL); // Logga nedladdnings-URL:en
+    return downloadURL;
+  } catch (error) {
+    console.error("Upload process failed:", error); // Logga eventuella fel
+    throw error;
+  }
+}
 
 // initialize the database
 export const db = getFirestore();

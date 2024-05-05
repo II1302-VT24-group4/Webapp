@@ -5,17 +5,23 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import Popup from "reactjs-popup";
+import { uploadFileToStorage } from "../firebaseModel";
 
 export default function MyCalendarView(props) {
+  
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [eventTitle, setEventTitle] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null); // State for error message during upload
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [eventTitle, setEventTitle] = useState(""); // State to hold event title
+  const [startTime, setStartTime] = useState(""); // State to hold start time
+  const [endTime, setEndTime] = useState(""); // State to hold end time
   const [file, setFile] = useState(null); // State to hold uploaded file
-  const [calendarInitialized, setCalendarInitialized] = useState(false); // New state to track calendar initialization
+
+  const [calendarInitialized, setCalendarInitialized] = useState(false);
 
   const isOverlapping = async (newEvent) => {
     const events = await calendar.getEvents();
@@ -26,6 +32,7 @@ export default function MyCalendarView(props) {
     }
     return false;
   }
+
 
   async function populateCalendar() {
     const meetings = await props.getMeetings(props.room);
@@ -56,12 +63,15 @@ export default function MyCalendarView(props) {
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
     const owner = props.user.user;
+
+    // Prepare event data
     const eventData = {
       title: eventTitle,
       startDate: startDate,
       endDate: endDate,
       room: props.room,
-      owner: owner
+      owner: owner,
+      file: file, // Attach the file to the event data
     };
 
     if(await isOverlapping(eventData)){
@@ -81,7 +91,9 @@ export default function MyCalendarView(props) {
     setEventTitle("");
     setStartTime("");
     setEndTime("");
+    setFile(null);
     setSelectedInfo(null);
+
   }
 
   const handleUpdateEvent = async () => {
@@ -110,12 +122,44 @@ export default function MyCalendarView(props) {
     setEventTitle("");
     setStartTime("");
     setEndTime("");
+    setFile(null);
     setSelectedEvent(null);
   }
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+    setSelectedFile(e.target.files[0]);
+    setFileName(e.target.files[0].name);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setError('Please select a file.');
+      return;
+    }
+  
+    try {
+      // Set uploading state to true to indicate file upload is in progress
+      setUploading(true);
+  
+      // Generate a unique filename based on current timestamp and original filename
+      const generatedFileName = `${Date.now()}_${selectedFile.name}`;
+  
+      // Call the uploadFileToStorage function (assuming it's correctly implemented) to upload the selected file
+      await uploadFileToStorage(selectedFile, generatedFileName);
+  
+      // Log success message
+      console.log('File uploaded successfully.');
+  
+      // Reset error state if upload is successful
+      setError(null);
+    } catch (error) {
+      // Set error state if file upload fails
+      setError('Error uploading file.');
+      console.error('Error uploading file:', error);
+    } finally {
+      // Set uploading state back to false after upload completes (whether successful or not)
+      setUploading(false);
+    }
   };
 
   useEffect(() => {
@@ -157,14 +201,12 @@ export default function MyCalendarView(props) {
     };
   }, []);
 
-  // Populate calendar after initialization
   useEffect(() => {
     if (calendarInitialized) {
       populateCalendar();
     }
   }, [calendarInitialized]);
 
-  // Initialize startTime and endTime with the times from selectedInfo, if available, and set their constants for use when creating event
   useEffect(() => {
     if (selectedInfo) {
       const startTimeStr = new Date(selectedInfo.start.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -175,7 +217,11 @@ export default function MyCalendarView(props) {
     }
   }, [selectedInfo]);
 
-  // Initialize startTime, endTime and title with the times from selectedEvent, if available, and set their constants for use when updating event
+  const handleFileUpload = () => {
+    // Logic to handle file upload using handleUpload function
+    handleUpload(); // Call handleUpload function when upload button is clicked
+  };
+
   useEffect(() => {
     if (selectedEvent) {
       const startTimeStr = new Date(selectedEvent.start.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -320,13 +366,19 @@ export default function MyCalendarView(props) {
               }}
             />
           </div>
-          <div style={{ marginBottom: "10px" }}>
-              <input
-                type="file"
-                id="file"
-                onChange={handleFileChange}
-              />
-            </div>
+           {/* File upload input */}
+           <div >
+      {/* Render file input and upload button */}
+          <input type="file" id="file" onChange={handleFileChange} />
+          <button onClick={handleFileUpload} disabled={uploading}>
+            
+            Upload
+          </button>
+          {error && <p>{error}</p>}
+          {uploading && <p>Uploading...</p>}
+        </div>
+
+              
           <div style={{marginTop: "20px"}}>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}
