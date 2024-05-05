@@ -20,6 +20,8 @@ export default function MyCalendarView(props) {
   const [startTime, setStartTime] = useState(""); // State to hold start time
   const [endTime, setEndTime] = useState(""); // State to hold end time
   const [file, setFile] = useState(null); // State to hold uploaded file
+  const [uploadComplete, setUploadComplete] = useState(false);
+  
 
   const [calendarInitialized, setCalendarInitialized] = useState(false);
 
@@ -129,6 +131,7 @@ export default function MyCalendarView(props) {
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
     setFileName(e.target.files[0].name);
+    setUploadComplete(false);
   };
 
   const handleUpload = async () => {
@@ -138,14 +141,16 @@ export default function MyCalendarView(props) {
     }
   
     try {
-      // Set uploading state to true to indicate file upload is in progress
       setUploading(true);
   
       // Generate a unique filename based on current timestamp and original filename
       const generatedFileName = `${Date.now()}_${selectedFile.name}`;
   
-      // Call the uploadFileToStorage function (assuming it's correctly implemented) to upload the selected file
+      // Call the uploadFileToStorage function to upload the selected file
       await uploadFileToStorage(selectedFile, generatedFileName);
+  
+      // Set uploadComplete to true after successful upload
+      setUploadComplete(true);
   
       // Log success message
       console.log('File uploaded successfully.');
@@ -160,6 +165,12 @@ export default function MyCalendarView(props) {
       // Set uploading state back to false after upload completes (whether successful or not)
       setUploading(false);
     }
+  };
+  
+
+  const handleFileUpload = () => {
+    // Logic to handle file upload using handleUpload function
+    handleUpload(); // Call handleUpload function when upload button is clicked
   };
 
   useEffect(() => {
@@ -217,10 +228,7 @@ export default function MyCalendarView(props) {
     }
   }, [selectedInfo]);
 
-  const handleFileUpload = () => {
-    // Logic to handle file upload using handleUpload function
-    handleUpload(); // Call handleUpload function when upload button is clicked
-  };
+  
 
   useEffect(() => {
     if (selectedEvent) {
@@ -376,6 +384,7 @@ export default function MyCalendarView(props) {
           </button>
           {error && <p>{error}</p>}
           {uploading && <p>Uploading...</p>}
+          {uploadComplete && <p>Uploading finished!</p>}
         </div>
 
               
