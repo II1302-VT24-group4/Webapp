@@ -15,6 +15,7 @@ export default function SingleRoomColumnView(props) {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventTitle, setEventTitle] = useState("");
   const [startTime, setStartTime] = useState("");
+  const [oldStartTime, setOldStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [calendarInitialized, setCalendarInitialized] = useState(false); // New state to track calendar initialization
   const [currentDate, setCurrentDate] = useState(0);
@@ -39,13 +40,15 @@ export default function SingleRoomColumnView(props) {
 
   async function populateCalendar() {
     const meetings = await props.getMeetings(props.room);
-    for (const meeting of meetings) {
-      const title = meeting.title;
-      const startDate = meeting.startDate?.toDate();
-      const endDate = meeting.endDate?.toDate();
-      const id = meeting.id;
-      const owner = meeting.owner;
-      createEvent(title, startDate, endDate, owner, id);
+    if(meetings.length !== 0){
+      for (const meeting of meetings) {
+        const title = meeting.title;
+        const startDate = stringsToDate(meeting.startDate, meeting.startTime);
+        const endDate = stringsToDate(meeting.endDate, meeting.endTime);
+        const id = meeting.id;
+        const owner = meeting.owner;
+        createEvent(title, startDate, endDate, owner, id);
+      }
     }
   }
 
@@ -62,14 +65,30 @@ export default function SingleRoomColumnView(props) {
     calendar.render();
   }
 
+  function dateToStrings(value){
+    console.log(value);
+    const [date, time] = value.split('T');
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${year}-${parseInt(month)}-${parseInt(day)}`;
+    return {date: formattedDate, time: time};
+  }
+
+  function stringsToDate(dateValue, timeValue) {
+    const [year, month, day] = dateValue.split('-').map(Number);
+    const [hours, minutes] = timeValue.split(':').map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  }
+
   const handleCreateEvent = async () => {
-    const startDate = new Date(startTime);
-    const endDate = new Date(endTime);
+    const startDate = dateToStrings(startTime);
+    const endDate = dateToStrings(endTime);
     const owner = props.user.user;
     const eventData = {
       title: eventTitle,
-      startDate: startDate,
-      endDate: endDate,
+      startDate: startDate.date,
+      startTime: startDate.time,
+      endDate: endDate.date,
+      endTime: endDate.time,
       room: props.room,
       owner: owner
     };
@@ -79,11 +98,12 @@ export default function SingleRoomColumnView(props) {
     }
     else{
       const id = await props.addMeeting(eventData);
-
+      const startDateObj = new Date(startTime);
+      const endDateObj = new Date(endTime);
       createEvent(
         eventTitle,
-        startDate,
-        endDate,
+        startDateObj,
+        endDateObj,
         owner,
         id
       );
@@ -95,15 +115,27 @@ export default function SingleRoomColumnView(props) {
   }
 
   const handleUpdateEvent = async () => {
-    const startDate = new Date(startTime);
-    const endDate = new Date(endTime);
+    const startDate = dateToStrings(startTime);
+    let oldStartDate = null;
+    if(oldStartTime === ""){
+      oldStartDate = startDate;
+    }
+    else{
+      oldStartDate = dateToStrings(oldStartTime);
+    }
+    const endDate = dateToStrings(endTime);
+    const owner = props.user.user;
 
     const eventData = {
       title: eventTitle,
-      startDate: startDate,
-      endDate: endDate,
+      oldStartDate: oldStartDate.date,
+      oldStartTime: oldStartDate.time,
+      startDate: startDate.date,
+      startTime: startDate.time,
+      endDate: endDate.date,
+      endTime: endDate.time,
       room: props.room,
-      id: selectedEvent.id
+      owner: owner
     };
 
     if(await isOverlapping(eventData)){
@@ -112,21 +144,27 @@ export default function SingleRoomColumnView(props) {
     else{
       props.updateMeeting(eventData);
 
+      const startDateObj = new Date(startTime);
+      const endDateObj = new Date(endTime);
+
       selectedEvent.setProp('title', eventTitle);
-      selectedEvent.setStart(startDate);
-      selectedEvent.setEnd(endDate);
+      selectedEvent.setStart(startDateObj);
+      selectedEvent.setEnd(endDateObj);
     }
     setEventTitle("");
     setStartTime("");
+    setOldStartTime("");
     setEndTime("");
     setSelectedEvent(null);
   }
 
   const handleRemoveEvent = () => {
-    
+    const startDate = dateToStrings(startTime);
+
     const eventData = {
       room: props.room,
-      id: selectedEvent.id
+      startDate: startDate.date,
+      startTime: startDate.time
     };
     props.deleteMeeting(eventData);
 
@@ -362,6 +400,12 @@ export default function SingleRoomColumnView(props) {
               value={startTime}
               onChange={(e) => {
                 const selectedHours = e.target.value.split(':')[0];
+                if (selectedEvent) {
+                  const timezoneOffset = selectedEvent.start.getTimezoneOffset();
+                  const adjustedStartDate = new Date(selectedEvent.start.getTime() - timezoneOffset * 60000);
+                  const adjustedStartDateISO = adjustedStartDate.toISOString().slice(0, 16);
+                  setOldStartTime(adjustedStartDateISO);                  
+                }
                 setStartTime(`${selectedHours}:00`);
               }}  
             />

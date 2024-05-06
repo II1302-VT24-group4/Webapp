@@ -18,7 +18,9 @@ import {
   getDocs,
   getDoc,
   deleteDoc,
-  deleteField
+  deleteField,
+  arrayUnion,
+  arrayRemove
 } from "firebase/firestore";
 
 // initialize the firebase app
@@ -138,6 +140,38 @@ export async function dbDelete(coll, entity, subColl, subEntity) {
   }
 }
 
+export async function dbUpdateMeetingsField(coll, entity, value) {
+  const docRef = doc(collection(db, coll), entity);
+
+  try {
+    // Check if the document exists
+    const docSnap = await getDoc(docRef);
+    if (docSnap && docSnap.data()) {
+      // Document exists, update the meetings field
+      await updateDoc(docRef, {
+        meetings: arrayUnion(value)
+      });
+    } else {
+      // Document doesn't exist, create it with the meetings field
+      await setDoc(docRef, { meetings: [value] });
+    }
+  } catch (error) {
+    console.error('Error updating meetings field:', error);
+  }
+}
+
+
+export async function dbRemoveFromMeetingsField(coll, entity, value) {
+  const docRef = doc(collection(db, coll), entity);
+  try {
+    // Update the document by removing the value from the meetings field
+    await updateDoc(docRef, {
+      meetings: arrayRemove(value)
+    });
+  } catch (error) {
+    console.error('Error removing value from meetings field:', error);
+  }
+}
 
 export function googleSignInOut(model) {
   //console.log(model.isLoggedIn)

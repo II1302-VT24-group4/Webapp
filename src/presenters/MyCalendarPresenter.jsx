@@ -32,7 +32,7 @@ const MyCalendarPresenter = observer((props) => {
     for (const attribute of Object.keys(event)) {
       if (attribute !== 'room' && attribute !== 'id') {
         const value = event[attribute];
-        props.model.firebaseInsert('rooms', room, 'meetings', meetingID, attribute, value, true);
+        //props.model.firebaseInsert('rooms', room, 'meetings', meetingID, attribute, value, true);
         props.model.firebaseInsert('users', user, 'meetings', meetingID, attribute, value, true);
       }
     }

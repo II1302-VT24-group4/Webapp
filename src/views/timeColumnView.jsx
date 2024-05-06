@@ -35,9 +35,9 @@ export default function TimeColumnView(props) {
         viewDidMount: function(view) {
             const titleElement = calendarEl.querySelector('.fc-toolbar-title');
             if (titleElement) {
-              titleElement.style.fontSize = "18px";
-              titleElement.style.height = "40px";
-              titleElement.style.lineHeight = "18px";
+              titleElement.style.fontSize = "30px";
+              titleElement.style.height = "124px";
+              titleElement.style.lineHeight = "30px";
             }
             const slotElements = calendarEl.querySelectorAll('tr');
             slotElements.forEach(slot => {
@@ -45,7 +45,7 @@ export default function TimeColumnView(props) {
             });
         }
       });
-      newCalendar.setOption('height', 833);
+      newCalendar.setOption('height', 917);
       setCalendar(newCalendar);
       newCalendar.render();
   

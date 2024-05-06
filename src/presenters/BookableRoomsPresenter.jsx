@@ -21,45 +21,50 @@ export default observer(function BookableRoomsPresenter(props) {
   const insertMeetingDB = async (event) => {
     const user = props.model.userState.user;
     const room = event.room;
-    //Get ID of new meeting in user
-    const newID = Math.random().toString(36).substring(2) + Date.now().toString(36);
-    //Go through each attribute and add it to the newly created meeting in the DB
-    for(const attribute of Object.keys(event)){
-      //The value of the given attribute
-      const value = event[attribute];
-      //Add to the users collection of meetings
-      if(attribute != "owner"){
-        props.model.firebaseInsert('users', user, 'meetings', newID, attribute, value, true);
-      }
-      //Add to the rooms collection of meetings
-      if(attribute != "room"){
-        props.model.firebaseInsert('rooms', room, 'meetings', newID, attribute, value, true);
-      }
-    }
-    //Add room owner to the meeting in the rooms db collection
-    props.model.firebaseInsert('rooms', room, 'meetings', newID, "owner", user, true);
-    return newID;
+    const startDate = event.startDate;
+    const startTime = event.startTime;
+    const endDate = event.endDate;
+    const endTime = event.endTime;
+    const title = event.title;
+
+    props.model.firebaseInsert('rooms', room, startDate, startTime, "endDate", endDate, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, "endTime", endTime, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, "title", title, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, "owner", user, true);
+    props.model.firebaseUpdateMeetingsField('rooms', room, startDate);
+
+    props.model.firebaseInsert('users', user, startDate, startTime, "endDate", endDate, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, "endTime", endTime, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, "title", title, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, "room", room, true);
   }
 
   const updateMeetingDB = async (event) => {
-    const user = props.model.userState.user;
-    const meetingID = event.id;
-    const room = event.room;
-    for(const attribute of Object.keys(event)){
-      if(attribute != "room" && attribute != "id"){
-        const value = event[attribute];
-        props.model.firebaseInsert('rooms', room, 'meetings', meetingID, attribute, value, true);
-        props.model.firebaseInsert('users', user, 'meetings', meetingID, attribute, value, true);
-      }
-    }
+
+    const oldEvent = {
+      startDate: event.oldStartDate,
+      startTime: event.oldStartTime,
+      room: event.room
+    };
+    const {oldStartDate, oldStartTime, ...newEvent } = event;
+    console.log(oldEvent, newEvent);
+    deleteMeetingDB(oldEvent);
+    insertMeetingDB(newEvent);
   }
 
   const deleteMeetingDB = async (event) => {
     const user = props.model.userState.user;
-    const meetingID = event.id;
     const room = event.room;
-    props.model.firebaseDelete('rooms', room, 'meetings', meetingID);
-    props.model.firebaseDelete('users', user, 'meetings', meetingID);
+    const startDate = event.startDate;
+    const startTime = event.startTime;
+
+    props.model.firebaseDelete('users', user, startDate, startTime);
+    await props.model.firebaseDelete('rooms', room, startDate, startTime);
+
+    const meetingDates = await props.model.firebaseRead('rooms', room, startDate);
+    if(meetingDates.length === 0){
+      props.model.firebaseRemoveFromMeetingsField('rooms', room, startDate);
+    }
   }
 
   const getMeetingsDB = async (room) => {
@@ -67,19 +72,42 @@ export default observer(function BookableRoomsPresenter(props) {
       // Wait for a short period before checking again
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    return await props.model.firebaseRead('rooms', room, 'meetings');
+
+    const result = await props.model.getRoomMeetingDates(room);
+
+    let meetings = [];
+    if(result !== undefined){
+      for(const date of result){
+        const meetingDataArray = await props.model.firebaseRead('rooms', room, date);
+        for (const meetingData of meetingDataArray) {
+          const meetingUpdated = {
+              startDate: date,
+              startTime: meetingData.id,
+              endDate: meetingData.endDate,
+              endTime: meetingData.endTime,
+              title: meetingData.title,
+              owner: meetingData.owner
+          };
+          meetings.push(meetingUpdated);
+        }
+      }
+      meetings = meetings.flat();
+    }
+    return meetings;
   }
 
-  const [rooms, setRooms] = useState(null);
+  function addToFavouritesACB(room) {
+    props.model.modifyFavourites(room, true);
+  }
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      const roomsData = await props.model.firebaseRead('rooms');
-      setRooms(roomsData);
-    };
+  const setSearchQuery = (value) => {
+    props.model.setSearchQuery(value);
+  };
 
-    fetchRooms();
-  }, [props.model]);
+  const doSearch = (value) => {
+    props.model.doSearch(value);
+    console.log(props.model.officeList);
+  };
 
   useEffect(() => {
     if (props.model.searchResultsPromiseState.data) {
@@ -95,35 +123,36 @@ export default observer(function BookableRoomsPresenter(props) {
     );
   }
   
-  if(rooms){
-    timeColumn = <div style={{flex: "0 0 auto"}}><TimeColumnView date={date}/></div>;
-    calendars = rooms.slice(0, 15).map((room, index) => (
-      <div key={index} style={{ flex: "0 0 auto", minWidth: "100px" }}>
-        <SingleRoomColumnView
-          user={props.model.userState}
-          addMeeting={insertMeetingDB}
-          updateMeeting={updateMeetingDB}
-          deleteMeeting={deleteMeetingDB}
-          getMeetings={getMeetingsDB}
-          room={room.name}
-          date={date}
-        />
+
+  timeColumn = <div style={{flex: "0 0 auto", marginRight: "20px"}}><TimeColumnView date={date}/></div>;
+
+  if (props.model.searchDone.done) {
+    calendars = Object.entries(props.model.officeList).map(([officeName, rooms]) => (
+      <div key={officeName}>
+        <h2 style={{ fontSize: "30px"}}>{officeName}</h2> {/* Office name */}
+        <div style={{ overflowX: "auto", whiteSpace: "nowrap", marginLeft: "10px" }}>
+          {rooms.map((room, index) => (
+            <div key={`${officeName}-${index}`} style={{ display: "inline-block", minWidth: "100px"}}>
+              <SingleRoomColumnView
+                user={props.model.userState}
+                addMeeting={insertMeetingDB}
+                updateMeeting={updateMeetingDB}
+                deleteMeeting={deleteMeetingDB}
+                getMeetings={getMeetingsDB}
+                room={room.name}
+                date={date}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-    ))
+    ));
   }
-
-  function addToFavouritesACB(room) {
-    props.model.modifyFavourites(room, true);
-  }
-
-  const setSearchQuery = (value) => {
-    props.model.setSearchQuery(value);
-  };
-
-  const doSearch = (value) => {
-    props.model.doSearch(value);
-  };
-
+  
+  
+  
+  
+  
   return (
     <div>
       <button onClick={() => setView(true)} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}} disabled={view}>timeedit</button>
@@ -138,7 +167,7 @@ export default observer(function BookableRoomsPresenter(props) {
           className="search-input"
         />
       </div>
-      {!view ? (
+      {!view && (
         <BookableRoomsView
           onSearchQuery={setSearchQuery}
           onSearchButton={doSearch}
@@ -151,21 +180,19 @@ export default observer(function BookableRoomsPresenter(props) {
           loggedIn={props.model.userState.isLoggedIn}
           office={props.model.office}
         />
-      ) : (
-        <div className="loading-bar-image">
-          {/* Placeholder for another view */}
-        </div>
       )}
-      {view && rooms ? (
-        <div style={{margin: '10px', display: "flex"}}>
-          {timeColumn}
-          {calendars}
+      {view && (
+        <div>
           <button onClick={previousDay} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}}>previous day</button>
           <button onClick={nextDay} style={{backgroundColor: "transparent"}}>next day</button>
-        </div>
-      ) : (
-        <div className="loading-bar-image">
-          {/* Placeholder for another view */}
+          <div style={{margin: '10px', display: "flex"}}>
+            <div style={{flex: "0 0 auto"}}>
+              {timeColumn}
+            </div>
+            <div style={{maxWidth: "90vw", overflowX: "auto", display: "flex"}}> {/* Apply display: flex; */}
+              {calendars}
+            </div>
+          </div>
         </div>
       )}
     </div>

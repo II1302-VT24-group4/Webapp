@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { googleSignInOut } from "./firebaseModel.js";
+import { dbRemoveFromMeetingsField, dbUpdateMeetingsField, googleSignInOut } from "./firebaseModel.js";
 import { useState } from "react";
 import { dbRooms, db, dbInsert, dbRead, dbDelete } from "./firebaseModel.js";
 const defaultLimit = 400;
@@ -39,6 +39,24 @@ export default {
 
   firebaseDelete(collection, entity, subCollection, subEntity) {
     dbDelete(collection, entity, subCollection, subEntity);
+  },
+
+  firebaseUpdateMeetingsField(collection, entity, value){
+    dbUpdateMeetingsField(collection, entity, value);
+  },
+
+  firebaseRemoveFromMeetingsField(collection, entity, value){
+    dbRemoveFromMeetingsField(collection, entity, value);
+  },
+
+  async getRoomMeetingDates(room){
+    try {
+      const result = await dbRead('rooms', room);
+      return result.meetings;
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
   },
 
   logInOrOutWithGoogle() {
@@ -92,7 +110,7 @@ export default {
 
     if (shouldSearch) {
       //this.searchDone.done = false;
-      console.log("Gör sökning");
+      //console.log("Gör sökning");
       this.officeList = []; // Rensa tidigare sökresultat
       this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
       this.currentQuery = this.searchParams.q;
@@ -149,7 +167,7 @@ export default {
 
     const mappedRoom = this.mapOfficeRooms(item);
     this.officeList[officeKey].push(mappedRoom);
-    console.log(`Added room to ${officeKey}:`, this.officeList[officeKey]);
+    //console.log(`Added room to ${officeKey}:`, this.officeList[officeKey]);
   },
   getInfoOfArray(favHistArray) {
     this.favHistReady.ready = false;
