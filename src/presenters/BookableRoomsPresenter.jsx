@@ -49,8 +49,7 @@ export default observer(function BookableRoomsPresenter(props) {
       room: event.room
     };
     const {oldStartDate, oldStartTime, ...newEvent } = event;
-    console.log(oldEvent, newEvent);
-    deleteMeetingDB(oldEvent);
+    await deleteMeetingDB(oldEvent);
     insertMeetingDB(newEvent);
   };
 
@@ -113,7 +112,6 @@ export default observer(function BookableRoomsPresenter(props) {
 
   const doSearch = (value) => {
     props.model.doSearch(value);
-    console.log(props.model.officeList);
   };
 
   useEffect(() => {

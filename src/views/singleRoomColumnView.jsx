@@ -198,9 +198,10 @@ export default function SingleRoomColumnView(props) {
   
       // Generate a unique filename based on current timestamp and original filename
       const generatedFileName = `${Date.now()}_${selectedFile.name}`;
-  
+      const date = dateToStrings(startTime);
+
       // Call the uploadFileToStorage function to upload the selected file
-      await uploadFileToStorage(selectedFile, generatedFileName);
+      await uploadFileToStorage(selectedFile, generatedFileName, props.room, date.date, date.time);
   
       // Set uploadComplete to true after successful upload
       setUploadComplete(true);

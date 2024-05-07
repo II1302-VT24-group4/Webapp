@@ -35,13 +35,11 @@ const MyCalendarPresenter = observer((props) => {
       room: event.room
     };
     const {oldStartDate, oldStartTime, ...newEvent } = event;
-    console.log(oldEvent, newEvent);
-    deleteMeetingDB(oldEvent);
+    await deleteMeetingDB(oldEvent);
     insertMeetingDB(newEvent);
   }
 
   const deleteMeetingDB = async (event) => {
-    console.log(event);
     const user = props.model.userState.user;
     const room = event.room;
     const startDate = event.startDate;

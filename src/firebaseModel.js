@@ -27,11 +27,11 @@ import {
 export const app = initializeApp(firebaseConfig);
 
 const storage = getStorage();
-export async function uploadFileToStorage(file, fileName) {
+export async function uploadFileToStorage(file, fileName, room, date, time) {
   console.log("File to upload:", file); // Logga filen som ska laddas upp
   console.log("File name:", fileName); // Logga filnamnet
 
-  const storageRef = ref(storage, `documents/${fileName}`);
+  const storageRef = ref(storage, `${room}/${date}/${time}/${fileName}`);
   console.log("Storage reference:", storageRef); // Logga lagringsreferensen
 
   const uploadTask = uploadBytesResumable(storageRef, file);
