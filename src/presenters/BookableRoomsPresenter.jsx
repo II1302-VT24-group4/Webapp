@@ -31,14 +31,14 @@ export default observer(function BookableRoomsPresenter(props) {
     props.model.firebaseInsert('rooms', room, startDate, startTime, "endTime", endTime, true);
     props.model.firebaseInsert('rooms', room, startDate, startTime, "title", title, true);
     props.model.firebaseInsert('rooms', room, startDate, startTime, "owner", user, true);
-    props.model.firebaseUpdateMeetingsField('rooms', room, startDate);
+    props.model.firebaseInsert('rooms', room, 'meetingIndex', startDate, null, null, true);
 
     props.model.firebaseInsert('users', user, startDate, startTime, "endDate", endDate, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "endTime", endTime, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "title", title, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "room", room, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "owner", user, true);
-    props.model.firebaseUpdateMeetingsField('users', user, startDate);
+    props.model.firebaseInsert('users', user, 'meetingIndex', startDate, null, null, true);
   };
 
   const updateMeetingDB = async (event) => {
@@ -64,12 +64,7 @@ export default observer(function BookableRoomsPresenter(props) {
 
     const roomMeetingDates = await props.model.firebaseRead('rooms', room, startDate);
     if(roomMeetingDates.length === 0){
-      props.model.firebaseRemoveFromMeetingsField('rooms', room, startDate);
-    }
-
-    const userMeetingDates = await props.model.firebaseRead('users', user, startDate);
-    if(userMeetingDates.length === 0){
-      props.model.firebaseRemoveFromMeetingsField('users', user, startDate);
+      props.model.firebaseDelete('rooms', room, 'meetingIndex', startDate);
     }
   };
 
@@ -79,15 +74,14 @@ export default observer(function BookableRoomsPresenter(props) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    const result = await props.model.getMeetingDates("rooms", room);
-
+    const result = await props.model.firebaseRead("rooms", room, 'meetingIndex');
     let meetings = [];
     if(result !== undefined){
       for(const date of result){
-        const meetingDataArray = await props.model.firebaseRead('rooms', room, date);
+        const meetingDataArray = await props.model.firebaseRead('rooms', room, date.id);
         for (const meetingData of meetingDataArray) {
           const meetingUpdated = {
-              startDate: date,
+              startDate: date.id,
               startTime: meetingData.id,
               endDate: meetingData.endDate,
               endTime: meetingData.endTime,
