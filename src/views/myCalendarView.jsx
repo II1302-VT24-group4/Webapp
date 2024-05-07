@@ -57,19 +57,21 @@ export default function MyCalendarView(props) {
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const owner = meeting.owner;
         const room = meeting.room;
-        createEvent(title, startDate, endDate, owner, room);
+        const downloads = meeting.downloads;
+        createEvent(title, startDate, endDate, owner, room, downloads);
       }
     }
   }
 
-  function createEvent(title, startDate, endDate, owner, room){
+  function createEvent(title, startDate, endDate, owner, room, downloads){
     calendar.addEvent({
       title: title,
       start: startDate,
       end: endDate,
       extendedProps: {
         owner: owner,
-        room: room
+        room: room,
+        downloads: downloads
       },
     });
     calendar.render();
@@ -157,7 +159,7 @@ export default function MyCalendarView(props) {
       // Generate a unique filename based on current timestamp and original filename
       const generatedFileName = `${Date.now()}_${selectedFile.name}`;
       const date = dateToStrings(startTime);
-      
+
       // Call the uploadFileToStorage function to upload the selected file
       await uploadFileToStorage(selectedFile, generatedFileName, room, date.date, date.time);
   
@@ -298,7 +300,17 @@ export default function MyCalendarView(props) {
               }}
             />
           </div>
-          <div >
+          <div style={{ textAlign: "left", marginBottom: "10px" }}>
+            Files:
+            {selectedEvent.extendedProps.downloads.map((download, index) => (
+              <div key={index}>
+                <a href={download.downloadURL} download={download.name}>
+                  {download.name}
+                </a>
+              </div>
+            ))}
+          </div>
+          <div>
             <input type="file" id="file" onChange={handleFileChange} />
             <button onClick={handleFileUpload} disabled={uploading}>
               

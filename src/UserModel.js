@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { dbRemoveFromMeetingsField, dbUpdateMeetingsField, googleSignInOut } from "./firebaseModel.js";
 import { useState } from "react";
-import { dbRooms, db, dbInsert, dbRead, dbDelete } from "./firebaseModel.js";
+import { dbRooms, db, dbInsert, dbRead, dbDelete, dbGetFiles } from "./firebaseModel.js";
 const defaultLimit = 400;
 const rooms = await dbRooms;
 
@@ -57,6 +57,10 @@ export default {
         console.error('Error:', error);
         return null;
     }
+  },
+
+  firebaseGetFiles(room, date, time){
+    return dbGetFiles(room, date, time);
   },
 
   logInOrOutWithGoogle() {

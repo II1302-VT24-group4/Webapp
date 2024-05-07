@@ -1,5 +1,5 @@
 import firebaseConfig from "/src/firebaseConfig";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll } from "firebase/storage";
 
 import {
   getAuth,
@@ -43,6 +43,28 @@ export async function uploadFileToStorage(file, fileName, room, date, time) {
     return downloadURL;
   } catch (error) {
     console.error("Upload process failed:", error); // Logga eventuella fel
+    throw error;
+  }
+}
+
+export async function dbGetFiles(room, date, time) {
+  const folderRef = ref(storage, `${room}/${date}/${time}`);
+
+  try {
+    // List all items (files and subfolders) within the specified folder
+    const folderContents = await listAll(folderRef);
+
+    // Get file data (name and download URL) for each file
+    const fileData = await Promise.all(folderContents.items.map(async (item) => {
+      const fileRef = ref(storage, `${room}/${date}/${time}/${item.name}`);
+      const downloadURL = await getDownloadURL(fileRef);
+      return { name: item.name, downloadURL: downloadURL };
+    }));
+
+    // Return array of objects containing file name and download URL
+    return fileData;
+  } catch (error) {
+    console.error("Error getting file data in time folder:", error);
     throw error;
   }
 }
