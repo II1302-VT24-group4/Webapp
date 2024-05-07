@@ -11,17 +11,17 @@ export default function MyCalendarView(props) {
   
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
-  const [selectedInfo, setSelectedInfo] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventTitle, setEventTitle] = useState(""); // State to hold event title
+  const [startTime, setStartTime] = useState(""); // State to hold start time
+  const [oldStartTime, setOldStartTime] = useState("");
+  const [endTime, setEndTime] = useState(""); // State to hold end time
+  const [file, setFile] = useState(null); // State to hold uploaded file
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null); // State for error message during upload
   const [selectedFile, setSelectedFile] = useState(null);
-  const [eventTitle, setEventTitle] = useState(""); // State to hold event title
-  const [startTime, setStartTime] = useState(""); // State to hold start time
-  const [endTime, setEndTime] = useState(""); // State to hold end time
-  const [file, setFile] = useState(null); // State to hold uploaded file
   const [uploadComplete, setUploadComplete] = useState(false);
-  
+  const [room, setRoom] = useState("");
 
   const [calendarInitialized, setCalendarInitialized] = useState(false);
 
@@ -33,82 +33,70 @@ export default function MyCalendarView(props) {
       }
     }
     return false;
+  };
+
+  function dateToStrings(value){
+    const [date, time] = value.split('T');
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${year}-${parseInt(month)}-${parseInt(day)}`;
+    return {date: formattedDate, time: time};
   }
 
+  function stringsToDate(dateValue, timeValue) {
+    const [year, month, day] = dateValue.split('-').map(Number);
+    const [hours, minutes] = timeValue.split(':').map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  }
 
   async function populateCalendar() {
     const meetings = await props.getMeetings(props.room);
-    for (const meeting of meetings) {
-      const title = meeting.title;
-      const startDate = meeting.startDate?.toDate();
-      const endDate = meeting.endDate?.toDate();
-      const id = meeting.id;
-      const owner = meeting.owner;
-      createEvent(title, startDate, endDate, owner, id);
+    if(meetings.length !== 0){
+      for (const meeting of meetings) {
+        const title = meeting.title;
+        const startDate = stringsToDate(meeting.startDate, meeting.startTime);
+        const endDate = stringsToDate(meeting.endDate, meeting.endTime);
+        const owner = meeting.owner;
+        const room = meeting.room;
+        createEvent(title, startDate, endDate, owner, room);
+      }
     }
   }
 
-  function createEvent(title, startDate, endDate, owner, id){
+  function createEvent(title, startDate, endDate, owner, room){
     calendar.addEvent({
       title: title,
       start: startDate,
       end: endDate,
-      id: id,
       extendedProps: {
-        owner: owner
+        owner: owner,
+        room: room
       },
     });
     calendar.render();
   }
 
-  const handleCreateEvent = async () => {
-    const startDate = new Date(startTime);
-    const endDate = new Date(endTime);
-    const owner = props.user.user;
-
-    // Prepare event data
-    const eventData = {
-      title: eventTitle,
-      startDate: startDate,
-      endDate: endDate,
-      room: props.room,
-      owner: owner,
-      file: file, // Attach the file to the event data
-    };
-
-    if(await isOverlapping(eventData)){
-      alert("event is overlapping another event");
+  const handleUpdateEvent = async () => {
+    const startDate = dateToStrings(startTime);
+    let oldStartDate = null;
+    if(oldStartTime === ""){
+      oldStartDate = startDate;
     }
     else{
-      const id = await props.addMeeting(eventData);
-
-      createEvent(
-        eventTitle,
-        startDate,
-        endDate,
-        owner,
-        id
-      );
+      oldStartDate = dateToStrings(oldStartTime);
     }
-    setEventTitle("");
-    setStartTime("");
-    setEndTime("");
-    setFile(null);
-    setSelectedInfo(null);
-
-  }
-
-  const handleUpdateEvent = async () => {
-    const startDate = new Date(startTime);
-    const endDate = new Date(endTime);
+    const endDate = dateToStrings(endTime);
+    const owner = props.user.user;
 
     const eventData = {
       title: eventTitle,
-      startDate: startDate,
-      endDate: endDate,
-      room: props.room,
-      id: selectedEvent.id,
-      file: file
+      oldStartDate: oldStartDate.date,
+      oldStartTime: oldStartDate.time,
+      startDate: startDate.date,
+      startTime: startDate.time,
+      endDate: endDate.date,
+      endTime: endDate.time,
+      room: room,
+      owner: owner
     };
 
     if(await isOverlapping(eventData)){
@@ -117,20 +105,43 @@ export default function MyCalendarView(props) {
     else{
       props.updateMeeting(eventData);
 
+      const startDateObj = new Date(startTime);
+      const endDateObj = new Date(endTime);
+
       selectedEvent.setProp('title', eventTitle);
-      selectedEvent.setStart(startDate);
-      selectedEvent.setEnd(endDate);
+      selectedEvent.setStart(startDateObj);
+      selectedEvent.setEnd(endDateObj);
     }
     setEventTitle("");
     setStartTime("");
+    setOldStartTime("");
     setEndTime("");
-    setFile(null);
+    setRoom("");
     setSelectedEvent(null);
-  }
+  };
+
+  const handleRemoveEvent = () => {
+    const startDate = dateToStrings(startTime);
+    
+    const eventData = {
+      room: room,
+      startDate: startDate.date,
+      startTime: startDate.time
+    };
+    props.deleteMeeting(eventData);
+
+    selectedEvent.remove();
+    
+    setEventTitle("");
+    setStartTime("");
+    setEndTime("");
+    setRoom("");
+    setSelectedEvent(null);
+  };
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
-    setFileName(e.target.files[0].name);
+    //setFileName(e.target.files[0].name);
     setUploadComplete(false);
   };
 
@@ -167,12 +178,12 @@ export default function MyCalendarView(props) {
     }
   };
   
-
   const handleFileUpload = () => {
     // Logic to handle file upload using handleUpload function
     handleUpload(); // Call handleUpload function when upload button is clicked
   };
 
+  //Calendar creation
   useEffect(() => {
     const calendarEl = calendarRef.current;
     const newCalendar = new Calendar(calendarEl, {
@@ -182,16 +193,6 @@ export default function MyCalendarView(props) {
       slotMinTime: "06:00:00", // Show slots starting from 6 AM
       slotMaxTime: "21:00:00", // Show slots until 9 PM
       selectable: true, // Enable selection
-      select: function (info) {
-        if (!info.startStr.includes("T")) {
-          info.startStr += "T13:00:00+02:00";
-        }
-        if (!info.endStr.includes("T")) {
-          info.endStr += "T14:00:00+02:00";
-        }
-        info.allDay = false;
-        setSelectedInfo(info);
-      },
       eventClick: function (event) {
         setSelectedEvent(event.event);
       },
@@ -212,24 +213,14 @@ export default function MyCalendarView(props) {
     };
   }, []);
 
+  // Populate calendar after initialization
   useEffect(() => {
     if (calendarInitialized) {
       populateCalendar();
     }
   }, [calendarInitialized]);
 
-  useEffect(() => {
-    if (selectedInfo) {
-      const startTimeStr = new Date(selectedInfo.start.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setStartTime(startTimeStr);
-      
-      const endTimeStr = new Date(selectedInfo.end.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setEndTime(endTimeStr);
-    }
-  }, [selectedInfo]);
-
-  
-
+  // Initialize startTime, endTime and title with the times from selectedEvent, if available, and set their constants for use when updating event
   useEffect(() => {
     if (selectedEvent) {
       const startTimeStr = new Date(selectedEvent.start.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
@@ -237,89 +228,15 @@ export default function MyCalendarView(props) {
       
       const endTimeStr = new Date(selectedEvent.end.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
       setEndTime(endTimeStr);
-
-      setEventTitle(selectedEvent.title);
+      setEventTitle(selectedEvent._def.title);
+      setRoom(selectedEvent.extendedProps.room);
     }
   }, [selectedEvent]);
 
   return (
     <div style={{ width: "98%", margin: "5" }}>
       <div ref={calendarRef} />
-      {selectedInfo && (
-        <Popup
-          open={selectedInfo !== null}
-          onClose={() => {
-            setSelectedInfo(null);
-            setEventTitle(""); // Reset event title input
-          }}
-          modal
-          closeOnDocumentClick
-        >
-          <div
-            style={{
-              padding: "20px",
-              background: "white",
-              borderRadius: "5px",
-              textAlign: "right"
-            }}
-          >
-            <h2 style={{ marginBottom: "20px" }}>Create Event</h2>
-            <div>
-              <label htmlFor="title">Title:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-              <input
-                office="text"
-                placeholder="Event Title"
-                style={{ marginBottom: "10px", width: "164px"}}
-                value={eventTitle}
-                onChange={(e) => setEventTitle(e.target.value)}
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label htmlFor="startTime">Start Time:&nbsp;</label>
-              <input
-                type="datetime-local"
-                office="time"
-                id="startTime"
-                style={{ marginLeft: "10px" }}
-                value={startTime}
-                onChange={(e) => {
-                  const selectedHours = e.target.value.split(':')[0];
-                  setStartTime(`${selectedHours}:00`);
-                }}                
-                />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label htmlFor="endTime">End Time:</label>
-              <input
-                type="datetime-local"
-                office="time"
-                id="endTime"
-                style={{ marginLeft: "14px" }}
-                value={endTime}
-                onChange={(e) => {
-                  const selectedHours = e.target.value.split(':')[0];
-                  setEndTime(`${selectedHours}:00`);
-                }}  
-              />
-            </div>
-            <div style={{marginTop: "20px"}}>
-              <button
-                style={{ marginRight: "80px", backgroundColor: "white" }}
-                onClick={() => setSelectedInfo(null)}
-              >
-                Cancel
-              </button>
-              <button
-                style={{ marginRight:"20px", backgroundColor: "white" }}
-                onClick={handleCreateEvent}
-              >
-                Save Event
-              </button>
-            </div>
-          </div>
-        </Popup>
-      )}
-      {selectedEvent && (
+      {selectedEvent && props.user.user == selectedEvent.extendedProps.owner && (
         <Popup
         open={selectedEvent !== null}
         onClose={() => {
@@ -357,6 +274,12 @@ export default function MyCalendarView(props) {
               value={startTime}
               onChange={(e) => {
                 const selectedHours = e.target.value.split(':')[0];
+                if (selectedEvent) {
+                  const timezoneOffset = selectedEvent.start.getTimezoneOffset();
+                  const adjustedStartDate = new Date(selectedEvent.start.getTime() - timezoneOffset * 60000);
+                  const adjustedStartDateISO = adjustedStartDate.toISOString().slice(0, 16);
+                  setOldStartTime(adjustedStartDateISO);                  
+                }
                 setStartTime(`${selectedHours}:00`);
               }}  
             />
@@ -374,20 +297,16 @@ export default function MyCalendarView(props) {
               }}
             />
           </div>
-           {/* File upload input */}
-           <div >
-      {/* Render file input and upload button */}
-          <input type="file" id="file" onChange={handleFileChange} />
-          <button onClick={handleFileUpload} disabled={uploading}>
-            
-            Upload
-          </button>
-          {error && <p>{error}</p>}
-          {uploading && <p>Uploading...</p>}
-          {uploadComplete && <p>Uploading finished!</p>}
-        </div>
-
+          <div >
+            <input type="file" id="file" onChange={handleFileChange} />
+            <button onClick={handleFileUpload} disabled={uploading}>
               
+              Upload
+            </button>
+            {error && <p>{error}</p>}
+            {uploading && <p>Uploading...</p>}
+            {uploadComplete && <p>Uploading finished!</p>}
+          </div>
           <div style={{marginTop: "20px"}}>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}
@@ -399,8 +318,7 @@ export default function MyCalendarView(props) {
             </button>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}
-              //not sure if we want to be able to remove events in personal calendar
-              //onClick={handleRemoveEvent}
+              onClick={handleRemoveEvent}
             >
               Remove
             </button>
@@ -414,6 +332,46 @@ export default function MyCalendarView(props) {
         </div>
       </Popup>
       )}
+      {selectedEvent && props.user.user != selectedEvent.extendedProps.owner && 
+        <Popup
+        open={selectedEvent !== null}
+        onClose={() => {
+          setSelectedEvent(null);
+        }}
+        modal
+        closeOnDocumentClick
+      >
+        <div
+          style={{
+            padding: "20px",
+            background: "white",
+            borderRadius: "5px",
+            textAlign: "left"
+          }}
+        >
+          <h2 style={{ marginBottom: "20px" }}>Event Information</h2>
+          <div style={{ marginBottom: "10px" }}>
+            <label htmlFor="title">Title: {eventTitle}</label>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label htmlFor="startTime">Start Time:&nbsp;{startTime.split('T')[1]}</label>
+          </div>
+          <div style={{ marginBottom: "10px" }}>
+            <label htmlFor="endTime">End Time: {endTime.split('T')[1]}</label>
+          </div>
+          <div style={{marginTop: "20px"}}>
+            <button
+              style={{ marginRight: "110px", backgroundColor: "white" }}
+              onClick={() => {
+                setSelectedEvent(null);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Popup>
+      }
     </div>
   );
 }

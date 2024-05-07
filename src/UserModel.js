@@ -49,9 +49,9 @@ export default {
     dbRemoveFromMeetingsField(collection, entity, value);
   },
 
-  async getRoomMeetingDates(room){
+  async getMeetingDates(collection, entity){
     try {
-      const result = await dbRead('rooms', room);
+      const result = await dbRead(collection, entity);
       return result.meetings;
     } catch (error) {
         console.error('Error:', error);

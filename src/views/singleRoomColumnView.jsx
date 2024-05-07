@@ -7,6 +7,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import Popup from "reactjs-popup";
+import { uploadFileToStorage } from "../firebaseModel";
 
 export default function SingleRoomColumnView(props) {
   const calendarRef = useRef(null);
@@ -19,6 +20,19 @@ export default function SingleRoomColumnView(props) {
   const [endTime, setEndTime] = useState("");
   const [calendarInitialized, setCalendarInitialized] = useState(false); // New state to track calendar initialization
   const [currentDate, setCurrentDate] = useState(0);
+  const [file, setFile] = useState(null); // State to hold uploaded file
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null); // State for error message during upload
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadComplete, setUploadComplete] = useState(false);
+
+  const updateDayCellBackground = () => {
+    const calendarEl = calendarRef.current;
+    const dayCells = calendarEl.querySelectorAll('.fc-day');
+    dayCells.forEach(cell => {
+      cell.style.backgroundColor = '#81a59c'; // Change to your desired background color
+    });
+  };
 
   const isOverlapping = async (newEvent) => {
     const events = await calendar.getEvents();
@@ -28,15 +42,20 @@ export default function SingleRoomColumnView(props) {
       }
     }
     return false;
+  };
+
+  function dateToStrings(value){
+    const [date, time] = value.split('T');
+    const [year, month, day] = date.split('-');
+    const formattedDate = `${year}-${parseInt(month)}-${parseInt(day)}`;
+    return {date: formattedDate, time: time};
   }
 
-  const updateDayCellBackground = () => {
-    const calendarEl = calendarRef.current;
-    const dayCells = calendarEl.querySelectorAll('.fc-day');
-    dayCells.forEach(cell => {
-      cell.style.backgroundColor = '#81a59c'; // Change to your desired background color
-    });
-  };
+  function stringsToDate(dateValue, timeValue) {
+    const [year, month, day] = dateValue.split('-').map(Number);
+    const [hours, minutes] = timeValue.split(':').map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+  }
 
   async function populateCalendar() {
     const meetings = await props.getMeetings(props.room);
@@ -63,20 +82,6 @@ export default function SingleRoomColumnView(props) {
       },
     });
     calendar.render();
-  }
-
-  function dateToStrings(value){
-    console.log(value);
-    const [date, time] = value.split('T');
-    const [year, month, day] = date.split('-');
-    const formattedDate = `${year}-${parseInt(month)}-${parseInt(day)}`;
-    return {date: formattedDate, time: time};
-  }
-
-  function stringsToDate(dateValue, timeValue) {
-    const [year, month, day] = dateValue.split('-').map(Number);
-    const [hours, minutes] = timeValue.split(':').map(Number);
-    return new Date(year, month - 1, day, hours, minutes);
   }
 
   const handleCreateEvent = async () => {
@@ -112,7 +117,7 @@ export default function SingleRoomColumnView(props) {
     setStartTime("");
     setEndTime("");
     setSelectedInfo(null);
-  }
+  };
 
   const handleUpdateEvent = async () => {
     const startDate = dateToStrings(startTime);
@@ -156,7 +161,7 @@ export default function SingleRoomColumnView(props) {
     setOldStartTime("");
     setEndTime("");
     setSelectedEvent(null);
-  }
+  };
 
   const handleRemoveEvent = () => {
     const startDate = dateToStrings(startTime);
@@ -174,7 +179,51 @@ export default function SingleRoomColumnView(props) {
     setStartTime("");
     setEndTime("");
     setSelectedEvent(null);
-  }
+  };
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+    //setFileName(e.target.files[0].name);
+    setUploadComplete(false);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setError('Please select a file.');
+      return;
+    }
+  
+    try {
+      setUploading(true);
+  
+      // Generate a unique filename based on current timestamp and original filename
+      const generatedFileName = `${Date.now()}_${selectedFile.name}`;
+  
+      // Call the uploadFileToStorage function to upload the selected file
+      await uploadFileToStorage(selectedFile, generatedFileName);
+  
+      // Set uploadComplete to true after successful upload
+      setUploadComplete(true);
+  
+      // Log success message
+      console.log('File uploaded successfully.');
+  
+      // Reset error state if upload is successful
+      setError(null);
+    } catch (error) {
+      // Set error state if file upload fails
+      setError('Error uploading file.');
+      console.error('Error uploading file:', error);
+    } finally {
+      // Set uploading state back to false after upload completes (whether successful or not)
+      setUploading(false);
+    }
+  };
+  
+  const handleFileUpload = () => {
+    // Logic to handle file upload using handleUpload function
+    handleUpload(); // Call handleUpload function when upload button is clicked
+  };
 
   //Calendar creation
   useEffect(() => {
@@ -235,7 +284,7 @@ export default function SingleRoomColumnView(props) {
     return () => {
       newCalendar.destroy();
     };
-  }, []); // Empty dependency array to ensure the effect runs only once after component mounting
+  }, []);
 
   // Populate calendar after initialization
   useEffect(() => {
@@ -423,6 +472,16 @@ export default function SingleRoomColumnView(props) {
               }}
             />
           </div>
+          <div >
+            <input type="file" id="file" onChange={handleFileChange} />
+            <button onClick={handleFileUpload} disabled={uploading}>
+              
+              Upload
+            </button>
+            {error && <p>{error}</p>}
+            {uploading && <p>Uploading...</p>}
+            {uploadComplete && <p>Uploading finished!</p>}
+          </div>
           <div style={{marginTop: "20px"}}>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}
@@ -462,49 +521,18 @@ export default function SingleRoomColumnView(props) {
             padding: "20px",
             background: "white",
             borderRadius: "5px",
-            textAlign: "right"
+            textAlign: "left"
           }}
         >
           <h2 style={{ marginBottom: "20px" }}>Event Information</h2>
-          <div>
-            <label htmlFor="title">Title:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-            <input
-              type="text"
-              placeholder="Event Title"
-              style={{ marginBottom: "10px", width: "164px"}}
-              value={eventTitle}
-              disabled
-              onChange={(e) => setEventTitle(e.target.value)
-              }
-            />
+          <div style={{ marginBottom: "10px" }}>
+            <label htmlFor="title">Title: {eventTitle}</label>
           </div>
           <div style={{ marginBottom: "10px" }}>
-            <label htmlFor="startTime">Start Time:&nbsp;</label>
-            <input
-              type="datetime-local"
-              id="startTime"
-              style={{ marginLeft: "10px" }}
-              value={startTime}
-              disabled
-              onChange={(e) => {
-                const selectedHours = e.target.value.split(':')[0];
-                setStartTime(`${selectedHours}:00`);
-              }}  
-            />
+            <label htmlFor="startTime">Start Time:&nbsp;{startTime.split('T')[1]}</label>
           </div>
           <div style={{ marginBottom: "10px" }}>
-            <label htmlFor="endTime">End Time:</label>
-            <input
-              type="datetime-local"
-              id="endTime"
-              style={{ marginLeft: "14px" }}
-              value={endTime}
-              disabled
-              onChange={(e) => {
-                const selectedHours = e.target.value.split(':')[0];
-                setEndTime(`${selectedHours}:00`);
-              }}
-            />
+            <label htmlFor="endTime">End Time: {endTime.split('T')[1]}</label>
           </div>
           <div style={{marginTop: "20px"}}>
             <button

@@ -37,7 +37,9 @@ export default observer(function BookableRoomsPresenter(props) {
     props.model.firebaseInsert('users', user, startDate, startTime, "endTime", endTime, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "title", title, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "room", room, true);
-  }
+    props.model.firebaseInsert('users', user, startDate, startTime, "owner", user, true);
+    props.model.firebaseUpdateMeetingsField('users', user, startDate);
+  };
 
   const updateMeetingDB = async (event) => {
 
@@ -50,7 +52,7 @@ export default observer(function BookableRoomsPresenter(props) {
     console.log(oldEvent, newEvent);
     deleteMeetingDB(oldEvent);
     insertMeetingDB(newEvent);
-  }
+  };
 
   const deleteMeetingDB = async (event) => {
     const user = props.model.userState.user;
@@ -58,14 +60,19 @@ export default observer(function BookableRoomsPresenter(props) {
     const startDate = event.startDate;
     const startTime = event.startTime;
 
-    props.model.firebaseDelete('users', user, startDate, startTime);
+    await props.model.firebaseDelete('users', user, startDate, startTime);
     await props.model.firebaseDelete('rooms', room, startDate, startTime);
 
-    const meetingDates = await props.model.firebaseRead('rooms', room, startDate);
-    if(meetingDates.length === 0){
+    const roomMeetingDates = await props.model.firebaseRead('rooms', room, startDate);
+    if(roomMeetingDates.length === 0){
       props.model.firebaseRemoveFromMeetingsField('rooms', room, startDate);
     }
-  }
+
+    const userMeetingDates = await props.model.firebaseRead('users', user, startDate);
+    if(userMeetingDates.length === 0){
+      props.model.firebaseRemoveFromMeetingsField('users', user, startDate);
+    }
+  };
 
   const getMeetingsDB = async (room) => {
     while (props.model.userState.user === null) {
@@ -73,7 +80,7 @@ export default observer(function BookableRoomsPresenter(props) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    const result = await props.model.getRoomMeetingDates(room);
+    const result = await props.model.getMeetingDates("rooms", room);
 
     let meetings = [];
     if(result !== undefined){
@@ -94,7 +101,7 @@ export default observer(function BookableRoomsPresenter(props) {
       meetings = meetings.flat();
     }
     return meetings;
-  }
+  };
 
   function addToFavouritesACB(room) {
     props.model.modifyFavourites(room, true);
