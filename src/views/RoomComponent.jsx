@@ -9,6 +9,11 @@ function RoomComponent({
   alertMessage,
   showAlert,
   loggedIn,
+  user,
+  addMeeting,
+  updateMeeting,
+  deleteMeeting,
+  getMeetings
 }) {
   let loggedInVal = true;
 
@@ -169,7 +174,16 @@ function RoomComponent({
       <p>ID: {room.id}</p>
       <p>Seats: {room.seats}</p>
       <p>Available: {room.available}</p>
-      <div class="description">{/*<MyCalendarView></MyCalendarView>*/}</div>
+      <div class="description">
+        <MyCalendarView 
+          user={user}
+          addMeeting={addMeeting}
+          updateMeeting={updateMeeting}
+          deleteMeeting={deleteMeeting}
+          getMeetings={getMeetings}
+          room={room.id}
+        />
+      </div>
     </div>
   );
 }

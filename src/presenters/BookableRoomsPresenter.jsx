@@ -178,6 +178,11 @@ export default observer(function BookableRoomsPresenter(props) {
           showAlert={props.model.isShowAlert}
           loggedIn={props.model.userState.isLoggedIn}
           office={props.model.office}
+          addMeeting={insertMeetingDB}
+          user={props.model.userState}
+          updateMeeting={updateMeetingDB}
+          deleteMeeting={deleteMeetingDB}
+          getMeetings={getMeetingsDB}
         />
       )}
       {view && (

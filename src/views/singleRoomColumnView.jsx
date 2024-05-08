@@ -239,7 +239,7 @@ export default function SingleRoomColumnView(props) {
       aspectRatio: 0.5,
       selectable: true,
       slotLabelInterval: { hours: 0 },
-      slotDuration: '01:00:00',
+      slotDuration: '00:30:00',
       select: function (info) {
           if(!info.startStr.includes("T")){
           info.startStr += "T13:00:00+02:00";
@@ -269,7 +269,7 @@ export default function SingleRoomColumnView(props) {
           }
           const slotElements = calendarEl.querySelectorAll('tr');
           slotElements.forEach(slot => {
-            slot.style.height = '50px'; // Adjust the height as needed
+            slot.style.height = '25px'; // Adjust the height as needed
           });
           updateDayCellBackground();
       },
@@ -376,9 +376,18 @@ export default function SingleRoomColumnView(props) {
                 style={{ marginLeft: "10px" }}
                 value={startTime}
                 onChange={(e) => {
-                  const selectedHours = e.target.value.split(':')[0];
-                  setStartTime(`${selectedHours}:00`);
-                }}                
+                  const selectedTime = e.target.value;
+                  const selectedHours = selectedTime.split(':')[0];
+                  let selectedMinutes = selectedTime.split(':')[1];
+                  
+                  // Round the selected minutes to the nearest 30-minute interval
+                  selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                  
+                  // Pad the minutes with leading zeros if necessary
+                  selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+                
+                  setStartTime(`${selectedHours}:${selectedMinutes}`);
+                }}             
                 />
             </div>
             <div style={{ marginBottom: "10px" }}>
@@ -390,9 +399,18 @@ export default function SingleRoomColumnView(props) {
                 style={{ marginLeft: "14px" }}
                 value={endTime}
                 onChange={(e) => {
-                  const selectedHours = e.target.value.split(':')[0];
-                  setEndTime(`${selectedHours}:00`);
-                }}  
+                  const selectedTime = e.target.value;
+                  const selectedHours = selectedTime.split(':')[0];
+                  let selectedMinutes = selectedTime.split(':')[1];
+                  
+                  // Round the selected minutes to the nearest 30-minute interval
+                  selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                  
+                  // Pad the minutes with leading zeros if necessary
+                  selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+                
+                  setEndTime(`${selectedHours}:${selectedMinutes}`);
+                }}
               />
             </div>
             <div style={{marginTop: "20px"}}>
@@ -449,14 +467,23 @@ export default function SingleRoomColumnView(props) {
               style={{ marginLeft: "10px" }}
               value={startTime}
               onChange={(e) => {
-                const selectedHours = e.target.value.split(':')[0];
                 if (selectedEvent) {
                   const timezoneOffset = selectedEvent.start.getTimezoneOffset();
                   const adjustedStartDate = new Date(selectedEvent.start.getTime() - timezoneOffset * 60000);
                   const adjustedStartDateISO = adjustedStartDate.toISOString().slice(0, 16);
                   setOldStartTime(adjustedStartDateISO);                  
                 }
-                setStartTime(`${selectedHours}:00`);
+                const selectedTime = e.target.value;
+                const selectedHours = selectedTime.split(':')[0];
+                let selectedMinutes = selectedTime.split(':')[1];
+                
+                // Round the selected minutes to the nearest 30-minute interval
+                selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                
+                // Pad the minutes with leading zeros if necessary
+                selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+              
+                setStartTime(`${selectedHours}:${selectedMinutes}`);
               }}  
             />
           </div>
@@ -468,8 +495,17 @@ export default function SingleRoomColumnView(props) {
               style={{ marginLeft: "14px" }}
               value={endTime}
               onChange={(e) => {
-                const selectedHours = e.target.value.split(':')[0];
-                setEndTime(`${selectedHours}:00`);
+                const selectedTime = e.target.value;
+                const selectedHours = selectedTime.split(':')[0];
+                let selectedMinutes = selectedTime.split(':')[1];
+                
+                // Round the selected minutes to the nearest 30-minute interval
+                selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                
+                // Pad the minutes with leading zeros if necessary
+                selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+              
+                setEndTime(`${selectedHours}:${selectedMinutes}`);
               }}
             />
           </div>

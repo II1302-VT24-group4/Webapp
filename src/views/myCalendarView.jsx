@@ -11,6 +11,7 @@ export default function MyCalendarView(props) {
   
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
+  const [selectedInfo, setSelectedInfo] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventTitle, setEventTitle] = useState(""); // State to hold event title
   const [startTime, setStartTime] = useState(""); // State to hold start time
@@ -76,6 +77,41 @@ export default function MyCalendarView(props) {
     });
     calendar.render();
   }
+
+  const handleCreateEvent = async () => {
+    const startDate = dateToStrings(startTime);
+    const endDate = dateToStrings(endTime);
+    const owner = props.user.user;
+    const eventData = {
+      title: eventTitle,
+      startDate: startDate.date,
+      startTime: startDate.time,
+      endDate: endDate.date,
+      endTime: endDate.time,
+      room: props.room,
+      owner: owner
+    };
+
+    if(await isOverlapping(eventData)){
+      alert("event is overlapping another event");
+    }
+    else{
+      const id = await props.addMeeting(eventData);
+      const startDateObj = new Date(startTime);
+      const endDateObj = new Date(endTime);
+      createEvent(
+        eventTitle,
+        startDateObj,
+        endDateObj,
+        owner,
+        id
+      );
+    }
+    setEventTitle("");
+    setStartTime("");
+    setEndTime("");
+    setSelectedInfo(null);
+  };
 
   const handleUpdateEvent = async () => {
     const startDate = dateToStrings(startTime);
@@ -195,7 +231,17 @@ export default function MyCalendarView(props) {
       allDaySlot: false,
       slotMinTime: "06:00:00", // Show slots starting from 6 AM
       slotMaxTime: "21:00:00", // Show slots until 9 PM
-      selectable: true, // Enable selection
+      selectable: props.room !== undefined, // Enable selection
+      select: function (info) {
+        if (!info.startStr.includes("T")) {
+          info.startStr += "T13:00:00+02:00";
+        }
+        if (!info.endStr.includes("T")) {
+          info.endStr += "T14:00:00+02:00";
+        }
+        info.allDay = false;
+        setSelectedInfo(info);
+      },
       eventClick: function (event) {
         setSelectedEvent(event.event);
       },
@@ -236,9 +282,112 @@ export default function MyCalendarView(props) {
     }
   }, [selectedEvent]);
 
+  // Initialize startTime and endTime with the times from selectedInfo, if available, and set their constants for use when creating event
+  useEffect(() => {
+    if (selectedInfo) {
+      const startTimeStr = new Date(selectedInfo.start.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      setStartTime(startTimeStr);
+      
+      const endTimeStr = new Date(selectedInfo.end.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      setEndTime(endTimeStr);
+    }
+  }, [selectedInfo]);
+
   return (
     <div style={{ width: "98%", margin: "5" }}>
       <div ref={calendarRef} />
+      {selectedInfo && (
+        <Popup
+          open={selectedInfo !== null}
+          onClose={() => {
+            setSelectedInfo(null);
+            setEventTitle(""); // Reset event title input
+          }}
+          modal
+          closeOnDocumentClick
+        >
+          <div
+            style={{
+              padding: "20px",
+              background: "white",
+              borderRadius: "5px",
+              textAlign: "right"
+            }}
+          >
+            <h2 style={{ marginBottom: "20px" }}>Create Event</h2>
+            <div>
+              <label htmlFor="title">Title:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+              <input
+                office="text"
+                placeholder="Event Title"
+                style={{ marginBottom: "10px", width: "164px"}}
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+              />
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              <label htmlFor="startTime">Start Time:&nbsp;</label>
+              <input
+                type="datetime-local"
+                office="time"
+                id="startTime"
+                style={{ marginLeft: "10px" }}
+                value={startTime}
+                onChange={(e) => {
+                  const selectedTime = e.target.value;
+                  const selectedHours = selectedTime.split(':')[0];
+                  let selectedMinutes = selectedTime.split(':')[1];
+                  
+                  // Round the selected minutes to the nearest 30-minute interval
+                  selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                  
+                  // Pad the minutes with leading zeros if necessary
+                  selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+                
+                  setStartTime(`${selectedHours}:${selectedMinutes}`);
+                }}                
+                />
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              <label htmlFor="endTime">End Time:</label>
+              <input
+                type="datetime-local"
+                office="time"
+                id="endTime"
+                style={{ marginLeft: "14px" }}
+                value={endTime}
+                onChange={(e) => {
+                  const selectedTime = e.target.value;
+                  const selectedHours = selectedTime.split(':')[0];
+                  let selectedMinutes = selectedTime.split(':')[1];
+                  
+                  // Round the selected minutes to the nearest 30-minute interval
+                  selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                  
+                  // Pad the minutes with leading zeros if necessary
+                  selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+                
+                  setEndTime(`${selectedHours}:${selectedMinutes}`);
+                }}  
+              />
+            </div>
+            <div style={{marginTop: "20px"}}>
+              <button
+                style={{ marginRight: "80px", backgroundColor: "white" }}
+                onClick={() => setSelectedInfo(null)}
+              >
+                Cancel
+              </button>
+              <button
+                style={{ marginRight:"20px", backgroundColor: "white" }}
+                onClick={handleCreateEvent}
+              >
+                Save Event
+              </button>
+            </div>
+          </div>
+        </Popup>
+      )}
       {selectedEvent && props.user.user == selectedEvent.extendedProps.owner && (
         <Popup
         open={selectedEvent !== null}
@@ -276,14 +425,23 @@ export default function MyCalendarView(props) {
               style={{ marginLeft: "10px" }}
               value={startTime}
               onChange={(e) => {
-                const selectedHours = e.target.value.split(':')[0];
                 if (selectedEvent) {
                   const timezoneOffset = selectedEvent.start.getTimezoneOffset();
                   const adjustedStartDate = new Date(selectedEvent.start.getTime() - timezoneOffset * 60000);
                   const adjustedStartDateISO = adjustedStartDate.toISOString().slice(0, 16);
                   setOldStartTime(adjustedStartDateISO);                  
                 }
-                setStartTime(`${selectedHours}:00`);
+                const selectedTime = e.target.value;
+                const selectedHours = selectedTime.split(':')[0];
+                let selectedMinutes = selectedTime.split(':')[1];
+                
+                // Round the selected minutes to the nearest 30-minute interval
+                selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                
+                // Pad the minutes with leading zeros if necessary
+                selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+              
+                setStartTime(`${selectedHours}:${selectedMinutes}`);
               }}  
             />
           </div>
@@ -295,8 +453,17 @@ export default function MyCalendarView(props) {
               style={{ marginLeft: "14px" }}
               value={endTime}
               onChange={(e) => {
-                const selectedHours = e.target.value.split(':')[0];
-                setEndTime(`${selectedHours}:00`);
+                const selectedTime = e.target.value;
+                const selectedHours = selectedTime.split(':')[0];
+                let selectedMinutes = selectedTime.split(':')[1];
+                
+                // Round the selected minutes to the nearest 30-minute interval
+                selectedMinutes = Math.round(selectedMinutes / 30) * 30;
+                
+                // Pad the minutes with leading zeros if necessary
+                selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
+              
+                setEndTime(`${selectedHours}:${selectedMinutes}`);
               }}
             />
           </div>

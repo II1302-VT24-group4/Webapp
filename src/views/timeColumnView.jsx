@@ -26,7 +26,8 @@ export default function TimeColumnView(props) {
             minute: '2-digit',
             hour12: false // Ensure 24-hour time format
         },
-        slotDuration: '01:00:00',
+        slotLabelInterval: { hours: 0.5 },
+        slotDuration: '00:30:00',
         headerToolbar: {
         left: "",
         center: "title",
@@ -41,7 +42,7 @@ export default function TimeColumnView(props) {
             }
             const slotElements = calendarEl.querySelectorAll('tr');
             slotElements.forEach(slot => {
-              slot.style.height = '50px'; // Adjust the height as needed
+              slot.style.height = '25px'; // Adjust the height as needed
             });
         }
       });

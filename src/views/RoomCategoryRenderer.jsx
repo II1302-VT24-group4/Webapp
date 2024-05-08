@@ -1,3 +1,4 @@
+import { update } from "firebase/database";
 import RoomComponent from "/src/views/RoomComponent.jsx";
 
 export function renderCategory({
@@ -10,6 +11,11 @@ export function renderCategory({
   onModifyRoomListACB,
   loggedIn,
   viewButtonText,
+  user,
+  addMeeting,
+  updateMeeting,
+  deleteMeeting,
+  getMeetings,
 }) {
   function getCategoryDisplayName(categoryName) {
     return categoryName; 
@@ -32,6 +38,11 @@ export function renderCategory({
               alertMessage={alertMessage}
               showAlert={showAlert}
               loggedIn={loggedIn}
+              user={user}
+              addMeeting={addMeeting}
+              updateMeeting={updateMeeting}
+              deleteMeeting={deleteMeeting}
+              getMeetings={getMeetings}
             />
           ))
         ) : (

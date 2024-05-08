@@ -80,6 +80,11 @@ export default function BookableRoomsView(props) {
             onViewACB,
             onModifyRoomListACB,
             loggedIn: props.loggedIn,
+            user: props.user,
+            addMeeting: props.addMeeting,
+            updateMeeting: props.updateMeeting,
+            deleteMeeting: props.deleteMeeting,
+            getMeetings: props.getMeetings,
           })
       )}
 
