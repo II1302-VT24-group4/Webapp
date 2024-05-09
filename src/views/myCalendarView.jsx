@@ -20,7 +20,7 @@ export default function MyCalendarView(props) {
   const [file, setFile] = useState(null); // State to hold uploaded file
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null); // State for error message during upload
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [room, setRoom] = useState("");
 
@@ -178,45 +178,43 @@ export default function MyCalendarView(props) {
   };
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-    //setFileName(e.target.files[0].name);
+    const filesArray = Array.from(e.target.files);
+    setSelectedFiles([...selectedFiles, ...filesArray]);
     setUploadComplete(false);
   };
 
+  
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select a file.');
+    if (selectedFiles.length === 0) {
+      setError("Please select at least one file.");
       return;
     }
-  
+
     try {
       setUploading(true);
-  
-      // Generate a unique filename based on current timestamp and original filename
-      const generatedFileName = `${Date.now()}_${selectedFile.name}`;
-      const date = dateToStrings(startTime);
 
-      // Call the uploadFileToStorage function to upload the selected file
-      await uploadFileToStorage(selectedFile, generatedFileName, room, date.date, date.time);
-  
-      // Set uploadComplete to true after successful upload
+      // Iterate over each selected file and upload
+      await Promise.all(
+        selectedFiles.map(async (file) => {
+          const generatedFileName = `${Date.now()}_${file.name}`;
+          const date = dateToStrings(startTime);
+
+          // Call upload function for each file
+          await uploadFileToStorage(file, generatedFileName, room, date.date, date.time);
+        })
+      );
+
       setUploadComplete(true);
-  
-      // Log success message
-      console.log('File uploaded successfully.');
-  
-      // Reset error state if upload is successful
-      setError(null);
-    } catch (error) {
-      // Set error state if file upload fails
-      setError('Error uploading file.');
-      console.error('Error uploading file:', error);
+      setError(null); // Reset error state
+      setSelectedFiles([]); // Clear selected files after upload
+      console.log("Files uploaded successfully.");
+    } catch (err) {
+      setError("Error uploading file(s).");
+      console.error("Error uploading file(s):", err);
     } finally {
-      // Set uploading state back to false after upload completes (whether successful or not)
       setUploading(false);
     }
   };
-  
   const handleFileUpload = () => {
     // Logic to handle file upload using handleUpload function
     handleUpload(); // Call handleUpload function when upload button is clicked
@@ -292,6 +290,16 @@ export default function MyCalendarView(props) {
       setEndTime(endTimeStr);
     }
   }, [selectedInfo]);
+
+  const renderFileList = () => {
+    return (
+      <ul>
+        {selectedFiles.map((file, index) => (
+          <li key={index}>{file.name}</li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
     <div style={{ width: "98%", margin: "5" }}>
@@ -468,7 +476,7 @@ export default function MyCalendarView(props) {
             />
           </div>
           <div style={{ textAlign: "left", marginBottom: "10px" }}>
-            Files:
+            Download Files:
             {selectedEvent.extendedProps.downloads.map((download, index) => (
               <div key={index}>
                 <a href={download.downloadURL} download={download.name}>
@@ -478,15 +486,20 @@ export default function MyCalendarView(props) {
             ))}
           </div>
           <div>
-            <input type="file" id="file" onChange={handleFileChange} />
-            <button onClick={handleFileUpload} disabled={uploading}>
-              
-              Upload
-            </button>
-            {error && <p>{error}</p>}
-            {uploading && <p>Uploading...</p>}
-            {uploadComplete && <p>Uploading finished!</p>}
-          </div>
+        <input type="file" id="file" onChange={handleFileChange} multiple />
+        <button onClick={handleFileUpload} disabled={uploading || selectedFiles.length === 0}>
+          Upload
+        </button>
+        {error && <p>{error}</p>}
+        {uploading && <p>Uploading...</p>}
+        {uploadComplete && <p>Uploading finished!</p>}
+      </div>
+      {selectedFiles.length > 0 && (
+        <div style={{ textAlign: "left", marginBottom: "10px" }}>
+          Selected Files:
+          {renderFileList()}
+        </div>
+        )}
           <div style={{marginTop: "20px"}}>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}

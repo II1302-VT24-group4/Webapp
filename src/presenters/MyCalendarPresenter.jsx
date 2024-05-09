@@ -67,7 +67,7 @@ const MyCalendarPresenter = observer((props) => {
       for(const date of result){
         const meetingDataArray = await props.model.firebaseRead('users', user, date.id);
         for (const meetingData of meetingDataArray) {
-          const downloads = await props.model.firebaseGetFiles(meetingData.room, date, meetingData.id);
+          const downloads = await props.model.firebaseGetFiles(meetingData.room, date.id, meetingData.id);
           const meetingUpdated = {
               startDate: date.id,
               startTime: meetingData.id,
