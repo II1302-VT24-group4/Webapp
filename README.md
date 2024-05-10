@@ -24,6 +24,8 @@ npm install reactjs-popup
 
 npm install react-beautiful-dnd --save
 
+npm install react-datepicker
+
 now to run the program, run the following command in the console
 
 npm run dev

@@ -6,6 +6,8 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import Popup from "reactjs-popup";
 import { uploadFileToStorage } from "../firebaseModel";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 
 export default function MyCalendarView(props) {
   
@@ -23,6 +25,7 @@ export default function MyCalendarView(props) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [room, setRoom] = useState("");
+  const [confirmationPopup, setConfirmationPopup] = useState("");
 
   const [calendarInitialized, setCalendarInitialized] = useState(false);
 
@@ -49,15 +52,32 @@ export default function MyCalendarView(props) {
     return new Date(year, month - 1, day, hours, minutes);
   }
 
+  function formatDateTime(dateString) {
+    const dateObject = new Date(dateString);
+
+    // Extract the date components
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObject.getDate()).padStart(2, '0');
+
+    // Extract the time components
+    const hours = String(dateObject.getHours()).padStart(2, '0');
+    const minutes = String(dateObject.getMinutes()).padStart(2, '0');
+
+    // Combine date and time components to form the desired format
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+    return formattedDateTime;
+}
+
   async function populateCalendar() {
-    const meetings = await props.getMeetings(props.room);
+    const meetings = await props.getMeetings(props.id);
     if(meetings.length !== 0){
       for (const meeting of meetings) {
         const title = meeting.title;
         const startDate = stringsToDate(meeting.startDate, meeting.startTime);
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const owner = meeting.owner;
-        const room = meeting.room;
+        const room = meeting.room !== undefined ? meeting.room : props.id;
         const downloads = meeting.downloads;
         createEvent(title, startDate, endDate, owner, room, downloads);
       }
@@ -88,7 +108,7 @@ export default function MyCalendarView(props) {
       startTime: startDate.time,
       endDate: endDate.date,
       endTime: endDate.time,
-      room: props.room,
+      id: props.id !== undefined ? props.id : room,
       owner: owner
     };
 
@@ -133,7 +153,7 @@ export default function MyCalendarView(props) {
       startTime: startDate.time,
       endDate: endDate.date,
       endTime: endDate.time,
-      room: room,
+      id: props.id !== undefined ? props.id : room,
       owner: owner
     };
 
@@ -162,7 +182,7 @@ export default function MyCalendarView(props) {
     const startDate = dateToStrings(startTime);
     
     const eventData = {
-      room: room,
+      id: props.id !== undefined ? props.id : room,
       startDate: startDate.date,
       startTime: startDate.time
     };
@@ -183,7 +203,6 @@ export default function MyCalendarView(props) {
     setUploadComplete(false);
   };
 
-  
   const handleUpload = async () => {
     if (selectedFiles.length === 0) {
       setError("Please select at least one file.");
@@ -215,6 +234,7 @@ export default function MyCalendarView(props) {
       setUploading(false);
     }
   };
+
   const handleFileUpload = () => {
     // Logic to handle file upload using handleUpload function
     handleUpload(); // Call handleUpload function when upload button is clicked
@@ -229,7 +249,7 @@ export default function MyCalendarView(props) {
       allDaySlot: false,
       slotMinTime: "06:00:00", // Show slots starting from 6 AM
       slotMaxTime: "21:00:00", // Show slots until 9 PM
-      selectable: props.room !== undefined, // Enable selection
+      selectable: props.id !== undefined, // Enable selection
       select: function (info) {
         if (!info.startStr.includes("T")) {
           info.startStr += "T13:00:00+02:00";
@@ -308,8 +328,10 @@ export default function MyCalendarView(props) {
         <Popup
           open={selectedInfo !== null}
           onClose={() => {
-            setSelectedInfo(null);
-            setEventTitle(""); // Reset event title input
+            if(confirmationPopup === ""){
+              setSelectedInfo(null);
+              setEventTitle(""); // Reset event title input
+            }
           }}
           modal
           closeOnDocumentClick
@@ -335,49 +357,29 @@ export default function MyCalendarView(props) {
             </div>
             <div style={{ marginBottom: "10px" }}>
               <label htmlFor="startTime">Start Time:&nbsp;</label>
-              <input
-                type="datetime-local"
-                office="time"
-                id="startTime"
-                style={{ marginLeft: "10px" }}
-                value={startTime}
-                onChange={(e) => {
-                  const selectedTime = e.target.value;
-                  const selectedHours = selectedTime.split(':')[0];
-                  let selectedMinutes = selectedTime.split(':')[1];
-                  
-                  // Round the selected minutes to the nearest 30-minute interval
-                  selectedMinutes = Math.round(selectedMinutes / 30) * 30;
-                  
-                  // Pad the minutes with leading zeros if necessary
-                  selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
-                
-                  setStartTime(`${selectedHours}:${selectedMinutes}`);
-                }}                
+              {startTime && (
+                <DatePicker
+                  selected={new Date(startTime)}
+                  onChange={(date) => setStartTime(formatDateTime(date))}
+                  showTimeSelect
+                  timeIntervals={30}
+                  timeFormat="HH:mm"
+                  dateFormat="yyyy-MM-dd HH:mm"
                 />
+              )}
             </div>
             <div style={{ marginBottom: "10px" }}>
               <label htmlFor="endTime">End Time:</label>
-              <input
-                type="datetime-local"
-                office="time"
-                id="endTime"
-                style={{ marginLeft: "14px" }}
-                value={endTime}
-                onChange={(e) => {
-                  const selectedTime = e.target.value;
-                  const selectedHours = selectedTime.split(':')[0];
-                  let selectedMinutes = selectedTime.split(':')[1];
-                  
-                  // Round the selected minutes to the nearest 30-minute interval
-                  selectedMinutes = Math.round(selectedMinutes / 30) * 30;
-                  
-                  // Pad the minutes with leading zeros if necessary
-                  selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
-                
-                  setEndTime(`${selectedHours}:${selectedMinutes}`);
-                }}  
-              />
+              {endTime && (
+                <DatePicker
+                  selected={new Date(endTime)}
+                  onChange={(date) => setEndTime(formatDateTime(date))}
+                  showTimeSelect
+                  timeIntervals={30}
+                  timeFormat="HH:mm"
+                  dateFormat="yyyy-MM-dd HH:mm"
+                />
+              )}
             </div>
             <div style={{marginTop: "20px"}}>
               <button
@@ -388,7 +390,9 @@ export default function MyCalendarView(props) {
               </button>
               <button
                 style={{ marginRight:"20px", backgroundColor: "white" }}
-                onClick={handleCreateEvent}
+                onClick={() => {
+                  setConfirmationPopup("create");
+                }}
               >
                 Save Event
               </button>
@@ -400,7 +404,9 @@ export default function MyCalendarView(props) {
         <Popup
         open={selectedEvent !== null}
         onClose={() => {
-          setSelectedEvent(null);
+          if(confirmationPopup === ""){
+            setSelectedEvent(null);
+          }
         }}
         modal
         closeOnDocumentClick
@@ -427,53 +433,29 @@ export default function MyCalendarView(props) {
           </div>
           <div style={{ marginBottom: "10px" }}>
             <label htmlFor="startTime">Start Time:&nbsp;</label>
-            <input
-              type="datetime-local"
-              id="startTime"
-              style={{ marginLeft: "10px" }}
-              value={startTime}
-              onChange={(e) => {
-                if (selectedEvent) {
-                  const timezoneOffset = selectedEvent.start.getTimezoneOffset();
-                  const adjustedStartDate = new Date(selectedEvent.start.getTime() - timezoneOffset * 60000);
-                  const adjustedStartDateISO = adjustedStartDate.toISOString().slice(0, 16);
-                  setOldStartTime(adjustedStartDateISO);                  
-                }
-                const selectedTime = e.target.value;
-                const selectedHours = selectedTime.split(':')[0];
-                let selectedMinutes = selectedTime.split(':')[1];
-                
-                // Round the selected minutes to the nearest 30-minute interval
-                selectedMinutes = Math.round(selectedMinutes / 30) * 30;
-                
-                // Pad the minutes with leading zeros if necessary
-                selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
-              
-                setStartTime(`${selectedHours}:${selectedMinutes}`);
-              }}  
-            />
+            {startTime && (
+              <DatePicker
+                selected={new Date(startTime)}
+                onChange={(date) => setStartTime(formatDateTime(date))}
+                showTimeSelect
+                timeIntervals={30}
+                timeFormat="HH:mm"
+                dateFormat="yyyy-MM-dd HH:mm"
+              />
+            )}
           </div>
           <div style={{ marginBottom: "10px" }}>
             <label htmlFor="endTime">End Time:</label>
-            <input
-              type="datetime-local"
-              id="endTime"
-              style={{ marginLeft: "14px" }}
-              value={endTime}
-              onChange={(e) => {
-                const selectedTime = e.target.value;
-                const selectedHours = selectedTime.split(':')[0];
-                let selectedMinutes = selectedTime.split(':')[1];
-                
-                // Round the selected minutes to the nearest 30-minute interval
-                selectedMinutes = Math.round(selectedMinutes / 30) * 30;
-                
-                // Pad the minutes with leading zeros if necessary
-                selectedMinutes = selectedMinutes < 10 ? `0${selectedMinutes}` : selectedMinutes;
-              
-                setEndTime(`${selectedHours}:${selectedMinutes}`);
-              }}
-            />
+            {endTime && (
+              <DatePicker
+                selected={new Date(endTime)}
+                onChange={(date) => setEndTime(formatDateTime(date))}
+                showTimeSelect
+                timeIntervals={30}
+                timeFormat="HH:mm"
+                dateFormat="yyyy-MM-dd HH:mm"
+              />
+            )}
           </div>
           <div style={{ textAlign: "left", marginBottom: "10px" }}>
             Download Files:
@@ -511,13 +493,17 @@ export default function MyCalendarView(props) {
             </button>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}
-              onClick={handleRemoveEvent}
+              onClick={() => {
+                setConfirmationPopup("remove");
+              }}
             >
               Remove
             </button>
             <button
               style={{ marginRight: "10px", backgroundColor: "white" }}
-              onClick={handleUpdateEvent}
+              onClick={() => {
+                setConfirmationPopup("update");
+              }}
             >
               Confirm
             </button>
@@ -565,6 +551,54 @@ export default function MyCalendarView(props) {
         </div>
       </Popup>
       }
+      {confirmationPopup && (
+        <Popup
+          open={confirmationPopup !== null}
+          onClose={() => {
+            setConfirmationPopup(null);
+          }}
+          modal
+          closeOnDocumentClick
+        >
+          <div
+            style={{
+              padding: "20px",
+              background: "white",
+              borderRadius: "5px",
+              textAlign: "right"
+            }}
+          >
+            <h2 style={{ marginBottom: "20px" }}>Are you sure?</h2>
+            <div style={{ marginTop: "20px" }}>
+              <button
+                style={{ marginRight: "35px", backgroundColor: "white" }}
+                onClick={() => {
+                  setConfirmationPopup(null);
+                }}
+              >
+                No
+              </button>
+              <button
+                style={{ marginRight: "10px", backgroundColor: "white" }}
+                onClick={() => {
+                  if (confirmationPopup === "remove") {
+                    handleRemoveEvent();
+                  } 
+                  else if (confirmationPopup === "update") {
+                    handleUpdateEvent();
+                  }
+                  else if (confirmationPopup === "create") {
+                    handleCreateEvent();
+                  }
+                  setConfirmationPopup("");
+                }}
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </Popup>
+      )}
     </div>
   );
 }

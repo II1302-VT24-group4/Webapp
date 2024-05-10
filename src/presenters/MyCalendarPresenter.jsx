@@ -6,19 +6,21 @@ const MyCalendarPresenter = observer((props) => {
 
   const insertMeetingDB = async (event) => {
     const user = props.model.userState.user;
-    const room = event.room;
+    const room = event.id;
     const startDate = event.startDate;
     const startTime = event.startTime;
     const endDate = event.endDate;
     const endTime = event.endTime;
     const title = event.title;
 
+    props.model.firebaseInsert('rooms', room, startDate, startTime, "startTime", startTime, true);
     props.model.firebaseInsert('rooms', room, startDate, startTime, "endDate", endDate, true);
     props.model.firebaseInsert('rooms', room, startDate, startTime, "endTime", endTime, true);
     props.model.firebaseInsert('rooms', room, startDate, startTime, "title", title, true);
     props.model.firebaseInsert('rooms', room, startDate, startTime, "owner", user, true);
     props.model.firebaseInsert('rooms', room, 'meetingIndex', startDate, null, null, true);
 
+    props.model.firebaseInsert('users', user, startDate, startTime, "startTime", startTime, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "endDate", endDate, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "endTime", endTime, true);
     props.model.firebaseInsert('users', user, startDate, startTime, "title", title, true);
@@ -32,7 +34,7 @@ const MyCalendarPresenter = observer((props) => {
     const oldEvent = {
       startDate: event.oldStartDate,
       startTime: event.oldStartTime,
-      room: event.room
+      room: event.id
     };
     const {oldStartDate, oldStartTime, ...newEvent } = event;
     await deleteMeetingDB(oldEvent);
@@ -41,7 +43,7 @@ const MyCalendarPresenter = observer((props) => {
 
   const deleteMeetingDB = async (event) => {
     const user = props.model.userState.user;
-    const room = event.room;
+    const room = event.id;
     const startDate = event.startDate;
     const startTime = event.startTime;
 
