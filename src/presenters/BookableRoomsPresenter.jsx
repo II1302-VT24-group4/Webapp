@@ -3,8 +3,10 @@ import BookableRoomsView from "/src/views/BookableRoomsView";
 import React, { useEffect, useState } from 'react';
 import SingleRoomColumnView from "../views/singleRoomColumnView.jsx";
 import TimeColumnView from "../views/timeColumnView.jsx";
+import {dbUsers} from "/src/firebaseModel";
 
 export default observer(function BookableRoomsPresenter(props) {
+  //console.log(dbUsers);
   const [view, setView] = useState(true);
 
   let timeColumn = null;
@@ -186,6 +188,7 @@ export default observer(function BookableRoomsPresenter(props) {
           updateMeeting={updateMeetingDB}
           deleteMeeting={deleteMeetingDB}
           getMeetings={getMeetingsDB}
+          users = {dbUsers}
         />
       )}
       {view && (

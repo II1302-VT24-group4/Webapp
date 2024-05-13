@@ -1,13 +1,19 @@
 import { renderCategory } from "./RoomCategoryRenderer";
 import BookableRoomsPresenter from "/src/presenters/BookableRoomsPresenter";
+import {dbUsers} from "/src/firebaseModel";
+
 
 export default function BookableRoomsView(props) {
+  console.log(props.users);
+  
+  
   function scrollToCategoryRoom(categoryId) {
     const element = document.getElementById(categoryId);
     if (element) {
       element.scrollIntoView();
     }
   }
+  
 
   function scrollToTop() {
     window.scrollTo({
@@ -50,6 +56,7 @@ export default function BookableRoomsView(props) {
   }
 
   return (
+    
     <main>
       <div class="Alert_content">
         {props.showAlert?.alert && (

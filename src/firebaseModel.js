@@ -80,6 +80,16 @@ export const dbRooms = roomsData.docs.map((doc) => ({
   ...doc.data(),
 }));
 
+// Get all users in the system
+const usersRef = collection(db, "users");
+const usersData = await getDocs(usersRef);
+export const dbUsers = usersData.docs.map((doc) => ({
+  id: doc.id,
+  ...doc.data(),
+}));
+//console.log(dbUsers);
+
+
 // Adding documents test
 // Add a new document in collection "cities"
 
