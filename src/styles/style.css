@@ -504,6 +504,10 @@ main {
   min-height: max(4vw, 50px);
 }
 
+.react-datepicker{
+  width: 327px;
+}
+
 .links-nav-section {
   display: flex;
   justify-content: center;

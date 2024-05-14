@@ -270,7 +270,7 @@ export default {
       available: item.available,
       office: item.office,
     };
-    console.log(item.available);
+    //console.log(item.available);
     let counter = 1;
 
     this.imageHolder = {};

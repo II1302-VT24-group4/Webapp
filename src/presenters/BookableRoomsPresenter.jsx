@@ -5,9 +5,10 @@ import SingleRoomColumnView from "../views/singleRoomColumnView.jsx";
 import TimeColumnView from "../views/timeColumnView.jsx";
 import { dbUsers } from "/src/firebaseModel";
 
-export default observer(function BookableRoomsPresenter(props) {
+const BookableRoomsPresenter = observer((props) => {
   //console.log(dbUsers);
   const [view, setView] = useState(true);
+  const [showAvailableRooms, setShowAvailableRooms] = useState(false); // State to track whether checkbox is checked
 
   let timeColumn = null;
   let calendars = null;
@@ -206,6 +207,7 @@ export default observer(function BookableRoomsPresenter(props) {
           date.id
         );
         for (const meetingData of meetingDataArray) {
+          const downloads = await props.model.firebaseGetFiles(room, date.id, meetingData.id);
           const meetingUpdated = {
             startDate: date.id,
             startTime: meetingData.id,
@@ -213,6 +215,7 @@ export default observer(function BookableRoomsPresenter(props) {
             endTime: meetingData.endTime,
             title: meetingData.title,
             owner: meetingData.owner,
+            downloads: downloads
           };
           meetings.push(meetingUpdated);
         }
@@ -239,7 +242,12 @@ export default observer(function BookableRoomsPresenter(props) {
       props.model.getRooms();
     }
   }, [props.model.searchResultsPromiseState.data]);
-
+  
+  timeColumn = (
+    <div style={{ flex: "0 0 auto", marginRight: "20px", marginTop: "20px" }}>
+      <TimeColumnView date={date} />
+    </div>
+  );
   if (!props.model.searchDone.done) {
     return (
       <div className="loading-bar-image">
@@ -247,14 +255,7 @@ export default observer(function BookableRoomsPresenter(props) {
       </div>
     );
   }
-
-  timeColumn = (
-    <div style={{ flex: "0 0 auto", marginRight: "20px", marginTop: "20px" }}>
-      <TimeColumnView date={date} />
-    </div>
-  );
-
-  if (props.model.searchDone.done) {
+  else{
     calendars = Object.entries(props.model.officeList).map(
       ([officeName, rooms]) => (
         <div key={officeName}>
@@ -266,7 +267,10 @@ export default observer(function BookableRoomsPresenter(props) {
               marginLeft: "10px",
             }}
           >
-            {rooms.map((room, index) => (
+          {rooms.map((room, index) => (
+            (showAvailableRooms && !room.available) ? ( // Check both room availability and checkbox state
+              null
+            ) : (
               <div
                 key={`${officeName}-${index}`}
                 style={{ display: "inline-block", minWidth: "100px" }}
@@ -281,9 +285,11 @@ export default observer(function BookableRoomsPresenter(props) {
                   name={room.name}
                   date={date}
                   seats={room.seats}
+                  available={room.available}
                 />
               </div>
-            ))}
+            )
+          ))}
           </div>
         </div>
       )
@@ -321,6 +327,12 @@ export default observer(function BookableRoomsPresenter(props) {
         `}
       </style>
       <div className="sub-menu">
+        <input
+          type="checkbox"
+          id="showAvailableCheckbox"
+          onChange={() => setShowAvailableRooms(!showAvailableRooms)}
+        />
+        <label>Show currently available rooms</label>
         <div className="room-grid">
           <button
             onClick={() => setView(true)}
@@ -355,7 +367,6 @@ export default observer(function BookableRoomsPresenter(props) {
           />
         </div>
       </div>
-
       {!view && (
         <BookableRoomsView
           onSearchQuery={setSearchQuery}
@@ -374,6 +385,7 @@ export default observer(function BookableRoomsPresenter(props) {
           deleteMeeting={deleteMeetingDB}
           getMeetings={getMeetingsDB}
           users={dbUsers}
+          showAvailableRooms={showAvailableRooms}
         />
       )}
       {view && (
@@ -391,3 +403,5 @@ export default observer(function BookableRoomsPresenter(props) {
     </div>
   );
 });
+
+export default BookableRoomsPresenter;

@@ -225,7 +225,7 @@ export function googleSignInOut(model) {
     model.user = fbUserChunk.user.uid;
     model.isLoggedIn = true;
     //console.log(model)
-    window.location.hash = "#/home";
+    window.location.hash = "#/myCalendar";
     //console.log("Successful login! Welcome "+auth.currentUser.email);
 
     //create a new user entry in database

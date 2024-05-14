@@ -77,16 +77,18 @@ export default function CalendarInGridView(props) {
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const id = meeting.id;
         const owner = meeting.owner;
-        createEvent(title, startDate, endDate, owner, id);
+        const downloads = meeting.downloads;
+        createEvent(title, startDate, endDate, owner, id, downloads);
       }
     }
   }
 
-  function createEvent(title, startDate, endDate, owner, downloads){
+  function createEvent(title, startDate, endDate, owner, id, downloads){
     calendar.addEvent({
       title: title,
       start: startDate,
       end: endDate,
+      id: id,
       extendedProps: {
         owner: owner,
         downloads: downloads
@@ -173,7 +175,6 @@ export default function CalendarInGridView(props) {
     setStartTime("");
     setOldStartTime("");
     setEndTime("");
-    setRoom("");
     setSelectedEvent(null);
   };
 
@@ -192,7 +193,6 @@ export default function CalendarInGridView(props) {
     setEventTitle("");
     setStartTime("");
     setEndTime("");
-    setRoom("");
     setSelectedEvent(null);
   };
 
@@ -218,7 +218,7 @@ export default function CalendarInGridView(props) {
           const date = dateToStrings(startTime);
 
           // Call upload function for each file
-          await uploadFileToStorage(file, generatedFileName, room, date.date, date.time);
+          await uploadFileToStorage(file, generatedFileName, props.id, date.date, date.time);
         })
       );
 
@@ -279,7 +279,7 @@ export default function CalendarInGridView(props) {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
-      }
+      },
     });
     setCalendar(newCalendar);
     newCalendar.render();
@@ -307,7 +307,6 @@ export default function CalendarInGridView(props) {
       const endTimeStr = new Date(selectedEvent.end.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
       setEndTime(endTimeStr);
       setEventTitle(selectedEvent._def.title);
-      setRoom(selectedEvent.extendedProps.room);
     }
   }, [selectedEvent]);
 
@@ -478,7 +477,7 @@ export default function CalendarInGridView(props) {
               </div>
             ))}
           </div>
-          <div>
+        <div>
         <input type="file" id="file" onChange={handleFileChange} multiple />
         <button onClick={handleFileUpload} disabled={uploading || selectedFiles.length === 0}>
           Upload

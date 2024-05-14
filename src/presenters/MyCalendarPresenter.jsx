@@ -88,16 +88,24 @@ const MyCalendarPresenter = observer((props) => {
     return meetings;
   }
 
-  return (
-    <div>
-      <MyCalendarView
-        user={props.model.userState}
-        updateMeeting={updateMeetingDB}
-        deleteMeeting={deleteMeetingDB}
-        getMeetings={getMeetingsDB}
-      />
-  </div>
-  );
+  const user = props.model.userState;
+  if(user.user === null){
+    return (
+      <div>Loading...</div>
+    );
+  }
+  else{
+    return (
+      <div>
+        <MyCalendarView
+          user={props.model.userState}
+          updateMeeting={updateMeetingDB}
+          deleteMeeting={deleteMeetingDB}
+          getMeetings={getMeetingsDB}
+        />
+    </div>
+    );
+  }
 });
 
 export default MyCalendarPresenter;
