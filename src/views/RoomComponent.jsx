@@ -107,23 +107,6 @@ function RoomComponent({
             {/*<CalendarInGridView></CalendarInGridView>*/}
 
             <h2>Copy the invitation to booked time</h2>
-            <div class="citation-style">
-              <h3>Booking</h3>
-              <p>{renderCitation("Harvard")}</p>
-              <button
-                class="copy-button"
-                onClick={() =>
-                  copyToClipboard(renderCitation("Harvard"), "Harvard")
-                }
-              >
-                <p>Copy</p>
-              </button>
-            </div>
-            {showAlert.value && (
-              <div class="alert-box">
-                <h1>{alertMessage.value}</h1>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -131,7 +114,7 @@ function RoomComponent({
       <p>Seats: {room.seats}</p>
       <p>Available: {room.available}</p>
       <div class="description">
-        <CalendarInGridView 
+        <CalendarInGridView
           user={user}
           addMeeting={addMeeting}
           updateMeeting={updateMeeting}
