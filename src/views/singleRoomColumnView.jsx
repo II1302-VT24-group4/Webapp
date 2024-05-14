@@ -86,19 +86,21 @@ export default function SingleRoomColumnView(props) {
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const id = meeting.id;
         const owner = meeting.owner;
-        createEvent(title, startDate, endDate, owner, id);
+        const downloads = meeting.downloads;
+        createEvent(title, startDate, endDate, owner, id, downloads);
       }
     }
   }
 
-  function createEvent(title, startDate, endDate, owner, id){
+  function createEvent(title, startDate, endDate, owner, id, downloads){
     calendar.addEvent({
       title: title,
       start: startDate,
       end: endDate,
       id: id,
       extendedProps: {
-        owner: owner
+        owner: owner,
+        downloads: downloads
       },
     });
     calendar.render();
@@ -289,6 +291,8 @@ export default function SingleRoomColumnView(props) {
             nameElement.style.fontSize = "30px";
             nameElement.style.height = "40px";
             nameElement.style.lineHeight = "40px";
+            nameElement.style.width = "110px";
+            nameElement.style.textAlign = "center"; // Center the text horizontally
 
             const seatsElement = document.createElement('span');
             seatsElement.textContent = "Seats: "
@@ -298,13 +302,16 @@ export default function SingleRoomColumnView(props) {
             seatsElement.style.height = "20px";
             seatsElement.style.fontSize = "18px";
             seatsElement.style.display = "block";
+            nameElement.style.width = "110px";
+            seatsElement.style.textAlign = "center"; // Center the text horizontally
 
             titleElement.appendChild(nameElement);
             titleElement.appendChild(seatsElement);
           }
           const slotElements = calendarEl.querySelectorAll('tr');
           slotElements.forEach(slot => {
-            slot.style.height = '25px'; // Adjust the height as needed
+            slot.style.height = '25px';
+            
           });
           updateDayCellBackground();
       },
@@ -314,7 +321,7 @@ export default function SingleRoomColumnView(props) {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-      },
+      }
     });
     newCalendar.setOption('height', 853);
     setCalendar(newCalendar);
@@ -374,7 +381,7 @@ export default function SingleRoomColumnView(props) {
       updateDayCellBackground();
     }
   }, [props.date]);
-
+  
   return (
     <div style={{width: '100%', overflowX: "hidden"}}>
       <div ref={calendarRef} />
@@ -511,7 +518,17 @@ export default function SingleRoomColumnView(props) {
               />
             )}
           </div>
-          <div >
+          <div style={{ textAlign: "left", marginBottom: "10px" }}>
+            Download Files:
+            {selectedEvent.extendedProps.downloads.map((download, index) => (
+              <div key={index}>
+                <a href={download.downloadURL} download={download.name}>
+                  {download.name}
+                </a>
+              </div>
+            ))}
+          </div>
+          <div>
             <input type="file" id="file" onChange={handleFileChange} />
             <button onClick={handleFileUpload} disabled={uploading}>
               

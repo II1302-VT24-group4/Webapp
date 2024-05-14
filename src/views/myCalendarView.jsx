@@ -66,7 +66,7 @@ export default function MyCalendarView(props) {
         const startDate = stringsToDate(meeting.startDate, meeting.startTime);
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const owner = meeting.owner;
-        const room = meeting.room
+        const room = meeting.room;
         const downloads = meeting.downloads;
         createEvent(title, startDate, endDate, owner, room, downloads);
       }
@@ -234,7 +234,18 @@ export default function MyCalendarView(props) {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
+      },
+      eventContent: function(arg) {
+        const roomInfo = arg.event.extendedProps.room;
+        const titleWithTime = arg.timeText ? `<div class="fc-title">Time: ${arg.timeText}</div>` : '';
+        const titleContent = arg.event.title ? `<div class="fc-title">Name: ${arg.event.title}</div>` : '';
+        const roomContent = `<div class="fc-title">Room: ${roomInfo}</div>`;
+        const combinedContent = titleWithTime + titleContent + roomContent;
+        return {
+          html: `<div class="fc-content">${combinedContent}</div>`,
+        };
       }
+      
     });
     setCalendar(newCalendar);
     newCalendar.render();
@@ -300,6 +311,7 @@ export default function MyCalendarView(props) {
           }}
         >
           <h2 style={{ marginBottom: "20px" }}>Edit Event</h2>
+          Room: {room}
           <div>
             <label htmlFor="title">Title:&nbsp;&nbsp;&nbsp;&nbsp;</label>
             <input

@@ -4,7 +4,7 @@ import NavView from "../views/navView";
 import React, { useEffect } from "react";
 const NavPresenter = observer(({ model }) => {
   useEffect(() => {
-    // model.doSearch(); // Anropa doSearch för att utföra en initial sökning när komponenten laddas
+     model.doSearch(); // Anropa doSearch för att utföra en initial sökning när komponenten laddas
   }); // Beroendet [model] säkerställer att effekten körs om modellen ändras
 
   const handleRoomListClicked = () => {
