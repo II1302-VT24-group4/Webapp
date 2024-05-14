@@ -1,4 +1,4 @@
-import MyCalendarView from "./myCalendarView";
+import CalendarInGridView from "./calendarInGridView";
 
 function RoomComponent({
   room,
@@ -148,7 +148,7 @@ function RoomComponent({
             <button class="close-button" onClick={closePopup}>
               ✖
             </button>
-            {/*<MyCalendarView></MyCalendarView>*/}
+            {/*<CalendarInGridView></CalendarInGridView>*/}
 
             <h2>Copy the invitation to booked time</h2>
             <div class="citation-style">
@@ -175,13 +175,14 @@ function RoomComponent({
       <p>Seats: {room.seats}</p>
       <p>Available: {room.available}</p>
       <div class="description">
-        <MyCalendarView 
+        <CalendarInGridView 
           user={user}
           addMeeting={addMeeting}
           updateMeeting={updateMeeting}
           deleteMeeting={deleteMeeting}
           getMeetings={getMeetings}
-          room={room.id}
+          id={room.id}
+          name={room.name}
         />
       </div>
     </div>

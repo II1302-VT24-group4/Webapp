@@ -24,7 +24,7 @@ export default function TimeColumnView(props) {
         slotLabelFormat: {
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false // Ensure 24-hour time format
+            hour12: false
         },
         slotLabelInterval: { hours: 0.5 },
         slotDuration: '00:30:00',

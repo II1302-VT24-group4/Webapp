@@ -13,7 +13,6 @@ export default function MyCalendarView(props) {
   
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
-  const [selectedInfo, setSelectedInfo] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventTitle, setEventTitle] = useState(""); // State to hold event title
   const [startTime, setStartTime] = useState(""); // State to hold start time
@@ -28,16 +27,6 @@ export default function MyCalendarView(props) {
   const [confirmationPopup, setConfirmationPopup] = useState("");
 
   const [calendarInitialized, setCalendarInitialized] = useState(false);
-
-  const isOverlapping = async (newEvent) => {
-    const events = await calendar.getEvents();
-    for (const oldEvent in events) {
-      if (newEvent.endDate > events[oldEvent].start && newEvent.startDate < events[oldEvent].end && newEvent.id != events[oldEvent].id) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   function dateToStrings(value){
     const [date, time] = value.split('T');
@@ -67,7 +56,7 @@ export default function MyCalendarView(props) {
     // Combine date and time components to form the desired format
     const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
     return formattedDateTime;
-}
+  }
 
   async function populateCalendar() {
     const meetings = await props.getMeetings(props.id);
@@ -77,7 +66,7 @@ export default function MyCalendarView(props) {
         const startDate = stringsToDate(meeting.startDate, meeting.startTime);
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const owner = meeting.owner;
-        const room = meeting.room !== undefined ? meeting.room : props.room;
+        const room = meeting.room
         const downloads = meeting.downloads;
         createEvent(title, startDate, endDate, owner, room, downloads);
       }
@@ -97,41 +86,6 @@ export default function MyCalendarView(props) {
     });
     calendar.render();
   }
-
-  const handleCreateEvent = async () => {
-    const startDate = dateToStrings(startTime);
-    const endDate = dateToStrings(endTime);
-    const owner = props.user.user;
-    const eventData = {
-      title: eventTitle,
-      startDate: startDate.date,
-      startTime: startDate.time,
-      endDate: endDate.date,
-      endTime: endDate.time,
-      id: props.id !== undefined ? props.id : room,
-      owner: owner
-    };
-
-    if(await isOverlapping(eventData)){
-      alert("event is overlapping another event");
-    }
-    else{
-      const id = await props.addMeeting(eventData);
-      const startDateObj = new Date(startTime);
-      const endDateObj = new Date(endTime);
-      createEvent(
-        eventTitle,
-        startDateObj,
-        endDateObj,
-        owner,
-        id
-      );
-    }
-    setEventTitle("");
-    setStartTime("");
-    setEndTime("");
-    setSelectedInfo(null);
-  };
 
   const handleUpdateEvent = async () => {
     const startDate = dateToStrings(startTime);
@@ -153,7 +107,7 @@ export default function MyCalendarView(props) {
       startTime: startDate.time,
       endDate: endDate.date,
       endTime: endDate.time,
-      id: props.id !== undefined ? props.id : room,
+      id: room,
       owner: owner
     };
 
@@ -250,6 +204,8 @@ export default function MyCalendarView(props) {
       slotMinTime: "06:00:00", // Show slots starting from 6 AM
       slotMaxTime: "21:00:00", // Show slots until 9 PM
       selectable: props.id !== undefined, // Enable selection
+      slotLabelInterval: { hours: 0.5 },
+      slotDuration: '00:30:00',
       select: function (info) {
         if (!info.startStr.includes("T")) {
           info.startStr += "T13:00:00+02:00";
@@ -269,6 +225,16 @@ export default function MyCalendarView(props) {
         center: "title",
         right: "dayGridMonth,timeGridWeek,listWeek",
       },
+      eventTimeFormat: {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      },
+      slotLabelFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }
     });
     setCalendar(newCalendar);
     newCalendar.render();
@@ -300,16 +266,6 @@ export default function MyCalendarView(props) {
     }
   }, [selectedEvent]);
 
-  // Initialize startTime and endTime with the times from selectedInfo, if available, and set their constants for use when creating event
-  useEffect(() => {
-    if (selectedInfo) {
-      const startTimeStr = new Date(selectedInfo.start.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setStartTime(startTimeStr);
-      
-      const endTimeStr = new Date(selectedInfo.end.getTime() - selectedInfo.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setEndTime(endTimeStr);
-    }
-  }, [selectedInfo]);
 
   const renderFileList = () => {
     return (
@@ -324,82 +280,6 @@ export default function MyCalendarView(props) {
   return (
     <div style={{ width: "98%", margin: "5" }}>
       <div ref={calendarRef} />
-      {selectedInfo && (
-        <Popup
-          open={selectedInfo !== null}
-          onClose={() => {
-            if(confirmationPopup === ""){
-              setSelectedInfo(null);
-              setEventTitle(""); // Reset event title input
-            }
-          }}
-          modal
-          closeOnDocumentClick
-        >
-          <div
-            style={{
-              padding: "20px",
-              background: "white",
-              borderRadius: "5px",
-              textAlign: "right"
-            }}
-          >
-            <h2 style={{ marginBottom: "20px" }}>Create Event</h2>
-            <div>
-              <label htmlFor="title">Title:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-              <input
-                office="text"
-                placeholder="Event Title"
-                style={{ marginBottom: "10px", width: "164px"}}
-                value={eventTitle}
-                onChange={(e) => setEventTitle(e.target.value)}
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label htmlFor="startTime">Start Time:&nbsp;</label>
-              {startTime && (
-                <DatePicker
-                  selected={new Date(startTime)}
-                  onChange={(date) => setStartTime(formatDateTime(date))}
-                  showTimeSelect
-                  timeIntervals={30}
-                  timeFormat="HH:mm"
-                  dateFormat="yyyy-MM-dd HH:mm"
-                />
-              )}
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <label htmlFor="endTime">End Time:</label>
-              {endTime && (
-                <DatePicker
-                  selected={new Date(endTime)}
-                  onChange={(date) => setEndTime(formatDateTime(date))}
-                  showTimeSelect
-                  timeIntervals={30}
-                  timeFormat="HH:mm"
-                  dateFormat="yyyy-MM-dd HH:mm"
-                />
-              )}
-            </div>
-            <div style={{marginTop: "20px"}}>
-              <button
-                style={{ marginRight: "80px", backgroundColor: "white" }}
-                onClick={() => setSelectedInfo(null)}
-              >
-                Cancel
-              </button>
-              <button
-                style={{ marginRight:"20px", backgroundColor: "white" }}
-                onClick={() => {
-                  setConfirmationPopup("create");
-                }}
-              >
-                Save Event
-              </button>
-            </div>
-          </div>
-        </Popup>
-      )}
       {selectedEvent && props.user.user == selectedEvent.extendedProps.owner && (
         <Popup
         open={selectedEvent !== null}
@@ -586,9 +466,6 @@ export default function MyCalendarView(props) {
                   } 
                   else if (confirmationPopup === "update") {
                     handleUpdateEvent();
-                  }
-                  else if (confirmationPopup === "create") {
-                    handleCreateEvent();
                   }
                   setConfirmationPopup("");
                 }}

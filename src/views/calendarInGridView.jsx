@@ -1,5 +1,3 @@
-// right now the owner of an event is stored directly in the meeting object, perhaps not the most secure solution
-
 import React, { useRef, useEffect, useState } from "react";
 import { Calendar } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -11,31 +9,24 @@ import { uploadFileToStorage } from "../firebaseModel";
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
-export default function SingleRoomColumnView(props) {
+export default function CalendarInGridView(props) {
+  
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
   const [selectedInfo, setSelectedInfo] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [eventTitle, setEventTitle] = useState("");
-  const [startTime, setStartTime] = useState("");
+  const [eventTitle, setEventTitle] = useState(""); // State to hold event title
+  const [startTime, setStartTime] = useState(""); // State to hold start time
   const [oldStartTime, setOldStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [calendarInitialized, setCalendarInitialized] = useState(false); // New state to track calendar initialization
-  const [currentDate, setCurrentDate] = useState(0);
+  const [endTime, setEndTime] = useState(""); // State to hold end time
   const [file, setFile] = useState(null); // State to hold uploaded file
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null); // State for error message during upload
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [confirmationPopup, setConfirmationPopup] = useState("");
 
-  const updateDayCellBackground = () => {
-    const calendarEl = calendarRef.current;
-    const dayCells = calendarEl.querySelectorAll('.fc-day');
-    dayCells.forEach(cell => {
-      cell.style.backgroundColor = '#81a59c'; // Change to your desired background color
-    });
-  };
+  const [calendarInitialized, setCalendarInitialized] = useState(false);
 
   const isOverlapping = async (newEvent) => {
     const events = await calendar.getEvents();
@@ -91,14 +82,14 @@ export default function SingleRoomColumnView(props) {
     }
   }
 
-  function createEvent(title, startDate, endDate, owner, id){
+  function createEvent(title, startDate, endDate, owner, downloads){
     calendar.addEvent({
       title: title,
       start: startDate,
       end: endDate,
-      id: id,
       extendedProps: {
-        owner: owner
+        owner: owner,
+        downloads: downloads
       },
     });
     calendar.render();
@@ -182,12 +173,13 @@ export default function SingleRoomColumnView(props) {
     setStartTime("");
     setOldStartTime("");
     setEndTime("");
+    setRoom("");
     setSelectedEvent(null);
   };
 
   const handleRemoveEvent = () => {
     const startDate = dateToStrings(startTime);
-
+    
     const eventData = {
       id: props.id,
       startDate: startDate.date,
@@ -200,49 +192,48 @@ export default function SingleRoomColumnView(props) {
     setEventTitle("");
     setStartTime("");
     setEndTime("");
+    setRoom("");
     setSelectedEvent(null);
   };
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-    //setFileName(e.target.files[0].name);
+    const filesArray = Array.from(e.target.files);
+    setSelectedFiles([...selectedFiles, ...filesArray]);
     setUploadComplete(false);
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select a file.');
+    if (selectedFiles.length === 0) {
+      setError("Please select at least one file.");
       return;
     }
-  
+
     try {
       setUploading(true);
-  
-      // Generate a unique filename based on current timestamp and original filename
-      const generatedFileName = `${Date.now()}_${selectedFile.name}`;
-      const date = dateToStrings(startTime);
 
-      // Call the uploadFileToStorage function to upload the selected file
-      await uploadFileToStorage(selectedFile, generatedFileName, props.id, date.date, date.time);
-  
-      // Set uploadComplete to true after successful upload
+      // Iterate over each selected file and upload
+      await Promise.all(
+        selectedFiles.map(async (file) => {
+          const generatedFileName = `${Date.now()}_${file.name}`;
+          const date = dateToStrings(startTime);
+
+          // Call upload function for each file
+          await uploadFileToStorage(file, generatedFileName, room, date.date, date.time);
+        })
+      );
+
       setUploadComplete(true);
-  
-      // Log success message
-      console.log('File uploaded successfully.');
-  
-      // Reset error state if upload is successful
-      setError(null);
-    } catch (error) {
-      // Set error state if file upload fails
-      setError('Error uploading file.');
-      console.error('Error uploading file:', error);
+      setError(null); // Reset error state
+      setSelectedFiles([]); // Clear selected files after upload
+      console.log("Files uploaded successfully.");
+    } catch (err) {
+      setError("Error uploading file(s).");
+      console.error("Error uploading file(s):", err);
     } finally {
-      // Set uploading state back to false after upload completes (whether successful or not)
       setUploading(false);
     }
   };
-  
+
   const handleFileUpload = () => {
     // Logic to handle file upload using handleUpload function
     handleUpload(); // Call handleUpload function when upload button is clicked
@@ -253,70 +244,43 @@ export default function SingleRoomColumnView(props) {
     const calendarEl = calendarRef.current;
     const newCalendar = new Calendar(calendarEl, {
       plugins: [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin],
-      initialView: "timeGridDay",
+      initialView: "timeGridWeek",
       allDaySlot: false,
-      dayHeaders: false,
       slotMinTime: "06:00:00", // Show slots starting from 6 AM
       slotMaxTime: "21:00:00", // Show slots until 9 PM
-      aspectRatio: 0.5,
-      selectable: true,
-      slotLabelInterval: { hours: 0 },
+      selectable: props.id !== undefined, // Enable selection
+      slotLabelInterval: { hours: 0.5 },
       slotDuration: '00:30:00',
       select: function (info) {
-          if(!info.startStr.includes("T")){
+        if (!info.startStr.includes("T")) {
           info.startStr += "T13:00:00+02:00";
-          }
-          if(!info.endStr.includes("T")){
+        }
+        if (!info.endStr.includes("T")) {
           info.endStr += "T14:00:00+02:00";
-          }
-          info.allDay = false;
-          setSelectedInfo(info);
+        }
+        info.allDay = false;
+        setSelectedInfo(info);
       },
       eventClick: function (event) {
         setSelectedEvent(event.event);
       },
       forceEventDuration: true, // Ensure events are displayed even without an end time
       headerToolbar: {
-          left: "",
-          center: "",
-          right: ""
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,listWeek",
       },
-      viewDidMount: function(view) {
-          const titleElement = calendarEl.querySelector('.fc-toolbar-chunk:nth-child(2)');
-          if (titleElement) {
-            const nameElement = document.createElement('div');
-            nameElement.textContent = props.name;
-            nameElement.style.fontSize = "30px";
-            nameElement.style.height = "40px";
-            nameElement.style.lineHeight = "40px";
-
-            const seatsElement = document.createElement('span');
-            seatsElement.textContent = "Seats: "
-            if(props.seats !== undefined){
-              seatsElement.textContent += props.seats;
-            }
-            seatsElement.style.height = "20px";
-            seatsElement.style.fontSize = "18px";
-            seatsElement.style.display = "block";
-
-            titleElement.appendChild(nameElement);
-            titleElement.appendChild(seatsElement);
-          }
-          const slotElements = calendarEl.querySelectorAll('tr');
-          slotElements.forEach(slot => {
-            slot.style.height = '25px'; // Adjust the height as needed
-          });
-          updateDayCellBackground();
-      },
-      eventOverlap: false,
-      selectOverlap: false,
       eventTimeFormat: {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
       },
+      slotLabelFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }
     });
-    newCalendar.setOption('height', 853);
     setCalendar(newCalendar);
     newCalendar.render();
     setCalendarInitialized(true);
@@ -334,6 +298,19 @@ export default function SingleRoomColumnView(props) {
     }
   }, [calendarInitialized]);
 
+  // Initialize startTime, endTime and title with the times from selectedEvent, if available, and set their constants for use when updating event
+  useEffect(() => {
+    if (selectedEvent) {
+      const startTimeStr = new Date(selectedEvent.start.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      setStartTime(startTimeStr);
+      
+      const endTimeStr = new Date(selectedEvent.end.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      setEndTime(endTimeStr);
+      setEventTitle(selectedEvent._def.title);
+      setRoom(selectedEvent.extendedProps.room);
+    }
+  }, [selectedEvent]);
+
   // Initialize startTime and endTime with the times from selectedInfo, if available, and set their constants for use when creating event
   useEffect(() => {
     if (selectedInfo) {
@@ -345,38 +322,18 @@ export default function SingleRoomColumnView(props) {
     }
   }, [selectedInfo]);
 
-  // Initialize startTime, endTime and title with the times from selectedEvent, if available, and set their constants for use when updating event
-  useEffect(() => {
-    if (selectedEvent) {
-      const startTimeStr = new Date(selectedEvent.start.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setStartTime(startTimeStr);
-      
-      const endTimeStr = new Date(selectedEvent.end.getTime() - selectedEvent.end.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      setEndTime(endTimeStr);
-
-      setEventTitle(selectedEvent.title);
-    }
-  }, [selectedEvent]);
-
-  // Change day
-  useEffect(() => {
-    if(calendar){
-      const newDate = new Date(calendar.getDate());
-      if (props.date > currentDate) {
-        newDate.setDate(newDate.getDate() + 1);
-        calendar.gotoDate(newDate);
-      }
-      else if(props.date < currentDate){
-        newDate.setDate(newDate.getDate() - 1);
-        calendar.gotoDate(newDate);
-      }
-      setCurrentDate(props.date);
-      updateDayCellBackground();
-    }
-  }, [props.date]);
+  const renderFileList = () => {
+    return (
+      <ul>
+        {selectedFiles.map((file, index) => (
+          <li key={index}>{file.name}</li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
-    <div style={{width: '100%', overflowX: "hidden"}}>
+    <div style={{ width: "98%", margin: "5" }}>
       <div ref={calendarRef} />
       {selectedInfo && (
         <Popup
@@ -511,16 +468,31 @@ export default function SingleRoomColumnView(props) {
               />
             )}
           </div>
-          <div >
-            <input type="file" id="file" onChange={handleFileChange} />
-            <button onClick={handleFileUpload} disabled={uploading}>
-              
-              Upload
-            </button>
-            {error && <p>{error}</p>}
-            {uploading && <p>Uploading...</p>}
-            {uploadComplete && <p>Uploading finished!</p>}
+          <div style={{ textAlign: "left", marginBottom: "10px" }}>
+            Download Files:
+            {selectedEvent.extendedProps.downloads.map((download, index) => (
+              <div key={index}>
+                <a href={download.downloadURL} download={download.name}>
+                  {download.name}
+                </a>
+              </div>
+            ))}
           </div>
+          <div>
+        <input type="file" id="file" onChange={handleFileChange} multiple />
+        <button onClick={handleFileUpload} disabled={uploading || selectedFiles.length === 0}>
+          Upload
+        </button>
+        {error && <p>{error}</p>}
+        {uploading && <p>Uploading...</p>}
+        {uploadComplete && <p>Uploading finished!</p>}
+      </div>
+      {selectedFiles.length > 0 && (
+        <div style={{ textAlign: "left", marginBottom: "10px" }}>
+          Selected Files:
+          {renderFileList()}
+        </div>
+        )}
           <div style={{marginTop: "20px"}}>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}
@@ -638,7 +610,6 @@ export default function SingleRoomColumnView(props) {
           </div>
         </Popup>
       )}
-
     </div>
   );
 }
