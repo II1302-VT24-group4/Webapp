@@ -851,12 +851,12 @@ export default function MeetingView(props) {
           </div>
 
           <h3 class="rubric">
-            <b>Please select a meeting type</b>
+            <b>Please select a meeting  preset</b>
           </h3>
 
           <div className="meeting-description">
             <div>
-              <h4>Regular meeting session with a team</h4>
+              <h4>1. Regular meeting session with a team</h4>
               <p>
                 These could be recurring meetings with a team, for example daily
                 stand-ups, or weekly, monthly, or annual review sessions. By
@@ -875,7 +875,7 @@ export default function MeetingView(props) {
               </button>
             </div>
             <div>
-              <h4>Briefing/presentation meeting</h4>
+              <h4>2. Briefing/presentation meeting</h4>
               <p>
                 These "meetings" may include technical demonstrations, company
                 policy briefings, product launches, or client presentations.
@@ -896,7 +896,7 @@ export default function MeetingView(props) {
               </button>
             </div>
             <div>
-              <h4>Negotiation between two parties</h4>
+              <h4>3. Negotiation between two parties</h4>
               <p>
                 This includes meetings such as business deal negotiations or
                 partnership discussions involving teams or businesses. Here,
