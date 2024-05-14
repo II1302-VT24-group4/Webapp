@@ -1,7 +1,18 @@
 import React, { useEffect } from "react";
-import { dbRemoveFromMeetingsField, dbUpdateMeetingsField, googleSignInOut } from "./firebaseModel.js";
+import {
+  dbRemoveFromMeetingsField,
+  dbUpdateMeetingsField,
+  googleSignInOut,
+} from "./firebaseModel.js";
 import { useState } from "react";
-import { dbRooms, db, dbInsert, dbRead, dbDelete, dbGetFiles } from "./firebaseModel.js";
+import {
+  dbRooms,
+  db,
+  dbInsert,
+  dbRead,
+  dbDelete,
+  dbGetFiles,
+} from "./firebaseModel.js";
 const defaultLimit = 400;
 const rooms = await dbRooms;
 
@@ -41,25 +52,25 @@ export default {
     dbDelete(collection, entity, subCollection, subEntity);
   },
 
-  firebaseUpdateMeetingsField(collection, entity, value){
+  firebaseUpdateMeetingsField(collection, entity, value) {
     dbUpdateMeetingsField(collection, entity, value);
   },
 
-  firebaseRemoveFromMeetingsField(collection, entity, value){
+  firebaseRemoveFromMeetingsField(collection, entity, value) {
     dbRemoveFromMeetingsField(collection, entity, value);
   },
 
-  async getMeetingDates(collection, entity){
+  async getMeetingDates(collection, entity) {
     try {
       const result = await dbRead(collection, entity);
       return result.meetings;
     } catch (error) {
-        console.error('Error:', error);
-        return null;
+      console.error("Error:", error);
+      return null;
     }
   },
 
-  firebaseGetFiles(room, date, time){
+  firebaseGetFiles(room, date, time) {
     return dbGetFiles(room, date, time);
   },
 
@@ -100,7 +111,7 @@ export default {
     let shouldSearch = this.currentQuery !== this.searchParams?.q; // Kontrollera om sökparametrarna har ändrats
     if (this.firstSearch) {
       shouldSearch = true;
-      this.firstSearch = false; 
+      this.firstSearch = false;
     }
     for (const key in this.officeList) {
       if (
@@ -108,7 +119,7 @@ export default {
         Array.isArray(this.officeList[key]) &&
         this.officeList[key].length === 0
       ) {
-        shouldSearch = true; 
+        shouldSearch = true;
       }
     }
 
@@ -140,7 +151,6 @@ export default {
 
         this.searchResultsPromiseState.data = { items: filteredRooms }; // Spara filtrerade resultat
       }
-
     }
   },
 
@@ -201,25 +211,24 @@ export default {
   modifyFavourites(room, add) {
     const officeKey = `Office ${room.office}`;
     if (!this.mediaFavourites[officeKey]) {
-        this.mediaFavourites[officeKey] = []; 
+      this.mediaFavourites[officeKey] = [];
     }
 
-    const roomIndex = this.mediaFavourites[officeKey].findIndex(fav => fav.id === room.id);
+    const roomIndex = this.mediaFavourites[officeKey].findIndex(
+      (fav) => fav.id === room.id
+    );
 
     if (add && roomIndex === -1) {
-        this.mediaFavourites[officeKey].push(room); 
+      this.mediaFavourites[officeKey].push(room);
     } else if (!add && roomIndex !== -1) {
-        this.mediaFavourites[officeKey].splice(roomIndex, 1); 
-        if (this.mediaFavourites[officeKey].length === 0) {
-            delete this.mediaFavourites[officeKey]; 
-        }
+      this.mediaFavourites[officeKey].splice(roomIndex, 1);
+      if (this.mediaFavourites[officeKey].length === 0) {
+        delete this.mediaFavourites[officeKey];
+      }
     }
     console.log("Updated favourites list:", this.mediaFavourites);
-},
-
-  
-  
-
+  },
+  /*
   removeFromFavourites(room) {
     const index = this.mediaFavourites.indexOf(room.id);
     if (index !== -1) {
@@ -230,6 +239,7 @@ export default {
       this.favArrayChanged = !this.favArrayChanged; // Toggle favArrayChanged state
     }
   },
+  */
   initializeOffices() {
     const uniqueOffices = new Set(
       this.rooms.map((room) => `office${room.office}`)
@@ -243,18 +253,17 @@ export default {
   getRooms() {
     this.searchDone.done = false;
     this.searchResultsPromiseState.data.items.forEach((item) => {
-        const officeKey = `Office ${item.office}`;
-        if (!this.officeList[officeKey]) {
-            this.officeList[officeKey] = []; 
-        }
-        if (!this.officeList[officeKey].some(room => room.id === item.id)) {
-            this.sortIntoOffice(item);
-        }
+      const officeKey = `Office ${item.office}`;
+      if (!this.officeList[officeKey]) {
+        this.officeList[officeKey] = [];
+      }
+      if (!this.officeList[officeKey].some((room) => room.id === item.id)) {
+        this.sortIntoOffice(item);
+      }
     });
     this.searchDone.done = true;
-},
+  },
 
-  //Used to extract usable data from the result
   mapOfficeRooms(item, imageHolder) {
     const itemInfo = {
       id: item.id,
@@ -263,7 +272,15 @@ export default {
       available: item.available,
       office: item.office,
     };
-    //imageHolder[item.id] = "https://i.ibb.co/NyzjMQh/room-placeholder.webp";
+    console.log(item.available);
+    let counter = 1;
+
+    this.imageHolder = {};
+    this.rooms.forEach((room) => {
+      this.imageHolder[room.id] = `src/images/room-images/room-${counter}.webp`; //= `src/images/room-images/room-${room.id}.webp`;
+      counter++;
+      counter = counter % 36;
+    });
     return itemInfo;
   },
 };

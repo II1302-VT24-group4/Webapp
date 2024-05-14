@@ -18,7 +18,7 @@ export default function roomListPresenter(props) {
     );
   else {
     return (
-      <roomListView
+      <roomFavouriteListView
         onModifyRoomList={removeFromFavouritesACB}
         images={props.model.favHistimageHolder}
         rooms={props.model.favHistOfficeList}

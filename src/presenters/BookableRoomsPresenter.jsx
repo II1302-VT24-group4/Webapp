@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import BookableRoomsView from "/src/views/BookableRoomsView";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import SingleRoomColumnView from "../views/singleRoomColumnView.jsx";
 import TimeColumnView from "../views/timeColumnView.jsx";
 
@@ -10,6 +10,12 @@ export default observer(function BookableRoomsPresenter(props) {
   let timeColumn = null;
   let calendars = null;
   const [date, setDate] = useState(0);
+  function totalRoomsCount() {
+    return Object.values(props.model.officeList).reduce(
+      (total, category) => total + category.length,
+      0
+    );
+  }
 
   const previousDay = () => {
     setDate(date - 1);
@@ -27,30 +33,133 @@ export default observer(function BookableRoomsPresenter(props) {
     const endTime = event.endTime;
     const title = event.title;
 
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "startTime", startTime, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "endDate", endDate, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "endTime", endTime, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "title", title, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "owner", user, true);
-    props.model.firebaseInsert('rooms', room, 'meetingIndex', startDate, null, null, true);
+    props.model.firebaseInsert(
+      "rooms",
+      room,
+      startDate,
+      startTime,
+      "startTime",
+      startTime,
+      true
+    );
+    props.model.firebaseInsert(
+      "rooms",
+      room,
+      startDate,
+      startTime,
+      "endDate",
+      endDate,
+      true
+    );
+    props.model.firebaseInsert(
+      "rooms",
+      room,
+      startDate,
+      startTime,
+      "endTime",
+      endTime,
+      true
+    );
+    props.model.firebaseInsert(
+      "rooms",
+      room,
+      startDate,
+      startTime,
+      "title",
+      title,
+      true
+    );
+    props.model.firebaseInsert(
+      "rooms",
+      room,
+      startDate,
+      startTime,
+      "owner",
+      user,
+      true
+    );
+    props.model.firebaseInsert(
+      "rooms",
+      room,
+      "meetingIndex",
+      startDate,
+      null,
+      null,
+      true
+    );
 
-    props.model.firebaseInsert('users', user, startDate, startTime, "startTime", startTime, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "endDate", endDate, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "endTime", endTime, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "title", title, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "room", room, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "owner", user, true);
-    props.model.firebaseInsert('users', user, 'meetingIndex', startDate, null, null, true);
+    props.model.firebaseInsert(
+      "users",
+      user,
+      startDate,
+      startTime,
+      "startTime",
+      startTime,
+      true
+    );
+    props.model.firebaseInsert(
+      "users",
+      user,
+      startDate,
+      startTime,
+      "endDate",
+      endDate,
+      true
+    );
+    props.model.firebaseInsert(
+      "users",
+      user,
+      startDate,
+      startTime,
+      "endTime",
+      endTime,
+      true
+    );
+    props.model.firebaseInsert(
+      "users",
+      user,
+      startDate,
+      startTime,
+      "title",
+      title,
+      true
+    );
+    props.model.firebaseInsert(
+      "users",
+      user,
+      startDate,
+      startTime,
+      "room",
+      room,
+      true
+    );
+    props.model.firebaseInsert(
+      "users",
+      user,
+      startDate,
+      startTime,
+      "owner",
+      user,
+      true
+    );
+    props.model.firebaseInsert(
+      "users",
+      user,
+      "meetingIndex",
+      startDate,
+      null,
+      null,
+      true
+    );
   };
 
   const updateMeetingDB = async (event) => {
-
     const oldEvent = {
       startDate: event.oldStartDate,
       startTime: event.oldStartTime,
-      room: event.id
+      room: event.id,
     };
-    const {oldStartDate, oldStartTime, ...newEvent } = event;
+    const { oldStartDate, oldStartTime, ...newEvent } = event;
     await deleteMeetingDB(oldEvent);
     insertMeetingDB(newEvent);
   };
@@ -61,34 +170,46 @@ export default observer(function BookableRoomsPresenter(props) {
     const startDate = event.startDate;
     const startTime = event.startTime;
 
-    await props.model.firebaseDelete('users', user, startDate, startTime);
-    await props.model.firebaseDelete('rooms', room, startDate, startTime);
+    await props.model.firebaseDelete("users", user, startDate, startTime);
+    await props.model.firebaseDelete("rooms", room, startDate, startTime);
 
-    const roomMeetingDates = await props.model.firebaseRead('rooms', room, startDate);
-    if(roomMeetingDates.length === 0){
-      props.model.firebaseDelete('rooms', room, 'meetingIndex', startDate);
+    const roomMeetingDates = await props.model.firebaseRead(
+      "rooms",
+      room,
+      startDate
+    );
+    if (roomMeetingDates.length === 0) {
+      props.model.firebaseDelete("rooms", room, "meetingIndex", startDate);
     }
   };
 
   const getMeetingsDB = async (room) => {
     while (props.model.userState.user === null) {
       // Wait for a short period before checking again
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    const result = await props.model.firebaseRead("rooms", room, 'meetingIndex');
+    const result = await props.model.firebaseRead(
+      "rooms",
+      room,
+      "meetingIndex"
+    );
     let meetings = [];
-    if(result !== undefined){
-      for(const date of result){
-        const meetingDataArray = await props.model.firebaseRead('rooms', room, date.id);
+    if (result !== undefined) {
+      for (const date of result) {
+        const meetingDataArray = await props.model.firebaseRead(
+          "rooms",
+          room,
+          date.id
+        );
         for (const meetingData of meetingDataArray) {
           const meetingUpdated = {
-              startDate: date.id,
-              startTime: meetingData.id,
-              endDate: meetingData.endDate,
-              endTime: meetingData.endTime,
-              title: meetingData.title,
-              owner: meetingData.owner
+            startDate: date.id,
+            startTime: meetingData.id,
+            endDate: meetingData.endDate,
+            endTime: meetingData.endTime,
+            title: meetingData.title,
+            owner: meetingData.owner,
           };
           meetings.push(meetingUpdated);
         }
@@ -123,52 +244,114 @@ export default observer(function BookableRoomsPresenter(props) {
       </div>
     );
   }
-  
 
-  timeColumn = <div style={{flex: "0 0 auto", marginRight: "20px"}}><TimeColumnView date={date}/></div>;
+  timeColumn = (
+    <div style={{ flex: "0 0 auto", marginRight: "20px" }}>
+      <TimeColumnView date={date} />
+    </div>
+  );
 
   if (props.model.searchDone.done) {
-    calendars = Object.entries(props.model.officeList).map(([officeName, rooms]) => (
-      <div key={officeName}>
-        <h2 style={{ fontSize: "30px"}}>{officeName}</h2> {/* Office name */}
-        <div style={{ overflowX: "auto", whiteSpace: "nowrap", marginLeft: "10px" }}>
-          {rooms.map((room, index) => (
-            <div key={`${officeName}-${index}`} style={{ display: "inline-block", minWidth: "100px"}}>
-              <SingleRoomColumnView
-                user={props.model.userState}
-                addMeeting={insertMeetingDB}
-                updateMeeting={updateMeetingDB}
-                deleteMeeting={deleteMeetingDB}
-                getMeetings={getMeetingsDB}
-                id={room.id}
-                name={room.name}
-                date={date}
-              />
-            </div>
-          ))}
+    calendars = Object.entries(props.model.officeList).map(
+      ([officeName, rooms]) => (
+        <div key={officeName}>
+          <h2 style={{ fontSize: "30px" }}>{officeName}</h2> {/* Office name */}
+          <div
+            style={{
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              marginLeft: "10px",
+            }}
+          >
+            {rooms.map((room, index) => (
+              <div
+                key={`${officeName}-${index}`}
+                style={{ display: "inline-block", minWidth: "100px" }}
+              >
+                <SingleRoomColumnView
+                  user={props.model.userState}
+                  addMeeting={insertMeetingDB}
+                  updateMeeting={updateMeetingDB}
+                  deleteMeeting={deleteMeetingDB}
+                  getMeetings={getMeetingsDB}
+                  id={room.id}
+                  name={room.name}
+                  date={date}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    ));
+      )
+    );
   }
-  
-  
-  
-  
-  
+
   return (
     <div>
-      <button onClick={() => setView(true)} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}} disabled={view}>timeedit</button>
-      <button onClick={() => setView(false)} style={{backgroundColor: "transparent"}} disabled={!view}>detailed</button>
-      <div>
-        <input
-          type="text"
-          value={props.query}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          onKeyDown={() => doSearch()}
-          placeholder="Find Room"
-          className="search-input"
-        />
+      <style>
+        {`
+        .sub-menu {
+          display: flex;
+          justify-content: center;
+          
+          background-color: #81a59c;
+          padding: 10px 20px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          width: 98.55vw;
+        }
+        .sub-menu button{
+          margin-top: .1vw;
+          margin-left: .5vw !important;
+          margin-right: .5vw !important;
+
+        }
+        .sub-menu button:disabled {
+          color: #ccc;
+        }
+        .sub-menu .search-input {
+          padding: 8px;
+          border: 2px solid #6e6e6e;
+          border-radius: 5px;
+          width: 200px;
+        }
+        `}
+      </style>
+      <div className="sub-menu">
+        <div className="room-grid">
+          <button
+            onClick={() => setView(true)}
+            disabled={view}
+            className="grid-view-rubric"
+          >
+            <h5>Grid view booking by day</h5>
+          </button>
+          {view && (
+            <>
+              <button onClick={previousDay} className="grid-view-back">
+                <h5>Previous Day</h5>
+              </button>
+              <button onClick={nextDay} className="grid-view-forward">
+                <h5>Next Day</h5>
+              </button>
+            </>
+          )}
+        </div>
+
+        <button onClick={() => setView(false)} disabled={!view}>
+          <h5>Book by specific room</h5>
+        </button>
+        <div>
+          <input
+            type="text"
+            value={props.query}
+            onChange={(event) => props.model.setSearchQuery(event.target.value)}
+            onKeyDown={() => props.model.doSearch(props.query)}
+            placeholder="Search room or office"
+            className="search-input"
+          />
+        </div>
       </div>
+
       {!view && (
         <BookableRoomsView
           onSearchQuery={setSearchQuery}
@@ -190,15 +373,13 @@ export default observer(function BookableRoomsPresenter(props) {
       )}
       {view && (
         <div>
-          <button onClick={previousDay} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}}>previous day</button>
-          <button onClick={nextDay} style={{backgroundColor: "transparent"}}>next day</button>
-          <div style={{margin: '10px', display: "flex"}}>
-            <div style={{flex: "0 0 auto"}}>
-              {timeColumn}
-            </div>
-            <div style={{maxWidth: "90vw", overflowX: "auto", display: "flex"}}> {/* Apply display: flex; */}
-              {calendars}
-            </div>
+          <h2>Grid view booking by day</h2>
+          <h3>
+            Search for "{props.model.query}". Showing {totalRoomsCount()} rooms
+          </h3>
+          <div className="calendar-container">
+            <div className="time-column">{timeColumn}</div>
+            <div className="calendar-scroll">{calendars}</div>
           </div>
         </div>
       )}

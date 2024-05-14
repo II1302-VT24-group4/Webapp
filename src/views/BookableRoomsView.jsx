@@ -1,9 +1,12 @@
+import React, { useState } from "react";
 import { renderCategory } from "./RoomCategoryRenderer";
-import BookableRoomsPresenter from "/src/presenters/BookableRoomsPresenter";
 
 export default function BookableRoomsView(props) {
+  const [isGridViewActive, setIsGridViewActive] = useState(false);
+
   function scrollToCategoryRoom(categoryId) {
-    const element = document.getElementById(categoryId);
+    const lowerCaseCategoryId = categoryId.toLowerCase();
+    const element = document.getElementById(lowerCaseCategoryId);
     if (element) {
       element.scrollIntoView();
     }
@@ -33,9 +36,8 @@ export default function BookableRoomsView(props) {
 
   function generateButton() {
     return (
-      <div class="room scroll-to-specific-office">
-        <h3>Scroll to a specific office</h3>
-        <div class="description scroll-to-specific-office-desp">
+      <div class="scroll-to-specific-office-div">
+        <div class="scroll-to-specific-office">
           {Object.keys(props.rooms).map((officeKey) => (
             <button
               key={officeKey}
@@ -59,11 +61,13 @@ export default function BookableRoomsView(props) {
         )}
       </div>
 
-      <h2>Search page</h2>
+      <h2>Book by specific room</h2>
 
       <h3>
-        Search for "{props.query}". Showing {totalRoomsCount()} rooms
+        Search for "{props.query}". Showing {totalRoomsCount()} rooms. The
+        buttons below scroll to an office.
       </h3>
+
       {generateButton()}
 
       {Object.entries(props.rooms).map(
@@ -86,6 +90,23 @@ export default function BookableRoomsView(props) {
             deleteMeeting: props.deleteMeeting,
             getMeetings: props.getMeetings,
           })
+      )}
+
+      {isGridViewActive && (
+        <>
+          <button
+            onClick={() => console.log("Previous Day")}
+            class="control-button"
+          >
+            <h5>Previous Day</h5>
+          </button>
+          <button
+            onClick={() => console.log("Next Day")}
+            class="control-button"
+          >
+            <h5>Next Day</h5>
+          </button>
+        </>
       )}
 
       <button onClick={scrollToTop} class="scroll-to-top-button">

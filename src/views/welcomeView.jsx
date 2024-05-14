@@ -12,7 +12,9 @@ function WelcomeView(props) {
           {/* First grid item */}
           <div className="custom-welcome-item">
             {/* Title */}
-            <h3 className="custom-welcome-view-heading">Personalised Calender</h3>
+            <h3 className="custom-welcome-view-heading">
+              Personalised Calender
+            </h3>
             {/* Image - Schedule Icon */}
             <img
               src="/src/styles/schedule.png"
@@ -27,7 +29,10 @@ function WelcomeView(props) {
             />
             {/* Content */}
             <p className="custom-welcome-view-paragraph">
-              Streamline your meetings by booking directly on your personal calendar with our intuitive scheduler. Seamlessly invite multiple participants from your company. Enhance productivity by attaching documents and taking notes—all within your calendar event.
+              Streamline your meetings by booking directly on your personal
+              calendar with our intuitive scheduler. Seamlessly invite multiple
+              participants from your company. Enhance productivity by attaching
+              documents and taking notes—all within your calendar event.
             </p>
           </div>
 
@@ -49,14 +54,17 @@ function WelcomeView(props) {
             />
             {/* Content */}
             <p className="custom-welcome-view-paragraph">
-              Discover an effortless way to book meeting rooms at your office. Access our comprehensive schedule of available rooms, and personalize your experience by marking favorite rooms for quick access and streamlined booking.
+              Discover an effortless way to book meeting rooms at your office.
+              Access our comprehensive schedule of available rooms, and
+              personalize your experience by marking favorite rooms for quick
+              access and streamlined booking.
             </p>
           </div>
 
           {/* Third grid item */}
           <div className="custom-welcome-item">
             {/* Title */}
-            <h3 className="custom-welcome-view-heading">Meeting Facilitator</h3>
+            <h3 className="custom-welcome-view-heading">Meeting Helper</h3>
             {/* Image - Discussion Icon */}
             <img
               src="/src/styles/discussion.png"
@@ -71,7 +79,10 @@ function WelcomeView(props) {
             />
             {/* Content */}
             <p className="custom-welcome-view-paragraph">
-            Explore a comprehensive meeting facilitator page offering diverse techniques for group meetings. Utilize our time tracker tool to ensure equitable participation by allocating time equally among meeting participants.
+              Explore a comprehensive Meeting Helper page offering diverse
+              techniques for group meetings. Utilize our time tracker tool to
+              ensure equitable participation by allocating time equally among
+              meeting participants.
             </p>
           </div>
 
