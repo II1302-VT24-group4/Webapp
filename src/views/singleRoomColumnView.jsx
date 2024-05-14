@@ -284,10 +284,23 @@ export default function SingleRoomColumnView(props) {
       viewDidMount: function(view) {
           const titleElement = calendarEl.querySelector('.fc-toolbar-chunk:nth-child(2)');
           if (titleElement) {
-              titleElement.textContent = props.name;
-              titleElement.style.fontSize = "30px";
-              titleElement.style.height = "40px";
-              titleElement.style.lineHeight = "60px";
+            const nameElement = document.createElement('div');
+            nameElement.textContent = props.name;
+            nameElement.style.fontSize = "30px";
+            nameElement.style.height = "40px";
+            nameElement.style.lineHeight = "40px";
+
+            const seatsElement = document.createElement('span');
+            seatsElement.textContent = "Seats: "
+            if(props.seats !== undefined){
+              seatsElement.textContent += props.seats;
+            }
+            seatsElement.style.height = "20px";
+            seatsElement.style.fontSize = "18px";
+            seatsElement.style.display = "block";
+
+            titleElement.appendChild(nameElement);
+            titleElement.appendChild(seatsElement);
           }
           const slotElements = calendarEl.querySelectorAll('tr');
           slotElements.forEach(slot => {
@@ -298,7 +311,7 @@ export default function SingleRoomColumnView(props) {
       eventOverlap: false,
       selectOverlap: false
     });
-    newCalendar.setOption('height', 833);
+    newCalendar.setOption('height', 853);
     setCalendar(newCalendar);
     newCalendar.render();
     setCalendarInitialized(true);
@@ -358,7 +371,7 @@ export default function SingleRoomColumnView(props) {
   }, [props.date]);
 
   return (
-    <div style={{width: '100%'}}>
+    <div style={{width: '100%', overflowX: "hidden"}}>
       <div ref={calendarRef} />
       {selectedInfo && (
         <Popup

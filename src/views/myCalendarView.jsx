@@ -77,7 +77,7 @@ export default function MyCalendarView(props) {
         const startDate = stringsToDate(meeting.startDate, meeting.startTime);
         const endDate = stringsToDate(meeting.endDate, meeting.endTime);
         const owner = meeting.owner;
-        const room = meeting.room !== undefined ? meeting.room : props.id;
+        const room = meeting.room !== undefined ? meeting.room : props.room;
         const downloads = meeting.downloads;
         createEvent(title, startDate, endDate, owner, room, downloads);
       }

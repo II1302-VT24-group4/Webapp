@@ -127,12 +127,12 @@ export default observer(function BookableRoomsPresenter(props) {
   }
   
 
-  timeColumn = <div style={{flex: "0 0 auto", marginRight: "20px"}}><TimeColumnView date={date}/></div>;
+  timeColumn = <div style={{flex: "0 0 auto", marginRight: "20px", marginTop: "20px"}}><TimeColumnView date={date}/></div>;
 
   if (props.model.searchDone.done) {
     calendars = Object.entries(props.model.officeList).map(([officeName, rooms]) => (
       <div key={officeName}>
-        <h2 style={{ fontSize: "30px"}}>{officeName}</h2> {/* Office name */}
+        <h2 style={{ fontSize: "30px"}}>{officeName}</h2>
         <div style={{ overflowX: "auto", whiteSpace: "nowrap", marginLeft: "10px" }}>
           {rooms.map((room, index) => (
             <div key={`${officeName}-${index}`} style={{ display: "inline-block", minWidth: "100px"}}>
@@ -145,6 +145,7 @@ export default observer(function BookableRoomsPresenter(props) {
                 id={room.id}
                 name={room.name}
                 date={date}
+                seats={room.seats}
               />
             </div>
           ))}
@@ -159,8 +160,8 @@ export default observer(function BookableRoomsPresenter(props) {
   
   return (
     <div>
-      <button onClick={() => setView(true)} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}} disabled={view}>timeedit</button>
-      <button onClick={() => setView(false)} style={{backgroundColor: "transparent"}} disabled={!view}>detailed</button>
+      <button onClick={() => setView(true)} style={{backgroundColor: "", position: "absolute", top: "200px", left: "700px", zIndex:"3"}} disabled={view}>List Schedule</button>
+      <button onClick={() => setView(false)} style={{backgroundColor: "", position: "absolute", top: "200px", left: "820px", zIndex:"3"}} disabled={!view}>Grid Schedule</button>
       <div>
         <input
           type="text"
@@ -169,6 +170,7 @@ export default observer(function BookableRoomsPresenter(props) {
           onKeyDown={() => doSearch()}
           placeholder="Find Room"
           className="search-input"
+          style={{backgroundColor: "", position: "absolute", top: "195px", left: "950px", zIndex:"3"}}
         />
       </div>
       {!view && (
@@ -193,8 +195,8 @@ export default observer(function BookableRoomsPresenter(props) {
       )}
       {view && (
         <div>
-          <button onClick={previousDay} style={{backgroundColor: "transparent", marginLeft: "20px", marginRight: "20px"}}>previous day</button>
-          <button onClick={nextDay} style={{backgroundColor: "transparent"}}>next day</button>
+          <button onClick={previousDay} style={{position: "absolute", top: "395px", left: "10px"}}>&lt;</button>
+          <button onClick={nextDay} style={{position: "absolute", top: "395px", left: "33px"}}>&gt;</button>
           <div style={{margin: '10px', display: "flex"}}>
             <div style={{flex: "0 0 auto"}}>
               {timeColumn}
