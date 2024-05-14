@@ -24,7 +24,7 @@ export default function TimeColumnView(props) {
         slotLabelFormat: {
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false // Ensure 24-hour time format
+            hour12: false
         },
         slotLabelInterval: { hours: 0.5 },
         slotDuration: '00:30:00',
@@ -36,9 +36,11 @@ export default function TimeColumnView(props) {
         viewDidMount: function(view) {
             const titleElement = calendarEl.querySelector('.fc-toolbar-title');
             if (titleElement) {
-              titleElement.style.fontSize = "30px";
+              titleElement.style.fontSize = "24px";
               titleElement.style.height = "124px";
               titleElement.style.lineHeight = "30px";
+              titleElement.style.display = "table-cell";
+              titleElement.style.verticalAlign = "bottom";
             }
             const slotElements = calendarEl.querySelectorAll('tr');
             slotElements.forEach(slot => {

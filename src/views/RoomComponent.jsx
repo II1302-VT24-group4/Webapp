@@ -1,5 +1,5 @@
+import CalendarInGridView from "./calendarInGridView";
 import React, { useState } from "react";
-import MyCalendarView from "./MyCalendarView";
 
 function RoomComponent({
   room,
@@ -104,25 +104,41 @@ function RoomComponent({
             <button className="close-button" onClick={closePopup}>
               ✖
             </button>
-            <MyCalendarView
-              user={user}
-              addMeeting={addMeeting}
-              updateMeeting={updateMeeting}
-              deleteMeeting={deleteMeeting}
-              getMeetings={getMeetings}
-              room={room.id}
-            />
+            {/*<CalendarInGridView></CalendarInGridView>*/}
+
+            <h2>Copy the invitation to booked time</h2>
+            <div class="citation-style">
+              <h3>Booking</h3>
+              <p>{renderCitation("Harvard")}</p>
+              <button
+                class="copy-button"
+                onClick={() =>
+                  copyToClipboard(renderCitation("Harvard"), "Harvard")
+                }
+              >
+                <p>Copy</p>
+              </button>
+            </div>
+            {showAlert.value && (
+              <div class="alert-box">
+                <h1>{alertMessage.value}</h1>
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <div className="description">
-        <MyCalendarView
+      <p>ID: {room.id}</p>
+      <p>Seats: {room.seats}</p>
+      <p>Available: {room.available}</p>
+      <div class="description">
+        <CalendarInGridView 
           user={user}
           addMeeting={addMeeting}
           updateMeeting={updateMeeting}
           deleteMeeting={deleteMeeting}
           getMeetings={getMeetings}
-          room={room.id}
+          id={room.id}
+          name={room.name}
         />
       </div>
     </div>

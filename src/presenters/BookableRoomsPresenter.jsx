@@ -3,8 +3,10 @@ import BookableRoomsView from "/src/views/BookableRoomsView";
 import React, { useEffect, useState } from "react";
 import SingleRoomColumnView from "../views/singleRoomColumnView.jsx";
 import TimeColumnView from "../views/timeColumnView.jsx";
+import {dbUsers} from "/src/firebaseModel";
 
 export default observer(function BookableRoomsPresenter(props) {
+  //console.log(dbUsers);
   const [view, setView] = useState(true);
 
   let timeColumn = null;
@@ -281,6 +283,28 @@ export default observer(function BookableRoomsPresenter(props) {
               </div>
             ))}
           </div>
+  timeColumn = <div style={{flex: "0 0 auto", marginRight: "20px", marginTop: "20px"}}><TimeColumnView date={date}/></div>;
+
+  if (props.model.searchDone.done) {
+    calendars = Object.entries(props.model.officeList).map(([officeName, rooms]) => (
+      <div key={officeName}>
+        <h2 style={{ fontSize: "30px"}}>{officeName}</h2>
+        <div style={{ overflowX: "auto", whiteSpace: "nowrap", marginLeft: "10px" }}>
+          {rooms.map((room, index) => (
+            <div key={`${officeName}-${index}`} style={{ display: "inline-block", minWidth: "100px"}}>
+              <SingleRoomColumnView
+                user={props.model.userState}
+                addMeeting={insertMeetingDB}
+                updateMeeting={updateMeetingDB}
+                deleteMeeting={deleteMeetingDB}
+                getMeetings={getMeetingsDB}
+                id={room.id}
+                name={room.name}
+                date={date}
+                seats={room.seats}
+              />
+            </div>
+          ))}
         </div>
       )
     );
@@ -350,6 +374,18 @@ export default observer(function BookableRoomsPresenter(props) {
             className="search-input"
           />
         </div>
+      <button onClick={() => setView(true)} style={{backgroundColor: "", position: "absolute", top: "200px", left: "700px", zIndex:"3"}} disabled={view}>List Schedule</button>
+      <button onClick={() => setView(false)} style={{backgroundColor: "", position: "absolute", top: "200px", left: "820px", zIndex:"3"}} disabled={!view}>Grid Schedule</button>
+      <div>
+        <input
+          type="text"
+          value={props.query}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          onKeyDown={() => doSearch()}
+          placeholder="Find Room"
+          className="search-input"
+          style={{backgroundColor: "", position: "absolute", top: "195px", left: "950px", zIndex:"3"}}
+        />
       </div>
 
       {!view && (
@@ -369,6 +405,7 @@ export default observer(function BookableRoomsPresenter(props) {
           updateMeeting={updateMeetingDB}
           deleteMeeting={deleteMeetingDB}
           getMeetings={getMeetingsDB}
+          users = {dbUsers}
         />
       )}
       {view && (
@@ -380,6 +417,15 @@ export default observer(function BookableRoomsPresenter(props) {
           <div className="calendar-container">
             <div className="time-column">{timeColumn}</div>
             <div className="calendar-scroll">{calendars}</div>
+          <button onClick={previousDay} style={{position: "absolute", top: "395px", left: "10px"}}>&lt;</button>
+          <button onClick={nextDay} style={{position: "absolute", top: "395px", left: "33px"}}>&gt;</button>
+          <div style={{margin: '10px', display: "flex"}}>
+            <div style={{flex: "0 0 auto"}}>
+              {timeColumn}
+            </div>
+            <div style={{maxWidth: "90vw", overflowX: "auto", display: "flex"}}> {/* Apply display: flex; */}
+              {calendars}
+            </div>
           </div>
         </div>
       )}

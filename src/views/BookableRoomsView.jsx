@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { renderCategory } from "./RoomCategoryRenderer";
+import {dbUsers} from "/src/firebaseModel";
+
 
 export default function BookableRoomsView(props) {
   const [isGridViewActive, setIsGridViewActive] = useState(false);
 
+  console.log(props.users);
+  
+  
   function scrollToCategoryRoom(categoryId) {
     const lowerCaseCategoryId = categoryId.toLowerCase();
     const element = document.getElementById(lowerCaseCategoryId);
@@ -11,6 +16,7 @@ export default function BookableRoomsView(props) {
       element.scrollIntoView();
     }
   }
+  
 
   function scrollToTop() {
     window.scrollTo({
@@ -52,6 +58,7 @@ export default function BookableRoomsView(props) {
   }
 
   return (
+    
     <main>
       <div class="Alert_content">
         {props.showAlert?.alert && (
