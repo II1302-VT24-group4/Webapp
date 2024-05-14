@@ -3,9 +3,6 @@ import {
   dbRemoveFromMeetingsField,
   dbUpdateMeetingsField,
   googleSignInOut,
-} from "./firebaseModel.js";
-import { useState } from "react";
-import {
   dbRooms,
   db,
   dbInsert,
@@ -13,6 +10,7 @@ import {
   dbDelete,
   dbGetFiles,
 } from "./firebaseModel.js";
+
 const defaultLimit = 400;
 const rooms = await dbRooms;
 
