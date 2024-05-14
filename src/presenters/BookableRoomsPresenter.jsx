@@ -8,17 +8,19 @@ import { dbUsers } from "/src/firebaseModel";
 const BookableRoomsPresenter = observer((props) => {
   //console.log(dbUsers);
   const [view, setView] = useState(true);
-  const [showAvailableRooms, setShowAvailableRooms] = useState(false); // State to track whether checkbox is checked
+  const [showAvailableRooms, setShowAvailableRooms] = useState(false);
 
   let timeColumn = null;
   let calendars = null;
   const [date, setDate] = useState(0);
 
   function totalRoomsCount() {
-    return Object.values(props.model.officeList).reduce(
-      (total, category) => total + category.length,
-      0
-    );
+    return Object.values(props.model.officeList).reduce((total, rooms) => {
+      const filteredRooms = rooms.filter(
+        (room) => !showAvailableRooms || room.available
+      );
+      return total + filteredRooms.length;
+    }, 0);
   }
 
   const previousDay = () => {
@@ -207,7 +209,11 @@ const BookableRoomsPresenter = observer((props) => {
           date.id
         );
         for (const meetingData of meetingDataArray) {
-          const downloads = await props.model.firebaseGetFiles(room, date.id, meetingData.id);
+          const downloads = await props.model.firebaseGetFiles(
+            room,
+            date.id,
+            meetingData.id
+          );
           const meetingUpdated = {
             startDate: date.id,
             startTime: meetingData.id,
@@ -215,7 +221,7 @@ const BookableRoomsPresenter = observer((props) => {
             endTime: meetingData.endTime,
             title: meetingData.title,
             owner: meetingData.owner,
-            downloads: downloads
+            downloads: downloads,
           };
           meetings.push(meetingUpdated);
         }
@@ -242,7 +248,7 @@ const BookableRoomsPresenter = observer((props) => {
       props.model.getRooms();
     }
   }, [props.model.searchResultsPromiseState.data]);
-  
+
   timeColumn = (
     <div style={{ flex: "0 0 auto", marginRight: "20px", marginTop: "20px" }}>
       <TimeColumnView date={date} />
@@ -254,8 +260,7 @@ const BookableRoomsPresenter = observer((props) => {
         <img src="https://i.ibb.co/BCtKCSK/loading-bar.gif" alt="Loading" />
       </div>
     );
-  }
-  else{
+  } else {
     calendars = Object.entries(props.model.officeList).map(
       ([officeName, rooms]) => (
         <div key={officeName}>
@@ -267,29 +272,27 @@ const BookableRoomsPresenter = observer((props) => {
               marginLeft: "10px",
             }}
           >
-          {rooms.map((room, index) => (
-            (showAvailableRooms && !room.available) ? ( // Check both room availability and checkbox state
-              null
-            ) : (
-              <div
-                key={`${officeName}-${index}`}
-                style={{ display: "inline-block", minWidth: "100px" }}
-              >
-                <SingleRoomColumnView
-                  user={props.model.userState}
-                  addMeeting={insertMeetingDB}
-                  updateMeeting={updateMeetingDB}
-                  deleteMeeting={deleteMeetingDB}
-                  getMeetings={getMeetingsDB}
-                  id={room.id}
-                  name={room.name}
-                  date={date}
-                  seats={room.seats}
-                  available={room.available}
-                />
-              </div>
-            )
-          ))}
+            {rooms.map((room, index) =>
+              showAvailableRooms && !room.available ? null : ( // Check both room availability and checkbox state
+                <div
+                  key={`${officeName}-${index}`}
+                  style={{ display: "inline-block", minWidth: "100px" }}
+                >
+                  <SingleRoomColumnView
+                    user={props.model.userState}
+                    addMeeting={insertMeetingDB}
+                    updateMeeting={updateMeetingDB}
+                    deleteMeeting={deleteMeetingDB}
+                    getMeetings={getMeetingsDB}
+                    id={room.id}
+                    name={room.name}
+                    date={date}
+                    seats={room.seats}
+                    available={room.available}
+                  />
+                </div>
+              )
+            )}
           </div>
         </div>
       )
@@ -327,12 +330,6 @@ const BookableRoomsPresenter = observer((props) => {
         `}
       </style>
       <div className="sub-menu">
-        <input
-          type="checkbox"
-          id="showAvailableCheckbox"
-          onChange={() => setShowAvailableRooms(!showAvailableRooms)}
-        />
-        <label>Show currently available rooms</label>
         <div className="room-grid">
           <button
             onClick={() => setView(true)}
@@ -394,6 +391,19 @@ const BookableRoomsPresenter = observer((props) => {
           <h3>
             Search for "{props.model.query}". Showing {totalRoomsCount()} rooms
           </h3>
+          <div className="filter-checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={showAvailableRooms}
+                onChange={(e) => {
+                  setShowAvailableRooms(e.target.checked);
+                  setShowAvailableRooms(!showAvailableRooms);
+                }}
+              />
+            </label>
+            <h3>Only show currently available rooms</h3>
+          </div>
           <div className="calendar-container">
             <div className="time-column">{timeColumn}</div>
             <div className="calendar-scroll">{calendars}</div>

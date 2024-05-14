@@ -925,3 +925,9 @@ button {
   margin-bottom: 1vw;
   margin-top: 1vw;
 }
+.filter-checkbox{
+  display: flex;
+  justify-content: center;
+  margin-top: 1vw;
+  flex-direction: row;
+}
