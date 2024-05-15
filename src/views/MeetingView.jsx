@@ -327,30 +327,46 @@ export default function MeetingView(props) {
   }, []);
 
   const restartMeeting = () => {
-    setParticipants([]);
-    setCurrentSpeakerIndex(0);
-    setPreviousSpeakerIndex(null);
-    setTimer(0);
-    setSpeakerTimes({});
-    setTotalTime(0);
-    setIndividualTimes({});
-    setSpeakingRounds({});
-    setTempSpeakerTimes({});
-    setShowTimeTracker(true);
-    setTimerActive(false);
-    setClearTimeOnSwitch(true);
-    setCountdown(3);
-    setDisplayCurrentSpeaker(false);
-    setTimerPaused(false);
-    setMeetingHasBegun(false);
-    setHasMeetingStarted(false);
-
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (
+      !confirm(
+        "Are you sure you want to restart the meeting? All data will be lost."
+      )
+    ) {
+      return; 
     }
 
-    startMeeting();
+    try {
+      setParticipants([]);
+      setCurrentSpeakerIndex(0);
+      setPreviousSpeakerIndex(null);
+      setTimer(0);
+      setTotalTime(0);
+      setIndividualTimes({});
+      setSpeakingRounds({});
+      setTempSpeakerTimes({});
+      setTimerActive(false);
+      setClearTimeOnSwitch(true);
+      setCountdown(3);
+      setDisplayCurrentSpeaker(false);
+      setTimerPaused(false);
+      setMeetingHasBegun(false);
+      setHasMeetingStarted(false);
+      setBonusTime(0);
+
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+
+      applyMeetingSettings(meetingConfigurations[meetingType]);
+
+      setShowTimeTracker(false);
+      setSoundSettings(initialSoundSettings);
+
+      console.log("Meeting has been successfully restarted.");
+    } catch (error) {
+      console.error("Failed to restart the meeting due to an error:", error);
+    }
   };
 
   const playAudio = (key, callback) => {
@@ -812,7 +828,6 @@ export default function MeetingView(props) {
         <h2>Hold a meeting</h2>
         <div className="welcome-view">
           <h2>Welcome to the Meeting Helper!</h2>
-
 
           <h3 class="rubric">
             <b>Please select a meeting preset</b>

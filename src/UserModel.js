@@ -190,7 +190,7 @@ export default {
     this.favHistReady.ready = false;
     this.favHistImageHolder = {};
     this.favHistOfficeList = this.initializeOffices();
-    this.officeList2 = {}; 
+    this.officeList2 = {};
 
     if (!Array.isArray(favHistArray) || favHistArray.length === 0) {
       console.log("No favourite rooms to process.");
@@ -235,6 +235,7 @@ export default {
       available: item.available,
       office: item.office,
     });
+
     console.log(
       `Updated office list for ${officeKey}:`,
       this.officeList2[officeKey]
