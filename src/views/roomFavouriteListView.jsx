@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { renderCategory } from "./RoomCategoryRenderer";
 
 export default function RoomFavouriteListView(props) {
+  console.log(props.favourites);
   // Hanterar läggning och borttagning av rum från favoriter
   function onModifyRoomListACB(room) {
     props.onModifyRoomList(room);

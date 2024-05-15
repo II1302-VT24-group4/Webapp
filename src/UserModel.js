@@ -94,6 +94,7 @@ export default {
   favHistOfficeList: {},
   favHistImageHolder: {},
   queryBeforeLogin: "",
+  favouriteRooms: [],
 
   setSearchQuery(textForQuery) {
     //Sets the query for the search as the text inputted
