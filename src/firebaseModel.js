@@ -254,7 +254,22 @@ function connectToFirebase(model) {
           ...doc.data(),
       }));
       model.mediaFavourites = favourites;
+      console.log("this is database: ", favourites);
+      console.log("this is model: ", model.mediaFavourites);
 
+    }
+    const favouriteRooms = [];
+    if(model.mediaFavourites.length){
+    
+      for(let i = 0; i < model.mediaFavourites.length; i++){
+        const docRef = doc(db, "rooms", model.mediaFavourites[i].id);
+        const docSnapshot = await getDoc(docRef);
+        favouriteRooms.push(docSnapshot.data());
+      }
+
+      model.favouriteRooms = favouriteRooms;
+      console.log(model.favouriteRooms);
+      
     }
 
     if (!user) {
