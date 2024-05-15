@@ -145,6 +145,7 @@ export default observer(function BookableRoomsPresenter(props) {
                 id={room.id}
                 name={room.name}
                 date={date}
+                users={dbUsers}
               />
             </div>
           ))}

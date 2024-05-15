@@ -79,8 +79,9 @@ export const dbRooms = roomsData.docs.map((doc) => ({
   id: doc.id,
   ...doc.data(),
 }));
+console.log(dbRooms);
 
-// Get all users in the system
+// Get all users in the database
 const usersRef = collection(db, "users");
 const usersData = await getDocs(usersRef);
 export const dbUsers = usersData.docs.map((doc) => ({
