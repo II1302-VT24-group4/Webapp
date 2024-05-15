@@ -246,7 +246,7 @@ function WelcomeView(props) {
             <div className="meeting-technique-guidance">
               <p className="custom-welcome-view-paragraph">
                 <b>
-                  Note: This page can, unlike Pages 1-3 be used independently of
+                  Note: This page can, unlike Pages 1 and 2, be used independently of
                   any meeting rooms.
                 </b>
               </p>
