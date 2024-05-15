@@ -114,13 +114,33 @@ p {
   overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease;
 }
+/*
+.room:hover .description {
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}
+.room:hover .description, .calendar-popup:hover, .calendar-popup-overlay:hover {
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}*/
 
 .room:hover .description {
   pointer-events: auto;
   opacity: 1;
   max-height: 1200px !important;
 }
-
+.calendar-popup-overlay:hover ~ .room .description{
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}
+.calendar-popup:hover ~ .room .description{
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}
 .scroll-to-specific-office {
   width: 69.8% !important;
   align-self: center;
