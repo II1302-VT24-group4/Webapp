@@ -13,7 +13,6 @@ import {
 
 const defaultLimit = 400;
 const rooms = await dbRooms;
-
 export default {
   roomListDone: { done: false },
   queryBeforeLogin: "",
@@ -21,6 +20,7 @@ export default {
   userState: { user: null, isLoggedIn: false }, //logged in user
   searchDone: { done: false },
   rooms: rooms,
+  officeList2: {},
 
   firebaseInsert(
     collection,
@@ -89,11 +89,13 @@ export default {
   isAlertMessage: { message: "" },
   isShowAlert: { alert: false },
   officeList: {},
+
   imageHolder: {},
   favHistReady: { ready: false },
   favHistOfficeList: {},
   favHistImageHolder: {},
   queryBeforeLogin: "",
+  favouriteRooms: [],
 
   setSearchQuery(textForQuery) {
     //Sets the query for the search as the text inputted
@@ -126,6 +128,7 @@ export default {
       //this.searchDone.done = false;
       //console.log("Gör sökning");
       this.officeList = []; // Rensa tidigare sökresultat
+
       this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
       this.currentQuery = this.searchParams.q;
 
@@ -183,49 +186,94 @@ export default {
     //console.log(`Added room to ${officeKey}:`, this.officeList[officeKey]);
   },
   getInfoOfArray(favHistArray) {
+    console.log("Running getInfoOfArray");
     this.favHistReady.ready = false;
     this.favHistImageHolder = {};
     this.favHistOfficeList = this.initializeOffices();
+    this.officeList2 = {}; 
 
     if (!Array.isArray(favHistArray) || favHistArray.length === 0) {
+      console.log("No favourite rooms to process.");
       this.favHistReady.ready = true;
       return;
     }
 
     let completeItems = 0;
-    favHistArray.forEach((id) => {
-      const room = this.rooms.find((room) => room.id === id);
+    favHistArray.forEach((roomObject) => {
+      const name = roomObject.name;
+      console.log(`Starting search for room: ${name}`);
+
+      const room = this.rooms.find((room) => room.name === name);
       if (room) {
-        this.sortIntoOffice(room);
-        this.favHistImageHolder[room.id] =
-          "https://i.ibb.co/NyzjMQh/room-placeholder.webp";
+        console.log(`Room found: ${room.name}`);
+        this.sortIntoOffice2(room);
+        this.favHistImageHolder[
+          room.id
+        ] = `src/images/room-images/room-${0}.webp`;
         completeItems++;
+      } else {
+        console.log(`No matching room found for name: ${name}`);
       }
+
       if (completeItems === favHistArray.length) {
+        console.log("All rooms processed.");
         this.favHistReady.ready = true;
       }
     });
   },
 
+  sortIntoOffice2(item) {
+    const officeKey = `Office ${item.office}`;
+    console.log(`Adding to office key: ${officeKey}`);
+    if (!this.officeList2[officeKey]) {
+      console.log(`Initializing list for ${officeKey}`);
+      this.officeList2[officeKey] = [];
+    }
+    this.officeList2[officeKey].push({
+      name: item.name,
+      seats: item.seats,
+      available: item.available,
+      office: item.office,
+    });
+    console.log(
+      `Updated office list for ${officeKey}:`,
+      this.officeList2[officeKey]
+    );
+  },
+
   modifyFavourites(room, add) {
     const officeKey = `Office ${room.office}`;
-    if (!this.mediaFavourites[officeKey]) {
-      this.mediaFavourites[officeKey] = [];
+    if (!this.mediaFavourites) {
+      this.mediaFavourites = [];
     }
 
-    const roomIndex = this.mediaFavourites[officeKey].findIndex(
+    const roomIndex = this.mediaFavourites.findIndex(
       (fav) => fav.id === room.id
     );
 
     if (add && roomIndex === -1) {
-      this.mediaFavourites[officeKey].push(room);
+      this.mediaFavourites.push(room.id);
     } else if (!add && roomIndex !== -1) {
-      this.mediaFavourites[officeKey].splice(roomIndex, 1);
-      if (this.mediaFavourites[officeKey].length === 0) {
-        delete this.mediaFavourites[officeKey];
+      this.mediaFavourites.splice(roomIndex, 1);
+      if (this.mediaFavourites.length === 0) {
+        delete this.mediaFavourites;
       }
     }
-    console.log("Updated favourites list:", this.mediaFavourites);
+    console.log(this.mediaFavourites);
+    console.log(this.mediaFavourites.length);
+    if (this.mediaFavourites.length) {
+      for (let i = 0; i < this.mediaFavourites.length; i++) {
+        console.log(this.mediaFavourites[i]);
+        this.firebaseInsert(
+          "users",
+          this.userState.user,
+          "favourites",
+          this.mediaFavourites[i],
+          "id",
+          this.mediaFavourites[i]
+        );
+      }
+    }
   },
   /*
   removeFromFavourites(room) {
@@ -278,7 +326,6 @@ export default {
     this.rooms.forEach((room) => {
       this.imageHolder[room.id] = `src/images/room-images/room-${counter}.webp`; //= `src/images/room-images/room-${room.id}.webp`;
       counter++;
-      counter = counter % 36;
     });
     return itemInfo;
   },

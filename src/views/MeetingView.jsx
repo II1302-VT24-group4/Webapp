@@ -812,46 +812,10 @@ export default function MeetingView(props) {
         <h2>Hold a meeting</h2>
         <div className="welcome-view">
           <h2>Welcome to the Meeting Helper!</h2>
-          <div className="meeting-technique-guidance">
-            <p>
-              The Meeting Helper helps to optimize and democratize speaking
-              times during a meeting. A designated 'meeting leader' should keep
-              this app open at all times. To tailor the meeting experience for
-              each team, the meeting leader can choose for speaker changes to
-              occur automatically or manually based on the app's alert that it
-              is time for the next person to speak.
-            </p>
-            <button
-              class="read-aloud-button"
-              onClick={() => playAudio("intro1")}
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg"
-                alt=""
-              />
-            </button>
-          </div>
-          <div className="meeting-technique-guidance">
-            <p>
-              Note: This page can be used independently of any meeting rooms.
-              However, when connected to a room, participant details and meeting
-              times are automatically filled in. The meeting leader should have
-              the app open on their device during the meeting for the group to
-              utilize the Meeting Helper features.
-            </p>
-            <button
-              class="read-aloud-button"
-              onClick={() => playAudio("intro2")}
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg"
-                alt=""
-              />{" "}
-            </button>
-          </div>
+
 
           <h3 class="rubric">
-            <b>Please select a meeting  preset</b>
+            <b>Please select a meeting preset</b>
           </h3>
 
           <div className="meeting-description">

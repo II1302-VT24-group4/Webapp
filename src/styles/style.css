@@ -326,7 +326,7 @@ h5 {
   font-size: max(0.52vw, 13px);
 }
 p {
-  font-size: max(0.6vw, 12px);
+  font-size: max(.6vw, 12px);
 }
 .room:hover {
   margin-bottom: 1120px;
@@ -906,13 +906,13 @@ button {
   margin-top: 2vw;
   margin-bottom: 0px;
 }
-.welcome-view .read-aloud-button {
+.read-aloud-button {
   padding: 0 !important;
 }
-.welcome-view .read-aloud-button img {
+.read-aloud-button img {
   width: 1.5vw;
 }
-.welcome-view .read-aloud-button {
+.read-aloud-button {
   width: 2vw;
   height: 2vw;
 }

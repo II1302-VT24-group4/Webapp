@@ -233,6 +233,7 @@ const BookableRoomsPresenter = observer((props) => {
 
   function addToFavouritesACB(room) {
     props.model.modifyFavourites(room, true);
+    console.log(room);
   }
 
   const setSearchQuery = (value) => {
@@ -289,6 +290,7 @@ const BookableRoomsPresenter = observer((props) => {
                     date={date}
                     seats={room.seats}
                     available={room.available}
+                    users={dbUsers}
                   />
                 </div>
               )
@@ -389,7 +391,8 @@ const BookableRoomsPresenter = observer((props) => {
         <div>
           <h2>Grid view booking by day</h2>
           <h3>
-            Search for "{props.model.query}". Showing {totalRoomsCount()} rooms
+            Search for "{props.model.currentQuery}". Showing {totalRoomsCount()}{" "}
+            rooms
           </h3>
           <div className="filter-checkbox">
             <label>

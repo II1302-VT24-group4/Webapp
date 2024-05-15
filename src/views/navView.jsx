@@ -5,13 +5,10 @@ export default function NavView(props) {
     <nav class="nav">
       <div class="nav-section links-nav-section">
         <button onClick={props.handleResetButtonClick}>
-          <h4>Welcome page</h4>
+          <h4>Welcome Page</h4>
         </button>
         {props.isLoggedIn && (
           <>
-            <button onClick={() => (window.location.hash = "#/home")}>
-              <h4>Home</h4>
-            </button>
             <button onClick={() => (window.location.hash = "#/myCalendar")}>
               <h4>My Calendar</h4>
             </button>
@@ -21,7 +18,7 @@ export default function NavView(props) {
                 props.onSearchButton();
               }}
             >
-              <h4>Bookable rooms</h4>
+              <h4>Bookable Rooms</h4>
             </button>
             <button
               onClick={() => {
@@ -32,7 +29,7 @@ export default function NavView(props) {
               <h4>Room Favourites List</h4>
             </button>
             <button onClick={() => (window.location.hash = "#/meeting")}>
-              <h4>Hold a meeting</h4>
+              <h4>Hold a Meeting</h4>
             </button>
           </>
         )}

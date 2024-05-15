@@ -4,12 +4,12 @@ import NavView from "../views/navView";
 import React, { useEffect } from "react";
 const NavPresenter = observer(({ model }) => {
   useEffect(() => {
-     model.doSearch(); // Anropa doSearch för att utföra en initial sökning när komponenten laddas
+    model.doSearch(); // Anropa doSearch för att utföra en initial sökning när komponenten laddas
   }); // Beroendet [model] säkerställer att effekten körs om modellen ändras
 
   const handleRoomListClicked = () => {
     model.roomListDone.done = true;
-    model.getInfoOfArray(model.mediaFavourites);
+    model.getInfoOfArray(model.favouriteRooms);
   };
 
   const handleLogInOutACB = () => {
@@ -20,7 +20,7 @@ const NavPresenter = observer(({ model }) => {
     if (model.userState.isLoggedIn) {
       return (
         <>
-        {/**
+          {/**
          *         <li>
             <p>
               {model.userState.user.displayName}, {model.userState.user.email}
@@ -31,7 +31,7 @@ const NavPresenter = observer(({ model }) => {
           </li>
          * 
          */}
-  
+
           <li>
             <button onClick={handleLogInOutACB}>
               <h5>Log out</h5>
