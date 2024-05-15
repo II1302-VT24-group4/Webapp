@@ -5,12 +5,15 @@ import { db } from "/src/firebaseModel";
 import { doc, getDoc } from "firebase/firestore"; // Import doc and getDoc
 
 export default observer(function RoomFavouriteListPresenter(props) {
-  
   function removeFromFavouritesACB(room) {
     props.model.modifyFavourites(room, false);
   }
 
-  useEffect(() => {}, [props.model.mediaFavourites]); //varför funkar det inte???
+  useEffect(() => {
+    if (props.model.searchResultsPromiseState.data) {
+      props.model.getRooms();
+    }
+  }, [props.model.searchResultsPromiseState.data]);
 
   if (!props.model.roomListDone) {
     return (
@@ -20,19 +23,16 @@ export default observer(function RoomFavouriteListPresenter(props) {
     );
   }
 
-  
- 
-  
   return (
     <RoomFavouriteListView
       onModifyRoomList={removeFromFavouritesACB}
       images={props.model.imageHolder}
-      rooms={props.model.mediaFavourites}
+      rooms={props.model.favouriteRooms}
       query={props.model.currentQuery}
       alertMessage={props.model.isAlertMessage}
       showAlert={props.model.isShowAlert}
       loggedIn={props.model.userState.isLoggedIn}
-      office={props.model.office}
+      officeList2={props.model.officeList2}
       favourites={props.model.favouriteRooms}
     />
   );

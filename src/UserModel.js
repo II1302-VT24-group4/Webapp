@@ -13,7 +13,6 @@ import {
 
 const defaultLimit = 400;
 const rooms = await dbRooms;
-
 export default {
   roomListDone: { done: false },
   queryBeforeLogin: "",
@@ -21,6 +20,7 @@ export default {
   userState: { user: null, isLoggedIn: false }, //logged in user
   searchDone: { done: false },
   rooms: rooms,
+  officeList2: {},
 
   firebaseInsert(
     collection,
@@ -89,6 +89,7 @@ export default {
   isAlertMessage: { message: "" },
   isShowAlert: { alert: false },
   officeList: {},
+
   imageHolder: {},
   favHistReady: { ready: false },
   favHistOfficeList: {},
@@ -127,6 +128,7 @@ export default {
       //this.searchDone.done = false;
       //console.log("Gör sökning");
       this.officeList = []; // Rensa tidigare sökresultat
+
       this.searchResultsPromiseState.data = { items: [] }; // Rensa tidigare sökresultat
       this.currentQuery = this.searchParams.q;
 
@@ -184,28 +186,59 @@ export default {
     //console.log(`Added room to ${officeKey}:`, this.officeList[officeKey]);
   },
   getInfoOfArray(favHistArray) {
+    console.log("Running getInfoOfArray");
     this.favHistReady.ready = false;
     this.favHistImageHolder = {};
     this.favHistOfficeList = this.initializeOffices();
+    this.officeList2 = {}; 
 
     if (!Array.isArray(favHistArray) || favHistArray.length === 0) {
+      console.log("No favourite rooms to process.");
       this.favHistReady.ready = true;
       return;
     }
 
     let completeItems = 0;
-    favHistArray.forEach((id) => {
-      const room = this.rooms.find((room) => room.id === id);
+    favHistArray.forEach((roomObject) => {
+      const name = roomObject.name;
+      console.log(`Starting search for room: ${name}`);
+
+      const room = this.rooms.find((room) => room.name === name);
       if (room) {
-        this.sortIntoOffice(room);
-        this.favHistImageHolder[room.id] =
-          "https://i.ibb.co/NyzjMQh/room-placeholder.webp";
+        console.log(`Room found: ${room.name}`);
+        this.sortIntoOffice2(room);
+        this.favHistImageHolder[
+          room.id
+        ] = `src/images/room-images/room-${0}.webp`;
         completeItems++;
+      } else {
+        console.log(`No matching room found for name: ${name}`);
       }
+
       if (completeItems === favHistArray.length) {
+        console.log("All rooms processed.");
         this.favHistReady.ready = true;
       }
     });
+  },
+
+  sortIntoOffice2(item) {
+    const officeKey = `Office ${item.office}`;
+    console.log(`Adding to office key: ${officeKey}`);
+    if (!this.officeList2[officeKey]) {
+      console.log(`Initializing list for ${officeKey}`);
+      this.officeList2[officeKey] = [];
+    }
+    this.officeList2[officeKey].push({
+      name: item.name,
+      seats: item.seats,
+      available: item.available,
+      office: item.office,
+    });
+    console.log(
+      `Updated office list for ${officeKey}:`,
+      this.officeList2[officeKey]
+    );
   },
 
   modifyFavourites(room, add) {
