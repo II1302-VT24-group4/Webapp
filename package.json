@@ -1,0 +1,28 @@
+{
+    "type": "module",
+    "scripts": {
+        "start": "vite",
+        "dev": "vite",
+        "build": "vite build",
+        "serve": "vite preview",
+        "predeploy": "npm run build",
+        "deploy": "git push origin main"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-react": "4.2.0",
+        "gh-pages": "^6.1.1",
+        "vite": "^4.4.11"
+    },
+    "dependencies": {
+        "firebase": "^9.23.0",
+        "fullcalendar": "^6.1.11",
+        "mobx": "^6.12.3",
+        "mobx-react-lite": "^3.4.2",
+        "react": "^18.0.0",
+        "react-beautiful-dnd": "^13.1.1",
+        "react-datepicker": "^6.9.0",
+        "react-dom": "^18.0.0",
+        "react-router-dom": "^6.8.1",
+        "reactjs-popup": "^2.0.6"
+    }
+}
