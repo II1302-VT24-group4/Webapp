@@ -9,9 +9,6 @@ export default function NavView(props) {
         </button>
         {props.isLoggedIn && (
           <>
-            <button onClick={() => (window.location.hash = "#/home")}>
-              <h4>Home</h4>
-            </button>
             <button onClick={() => (window.location.hash = "#/myCalendar")}>
               <h4>My Calendar</h4>
             </button>

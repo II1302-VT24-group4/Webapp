@@ -219,7 +219,6 @@ export default {
 
     if (add && roomIndex === -1) {
       this.mediaFavourites.push(room.id);
-      
     } else if (!add && roomIndex !== -1) {
       this.mediaFavourites.splice(roomIndex, 1);
       if (this.mediaFavourites.length === 0) {
@@ -228,10 +227,17 @@ export default {
     }
     console.log(this.mediaFavourites);
     console.log(this.mediaFavourites.length);
-    if(this.mediaFavourites.length){
-      for(let i = 0; i < this.mediaFavourites.length; i++){
+    if (this.mediaFavourites.length) {
+      for (let i = 0; i < this.mediaFavourites.length; i++) {
         console.log(this.mediaFavourites[i]);
-        this.firebaseInsert("users", this.userState.user, "favourites", this.mediaFavourites[i], "id", this.mediaFavourites[i])
+        this.firebaseInsert(
+          "users",
+          this.userState.user,
+          "favourites",
+          this.mediaFavourites[i],
+          "id",
+          this.mediaFavourites[i]
+        );
       }
     }
   },
@@ -286,7 +292,6 @@ export default {
     this.rooms.forEach((room) => {
       this.imageHolder[room.id] = `src/images/room-images/room-${counter}.webp`; //= `src/images/room-images/room-${room.id}.webp`;
       counter++;
-      counter = counter % 36;
     });
     return itemInfo;
   },

@@ -24,13 +24,13 @@ export default function RoomFavouriteListView(props) {
       <h2>Favourites</h2>
       {/*
 
-      {Object.entries(props.rooms).map(
-        ([categoryName, rooms]) =>
-          rooms.length > 0 &&
+      {Object.entries(props.favourites).map(
+        ([categoryName, favourites]) =>
+          favourites.length > 0 &&
           renderCategory({
-            rooms,
+            favourites,
             categoryName,
-            roomListButtonText: "Remove from my rooms",
+            roomListButtonText: "Remove from my favourites",
             viewButtonText: "Open schedule",
             showAlert: showAlert,
             alertMessage: alertMessage,
@@ -43,13 +43,13 @@ export default function RoomFavouriteListView(props) {
       )}
 */}
 
-      {Object.entries(props.rooms).map(
-        ([categoryName, rooms]) =>
-          rooms.length > 0 &&
+      {Object.entries(props.favourites).map(
+        ([categoryName, favourites]) =>
+          favourites.length > 0 &&
           renderCategory({
-            rooms,
+            favourites,
             categoryName,
-            roomListButtonText: "Remove from my rooms",
+            roomListButtonText: "Remove from my favourites",
             viewButtonText: "Open Schedule",
             showAlert: props.showAlert,
             alertMessage: props.alertMessage,

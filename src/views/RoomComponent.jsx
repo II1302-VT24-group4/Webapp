@@ -66,14 +66,15 @@ function RoomComponent({
           style={{
             position: "absolute",
             left: "50%",
-            bottom: "50px",
+            bottom: "0px",
             transform: "translateX(-50%)",
             zIndex: 10,
           }}
         >
           <h5>{roomListButtonText}</h5>
         </button>
-        <button
+        {/**
+         *  <button
           onClick={openPopup}
           style={{
             position: "absolute",
@@ -82,9 +83,9 @@ function RoomComponent({
             transform: "translateX(-50%)",
             zIndex: 10,
           }}
-        >
-          <h5>{"Getting here"}</h5>
+        > <h5>{"Getting here"}</h5>
         </button>
+         */}
       </div>
       <p>
         Room ID: <b>{room.id}</b> with <b>{room.seats}</b> seats
