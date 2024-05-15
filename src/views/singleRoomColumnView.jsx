@@ -398,13 +398,16 @@ export default function SingleRoomColumnView(props) {
           }}
           modal
           closeOnDocumentClick
+          className="calendar-popup"
         >
           <div
             style={{
               padding: "20px",
               background: "white",
               borderRadius: "5px",
-              textAlign: "right"
+              textAlign: "right",
+              borderStyle: "solid",
+              borderWidth: "2px"
             }}
           >
             <h2 style={{ marginBottom: "20px" }}>Create Event</h2>
@@ -473,13 +476,16 @@ export default function SingleRoomColumnView(props) {
         }}
         modal
         closeOnDocumentClick
+        className="calendar-popup"
       >
         <div
           style={{
             padding: "20px",
             background: "white",
             borderRadius: "5px",
-            textAlign: "right"
+            textAlign: "right",
+            borderStyle: "solid",
+            borderWidth: "2px"
           }}
         >
           <h2 style={{ marginBottom: "20px" }}>Edit Event</h2>
@@ -577,13 +583,16 @@ export default function SingleRoomColumnView(props) {
         }}
         modal
         closeOnDocumentClick
+        className="calendar-popup"
       >
         <div
           style={{
             padding: "20px",
             background: "white",
             borderRadius: "5px",
-            textAlign: "left"
+            textAlign: "left",
+            borderStyle: "solid",
+            borderWidth: "2px"
           }}
         >
           <h2 style={{ marginBottom: "20px" }}>Event Information</h2>
@@ -617,27 +626,22 @@ export default function SingleRoomColumnView(props) {
           }}
           modal
           closeOnDocumentClick
+          className="calendar-popup"
         >
           <div
             style={{
               padding: "20px",
               background: "white",
               borderRadius: "5px",
-              textAlign: "right"
+              textAlign: "right",
+              borderStyle: "solid",
+              borderWidth: "2px"
             }}
           >
             <h2 style={{ marginBottom: "20px" }}>Are you sure?</h2>
-            <div style={{ marginTop: "20px" }}>
+            <div style={{marginTop: "20px", display: "flex", alignItems: "row", justifyContent: "space-between"}}>
               <button
-                style={{ marginRight: "35px", backgroundColor: "white" }}
-                onClick={() => {
-                  setConfirmationPopup(null);
-                }}
-              >
-                No
-              </button>
-              <button
-                style={{ marginRight: "10px", backgroundColor: "white" }}
+                style={{marginRight: "10px", backgroundColor: "white", minWidth: "3vw"}}
                 onClick={() => {
                   if (confirmationPopup === "remove") {
                     handleRemoveEvent();
@@ -652,6 +656,14 @@ export default function SingleRoomColumnView(props) {
                 }}
               >
                 Yes
+              </button>
+              <button
+                style={{marginRight: "10px", backgroundColor: "white", minWidth: "3vw"}}
+                onClick={() => {
+                  setConfirmationPopup(null);
+                }}
+              >
+                No
               </button>
             </div>
           </div>
