@@ -25,7 +25,9 @@ export function renderCategory({
 
   return (
     <>
-      <h3>{displayName}</h3>
+      <h3>
+        <b>{displayName}</b>{" "}
+      </h3>
       <div class="rooms" id={categoryName.toLowerCase()}>
         {rooms.length > 0 ? (
           rooms.map((room) => (

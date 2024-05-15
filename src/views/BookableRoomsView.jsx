@@ -1,19 +1,20 @@
+import React, { useState } from "react";
 import { renderCategory } from "./RoomCategoryRenderer";
-import BookableRoomsPresenter from "/src/presenters/BookableRoomsPresenter";
-import {dbUsers} from "/src/firebaseModel";
-
+import { dbUsers } from "/src/firebaseModel";
 
 export default function BookableRoomsView(props) {
+  const [isGridViewActive, setIsGridViewActive] = useState(false);
+  const [showAvailableRooms, setShowAvailableRooms] = useState(false);
+
   console.log(props.users);
-  
-  
+
   function scrollToCategoryRoom(categoryId) {
-    const element = document.getElementById(categoryId);
+    const lowerCaseCategoryId = categoryId.toLowerCase();
+    const element = document.getElementById(lowerCaseCategoryId);
     if (element) {
       element.scrollIntoView();
     }
   }
-  
 
   function scrollToTop() {
     window.scrollTo({
@@ -31,17 +32,18 @@ export default function BookableRoomsView(props) {
   }
 
   function totalRoomsCount() {
-    return Object.values(props.rooms).reduce(
-      (total, category) => total + category.length,
-      0
-    );
+    return Object.values(props.rooms).reduce((total, rooms) => {
+      const filteredRooms = rooms.filter(
+        (room) => !showAvailableRooms || room.available
+      );
+      return total + filteredRooms.length;
+    }, 0);
   }
 
   function generateButton() {
     return (
-      <div class="room scroll-to-specific-office">
-        <h3>Scroll to a specific office</h3>
-        <div class="description scroll-to-specific-office-desp">
+      <div class="scroll-to-specific-office-div">
+        <div class="scroll-to-specific-office">
           {Object.keys(props.rooms).map((officeKey) => (
             <button
               key={officeKey}
@@ -56,28 +58,41 @@ export default function BookableRoomsView(props) {
   }
 
   return (
-    
     <main>
-      <div class="Alert_content">
+      <div className="Alert_content">
         {props.showAlert?.alert && (
-          <div class="alert-box">
+          <div className="alert-box">
             <p>{props.alertMessage.message}</p>
           </div>
         )}
       </div>
 
-      <h2>Search page</h2>
+      <h2>Book by specific room</h2>
 
       <h3>
-        Search for "{props.query}". Showing {totalRoomsCount()} rooms
+        Search for "{props.query}". Showing {totalRoomsCount()} rooms. The
+        buttons below scroll to an office.
       </h3>
+      <div className="filter-checkbox">
+        <label>
+          <input
+            type="checkbox"
+            checked={showAvailableRooms}
+            onChange={(e) => setShowAvailableRooms(e.target.checked)}
+          />
+        </label>
+        <h3>Only show currently available rooms</h3>
+      </div>
       {generateButton()}
 
       {Object.entries(props.rooms).map(
         ([categoryName, rooms]) =>
-          rooms.length > 0 &&
+          rooms.filter((room) => !showAvailableRooms || room.available).length >
+            0 &&
           renderCategory({
-            rooms,
+            rooms: rooms.filter(
+              (room) => !showAvailableRooms || room.available
+            ),
             categoryName,
             roomListButtonText: "Add to my rooms",
             viewButtonText: "Open Schedule",
@@ -95,7 +110,24 @@ export default function BookableRoomsView(props) {
           })
       )}
 
-      <button onClick={scrollToTop} class="scroll-to-top-button">
+      {isGridViewActive && (
+        <>
+          <button
+            onClick={() => console.log("Previous Day")}
+            className="control-button"
+          >
+            <h5>Previous Day</h5>
+          </button>
+          <button
+            onClick={() => console.log("Next Day")}
+            className="control-button"
+          >
+            <h5>Next Day</h5>
+          </button>
+        </>
+      )}
+
+      <button onClick={scrollToTop} className="scroll-to-top-button">
         ↑
       </button>
     </main>
