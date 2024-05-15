@@ -20,7 +20,8 @@ const NavPresenter = observer(({ model }) => {
     if (model.userState.isLoggedIn) {
       return (
         <>
-          <li>
+        {/**
+         *         <li>
             <p>
               {model.userState.user.displayName}, {model.userState.user.email}
             </p>
@@ -28,6 +29,9 @@ const NavPresenter = observer(({ model }) => {
           <li>
             <img src={model.userState.user.photoURL} alt="User profile" />
           </li>
+         * 
+         */}
+  
           <li>
             <button onClick={handleLogInOutACB}>
               <h5>Log out</h5>

@@ -525,6 +525,7 @@ main {
   position: absolute;
   right: 0;
   top: 0;
+  padding-right: 1vw !important;
 }
 
 .search-input {
