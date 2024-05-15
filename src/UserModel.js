@@ -209,23 +209,31 @@ export default {
 
   modifyFavourites(room, add) {
     const officeKey = `Office ${room.office}`;
-    if (!this.mediaFavourites[officeKey]) {
-      this.mediaFavourites[officeKey] = [];
+    if (!this.mediaFavourites) {
+      this.mediaFavourites = [];
     }
 
-    const roomIndex = this.mediaFavourites[officeKey].findIndex(
+    const roomIndex = this.mediaFavourites.findIndex(
       (fav) => fav.id === room.id
     );
 
     if (add && roomIndex === -1) {
-      this.mediaFavourites[officeKey].push(room);
+      this.mediaFavourites.push(room.id);
+      
     } else if (!add && roomIndex !== -1) {
-      this.mediaFavourites[officeKey].splice(roomIndex, 1);
-      if (this.mediaFavourites[officeKey].length === 0) {
-        delete this.mediaFavourites[officeKey];
+      this.mediaFavourites.splice(roomIndex, 1);
+      if (this.mediaFavourites.length === 0) {
+        delete this.mediaFavourites;
       }
     }
-    console.log("Updated favourites list:", this.mediaFavourites);
+    console.log(this.mediaFavourites);
+    console.log(this.mediaFavourites.length);
+    if(this.mediaFavourites.length){
+      for(let i = 0; i < this.mediaFavourites.length; i++){
+        console.log(this.mediaFavourites[i]);
+        this.firebaseInsert("users", this.userState.user, "favourites", this.mediaFavourites[i], "id", this.mediaFavourites[i])
+      }
+    }
   },
   /*
   removeFromFavourites(room) {

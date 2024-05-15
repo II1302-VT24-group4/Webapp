@@ -239,12 +239,22 @@ export function googleSignInOut(model) {
 function connectToFirebase(model) {
   onAuthStateChanged(auth, loginOrOutACB);
 
-  function loginOrOutACB(user) {
+  async function loginOrOutACB(user) {
     //console.log(user.uid)
 
     if (user) {
       model.userState.user = user.uid;
       model.userState.isLoggedIn = true;
+      const path = "users/" + user.uid + "/favourites";
+
+      const favouritesRef = collection(db, path);
+      const favouritesSnapshot = await getDocs(favouritesRef);
+      const favourites = favouritesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+      }));
+      model.mediaFavourites = favourites;
+
     }
 
     if (!user) {

@@ -233,6 +233,7 @@ const BookableRoomsPresenter = observer((props) => {
 
   function addToFavouritesACB(room) {
     props.model.modifyFavourites(room, true);
+    console.log(room);
   }
 
   const setSearchQuery = (value) => {
@@ -289,6 +290,7 @@ const BookableRoomsPresenter = observer((props) => {
                     date={date}
                     seats={room.seats}
                     available={room.available}
+                    users={dbUsers}
                   />
                 </div>
               )
