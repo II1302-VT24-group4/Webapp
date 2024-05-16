@@ -66,14 +66,15 @@ function RoomComponent({
           style={{
             position: "absolute",
             left: "50%",
-            bottom: "50px",
+            bottom: "0px",
             transform: "translateX(-50%)",
             zIndex: 10,
           }}
         >
           <h5>{roomListButtonText}</h5>
         </button>
-        <button
+        {/**
+         *  <button
           onClick={openPopup}
           style={{
             position: "absolute",
@@ -82,15 +83,15 @@ function RoomComponent({
             transform: "translateX(-50%)",
             zIndex: 10,
           }}
-        >
-          <h5>{"Getting here"}</h5>
+        > <h5>{"Getting here"}</h5>
         </button>
+         */}
       </div>
       <p>
         Room ID: <b>{room.id}</b> with <b>{room.seats}</b> seats
       </p>
       <p>
-        Available: <b>{room.available}</b>
+        Available: <b>{room.available ? "Yes" : "No"}</b>
       </p>
       {alert && (
         <div className="alert-box">
@@ -110,9 +111,6 @@ function RoomComponent({
           </div>
         </div>
       </div>
-      <p>ID: {room.id}</p>
-      <p>Seats: {room.seats}</p>
-      <p>Available: {room.available}</p>
       <div class="description">
         <CalendarInGridView
           user={user}

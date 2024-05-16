@@ -18,7 +18,8 @@ export function renderCategory({
   getMeetings,
 }) {
   function getCategoryDisplayName(categoryName) {
-    return categoryName; 
+    console.log(categoryName);
+    return categoryName;
   }
 
   const displayName = getCategoryDisplayName(categoryName);

@@ -94,7 +94,7 @@ export default function BookableRoomsView(props) {
               (room) => !showAvailableRooms || room.available
             ),
             categoryName,
-            roomListButtonText: "Add to my rooms",
+            roomListButtonText: "Add to Favourites",
             viewButtonText: "Open Schedule",
             showAlert: props.showAlert,
             alertMessage: props.alertMessage,

@@ -268,7 +268,7 @@ export default function CalendarInGridView(props) {
       headerToolbar: {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,listWeek",
+        right: "",
       },
       eventTimeFormat: {
         hour: "2-digit",
@@ -473,16 +473,18 @@ export default function CalendarInGridView(props) {
               />
             )}
           </div>
-          <div style={{ textAlign: "left", marginBottom: "10px" }}>
-            Download Files:
-            {selectedEvent.extendedProps.downloads.map((download, index) => (
-              <div key={index}>
-                <a href={download.downloadURL} download={download.name}>
-                  {download.name}
-                </a>
-              </div>
-            ))}
-          </div>
+          {selectedEvent && selectedEvent.extendedProps && selectedEvent.extendedProps.downloads && (
+            <div style={{ textAlign: "left", marginBottom: "10px" }}>
+              Download Files:
+              {selectedEvent.extendedProps.downloads.map((download, index) => (
+                <div key={index}>
+                  <a href={download.downloadURL} download={download.name}>
+                    {download.name}
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
         <div>
         <input type="file" id="file" onChange={handleFileChange} multiple />
         <button onClick={handleFileUpload} disabled={uploading || selectedFiles.length === 0}>

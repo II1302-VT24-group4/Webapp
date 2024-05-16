@@ -114,13 +114,33 @@ p {
   overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease;
 }
+/*
+.room:hover .description {
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}
+.room:hover .description, .calendar-popup:hover, .calendar-popup-overlay:hover {
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}*/
 
 .room:hover .description {
   pointer-events: auto;
   opacity: 1;
   max-height: 1200px !important;
 }
-
+.calendar-popup-overlay:hover ~ .room .description{
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}
+.calendar-popup:hover ~ .room .description{
+  pointer-events: auto;
+  opacity: 1;
+  max-height: 1200px !important;
+}
 .scroll-to-specific-office {
   width: 69.8% !important;
   align-self: center;
@@ -306,7 +326,7 @@ h5 {
   font-size: max(0.52vw, 13px);
 }
 p {
-  font-size: max(0.6vw, 12px);
+  font-size: max(.6vw, 12px);
 }
 .room:hover {
   margin-bottom: 1120px;
@@ -886,13 +906,13 @@ button {
   margin-top: 2vw;
   margin-bottom: 0px;
 }
-.welcome-view .read-aloud-button {
+.read-aloud-button {
   padding: 0 !important;
 }
-.welcome-view .read-aloud-button img {
+.read-aloud-button img {
   width: 1.5vw;
 }
-.welcome-view .read-aloud-button {
+.read-aloud-button {
   width: 2vw;
   height: 2vw;
 }
