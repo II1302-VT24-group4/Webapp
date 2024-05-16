@@ -513,6 +513,7 @@ export default function MeetingView(props) {
     }
   };
 
+  /*
   const handleTimeAdjustment = (participantName, adjustment) => {
     setParticipants((prevParticipants) => {
       return prevParticipants.map((participant) => {
@@ -540,8 +541,26 @@ export default function MeetingView(props) {
         return participant;
       });
     });
+  };*/
+  const handleTimeAdjustment = (participantName, adjustment) => {
+    setTempSpeakerTimes((prevTempTimes) => {
+      const currentSpeakingTime = prevTempTimes[participantName] || 0;
+      const newTime = Math.max(1, currentSpeakingTime + adjustment);
+  
+      setSpeakerTimes((prevSpeakerTimes) => ({
+        ...prevSpeakerTimes,
+        [participantName]: newTime,
+      }));
+  
+      return {
+        ...prevTempTimes,
+        [participantName]: newTime
+      };
+    });
   };
-
+  
+  
+  
   const moveParticipant = (index, direction) => {
     const newPosition =
       (index + direction + participants.length) % participants.length;

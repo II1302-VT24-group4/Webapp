@@ -52,7 +52,7 @@ function WelcomeView(props) {
           <div className="custom-welcome-item">
             {/* Title */}
             <h3 className="custom-welcome-view-heading">
-              The Hardware: The Meeting Room Controller
+              The Hardware: The Meeting Room Device
             </h3>
             {/* Image - Discussion Icon */}
             <img
@@ -68,7 +68,7 @@ function WelcomeView(props) {
             />
             {/* Content */}
             <p className="custom-welcome-view-paragraph">
-              The Room Display Controller is positioned at the entrance of each
+              The Room Display device is positioned at the entrance of each
               meeting room. On the screen, you can:
               <ol>
                 <li>Check the room’s current status.</li>
