@@ -12,6 +12,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
 export default function SingleRoomColumnView(props) {
+  console.log(props.users);
   
 
   const calendarRef = useRef(null);
