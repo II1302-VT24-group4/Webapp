@@ -497,6 +497,7 @@ export default function SingleRoomColumnView(props) {
               borderStyle: "solid",
               borderWidth: "2px",
               display: "flex",
+              flexDirection: "column",
             }}
           >
             <h2 style={{ marginBottom: "20px" }}>Create Event</h2>
@@ -536,14 +537,16 @@ export default function SingleRoomColumnView(props) {
                 />
               )}
             </div>
-            <div style={{ marginTop: "20px" }}>
+            <div style={{ marginTop: "20px" }} class="edit-event-popup">
               <button
+                class="wide-button"
                 style={{ marginRight: "80px", backgroundColor: "white" }}
                 onClick={() => setSelectedInfo(null)}
               >
                 Cancel
               </button>
               <button
+                class="wide-button"
                 style={{ marginRight: "20px", backgroundColor: "white" }}
                 onClick={() => {
                   setConfirmationPopup("create");
