@@ -131,12 +131,12 @@ p {
   opacity: 1;
   max-height: 1200px !important;
 }
-.calendar-popup-overlay:hover ~ .room .description{
+.calendar-popup-overlay:hover ~ .room .description {
   pointer-events: auto;
   opacity: 1;
   max-height: 1200px !important;
 }
-.calendar-popup:hover ~ .room .description{
+.calendar-popup:hover ~ .room .description {
   pointer-events: auto;
   opacity: 1;
   max-height: 1200px !important;
@@ -326,7 +326,7 @@ h5 {
   font-size: max(0.52vw, 13px);
 }
 p {
-  font-size: max(.6vw, 12px);
+  font-size: max(0.6vw, 12px);
 }
 .room:hover {
   margin-bottom: 1120px;
@@ -524,7 +524,7 @@ main {
   min-height: max(4vw, 50px);
 }
 
-.react-datepicker{
+.react-datepicker {
   width: 327px;
 }
 
@@ -757,7 +757,7 @@ header img {
 }
 
 .restart-meeting-button {
-  background-color: #ff3b14;
+  background-color: #ff3b14 !important;
   color: white;
   padding: 10px 20px;
   text-align: center;
@@ -770,7 +770,7 @@ header img {
 }
 
 .restart-meeting-button:hover {
-  background-color: rgb(218, 0, 0);
+  background-color: rgb(218, 0, 0) !important;
   color: black;
 }
 .audio-settings {
@@ -946,14 +946,33 @@ button {
 .intro-toggles {
   width: 150px;
   margin-bottom: 1vw;
+  margin-top: 1vw;
+  margin-left: calc(50% - 75px);
+}
+.open-close-meeting-helper {
+  margin-left: calc(50% - 75px);
 }
 .settings-preview h3 {
   margin-bottom: 1vw;
   margin-top: 1vw;
 }
-.filter-checkbox{
+.filter-checkbox {
   display: flex;
   justify-content: center;
   margin-top: 1vw;
   flex-direction: row;
+}
+.apply-updated-speaking-times {
+  margin-top: 1vw;
+}
+.participants-row-buttons {
+  display: flex;
+  justify-content: center;
+}
+.participants-row-buttons button {
+  margin-left: 0.5vw;
+  margin-right: 0.5vw;
+}
+.move-buttons {
+  margin-top: 1vw;
 }

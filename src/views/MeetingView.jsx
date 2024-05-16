@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 const AUDIO_PATHS = {
   nextSpeaker: "src/audio/next-speaker.mp3",
   tick: "src/audio/tick.mp3",
-  welcome: "src/audio/welcome.mp3",
   start: "src/audio/start-and-begin.mp3",
   paused: "src/audio/timer-paused.mp3",
   resumed: "src/audio/timer-resumed.mp3",
@@ -25,6 +24,7 @@ const AUDIO_PATHS = {
   meetingType2: "src/audio/tutorial/meeting-type-2.mp3",
   meetingType3: "src/audio/tutorial/meeting-type-3.mp3",
   MeetingOver: "src/audio/meeting-over.mp3",
+  Restart: "src/audio/restart.mp3",
 };
 
 export default function MeetingView(props) {
@@ -47,8 +47,8 @@ export default function MeetingView(props) {
   const [bonusTime, setBonusTime] = useState(0);
   const defaultSpeakingTimes = {
     shorter: 30,
-    default: 300,
-    longer: 600,
+    default: 240,
+    longer: 480,
   };
   const DELAY_TYPES = {
     ALL: "enabled_all",
@@ -66,7 +66,6 @@ export default function MeetingView(props) {
     nextSpeaker: true,
     meetingTechniques: true,
     tick: true,
-    welcome: true,
     start: true,
     paused: true,
     resumed: true,
@@ -88,13 +87,13 @@ export default function MeetingView(props) {
     meetingType2: true,
     meetingType3: true,
     MeetingOver: true,
+    Restart: true,
   });
 
   const AUDIO_LABELS = {
     nextSpeaker: "Announce Next Speaker",
     meetingTechniques: "Meeting Techniques",
     tick: "Audible Ticking Clock At Speaker Switch",
-    welcome: "Welcome Message",
     start: "Start Meeting",
     paused: "Pause Timer",
     resumed: "Resume Timer",
@@ -110,15 +109,15 @@ export default function MeetingView(props) {
     MeetingMinLeft1: "1 Minute Left in Meeting",
     MeetingSecLeft30: "30 Seconds Left in Meeting",
     SpeakingTimeDepletedFor:
-      "Speaking Time Depleted Warning (recommended with manual speaker switching)",
+      "Speaking Time Depleted Warning (for manual speaker switching)",
     MeetingOver: "Meeting Over",
+    Restart: "Restart meeting",
   };
 
   const AUDIO_CATEGORIES = {
     GeneralMeetingControlsAlerts: [
       "nextSpeaker",
       "tick",
-      "welcome",
       "start",
       "paused",
       "resumed",
@@ -150,7 +149,7 @@ export default function MeetingView(props) {
   const [speakerTimes, setSpeakerTimes] = useState({});
   const [showTimeTracker, setShowTimeTracker] = useState(false);
   const [manualSpeakerSwitching, setManualSpeakerSwitching] = useState(false);
-  const [speakerSwitchDelay, setSpeakerSwitchDelay] = useState("ALL");
+  const [speakerSwitchDelay, setSpeakerSwitchDelay] = useState("enabled_all");
   const [groupNames, setGroupNames] = useState({});
 
   const meetingConfigurations = {
@@ -162,7 +161,6 @@ export default function MeetingView(props) {
         "nextSpeaker",
         "meetingTechniques",
         "tick",
-        "welcome",
         "start",
         "paused",
         "resumed",
@@ -183,7 +181,6 @@ export default function MeetingView(props) {
         "nextSpeaker",
         "meetingTechniques",
         "tick",
-        "welcome",
         "start",
         "paused",
         "resumed",
@@ -196,14 +193,13 @@ export default function MeetingView(props) {
       ],
     },
     negotiation: {
-      title: "Negotiation between two parties",
+      title: "Negotiation between parties",
       speakerSwitchType: "Automatic with speaker switch alerts",
       speakerTimeDistribution: "Equally distributed (customizable)",
       audioAlerts: [
         "nextSpeaker",
         "meetingTechniques",
         "tick",
-        "welcome",
         "start",
         "paused",
         "resumed",
@@ -327,46 +323,79 @@ export default function MeetingView(props) {
   }, []);
 
   const restartMeeting = () => {
-    if (
-      !confirm(
-        "Are you sure you want to restart the meeting? All data will be lost."
-      )
-    ) {
-      return; 
-    }
+    playAudio("Restart", () => {
+      if (
+        confirm(
+          "Are you sure you want to restart the meeting? All data will be lost."
+        )
+      ) {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        setParticipants([]);
+        setCurrentSpeakerIndex(0);
+        setPreviousSpeakerIndex(null);
+        setTimer(0);
+        setTotalTime(0);
+        setIndividualTimes({});
+        setSpeakingRounds({});
+        setTempSpeakerTimes({});
+        setTimerActive(false);
+        setClearTimeOnSwitch(true);
+        setCountdown(3);
+        setDisplayCurrentSpeaker(false);
+        setTimerPaused(false);
+        setMeetingHasBegun(false);
+        setHasMeetingStarted(false);
+        setBonusTime(0);
 
-    try {
-      setParticipants([]);
-      setCurrentSpeakerIndex(0);
-      setPreviousSpeakerIndex(null);
-      setTimer(0);
-      setTotalTime(0);
-      setIndividualTimes({});
-      setSpeakingRounds({});
-      setTempSpeakerTimes({});
-      setTimerActive(false);
-      setClearTimeOnSwitch(true);
-      setCountdown(3);
-      setDisplayCurrentSpeaker(false);
-      setTimerPaused(false);
-      setMeetingHasBegun(false);
-      setHasMeetingStarted(false);
-      setBonusTime(0);
+        setSoundSettings({
+          nextSpeaker: true,
+          meetingTechniques: true,
+          tick: true,
+          start: true,
+          paused: true,
+          resumed: true,
+          MinLeft10: true,
+          MinLeft5: true,
+          MinLeft1: true,
+          SecLeft30: true,
+          MeetingHourLeft1: false,
+          MeetingMinLeft30: false,
+          MeetingMinLeft20: false,
+          MeetingMinLeft10: false,
+          MeetingMinLeft5: false,
+          MeetingMinLeft1: false,
+          MeetingSecLeft30: false,
+          SpeakingTimeDepletedFor: true,
+          intro1: true,
+          intro2: true,
+          meetingType1: true,
+          meetingType2: true,
+          meetingType3: true,
+          MeetingOver: true,
+          Restart: true,
+        });
 
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+        // Reset meeting type to initial type
+        setMeetingType("negotiation");
+        setCurrentSettings(meetingConfigurations["negotiation"]);
+
+        // Reset group tracking if used
+        setGroupNames({});
+        setTrackByGroup(false);
+
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
+
+        console.log("Meeting has been successfully restarted.");
+      } else {
+        console.log("Meeting restart was cancelled.");
       }
-
-      applyMeetingSettings(meetingConfigurations[meetingType]);
-
-      setShowTimeTracker(false);
-      setSoundSettings(initialSoundSettings);
-
-      console.log("Meeting has been successfully restarted.");
-    } catch (error) {
-      console.error("Failed to restart the meeting due to an error:", error);
-    }
+    });
   };
 
   const playAudio = (key, callback) => {
@@ -562,21 +591,19 @@ export default function MeetingView(props) {
     setTempSpeakerTimes((prevTempTimes) => {
       const currentSpeakingTime = prevTempTimes[participantName] || 0;
       const newTime = Math.max(1, currentSpeakingTime + adjustment);
-  
+
       setSpeakerTimes((prevSpeakerTimes) => ({
         ...prevSpeakerTimes,
         [participantName]: newTime,
       }));
-  
+
       return {
         ...prevTempTimes,
-        [participantName]: newTime
+        [participantName]: newTime,
       };
     });
   };
-  
-  
-  
+
   const moveParticipant = (index, direction) => {
     const newPosition =
       (index + direction + participants.length) % participants.length;
@@ -592,27 +619,28 @@ export default function MeetingView(props) {
     event.preventDefault();
     const name = event.target.participantName.value.trim();
     if (name && !participants.some((p) => p.name === name)) {
-  
       const isFirstParticipant = participants.length === 0;
       let newRole;
       let newSpeakingTime;
-  
+
       if (meetingType === "briefing" && isFirstParticipant) {
         newRole = "longer";
         newSpeakingTime = speakingTimes.longer;
+      } else if (meetingType === "briefing") {
+        newRole = "shorter";
+        newSpeakingTime = speakingTimes.shorter;
       } else {
-  
         newRole = "default";
         newSpeakingTime = speakingTimes.default;
       }
-  
+
       const newParticipant = {
         name,
         role: newRole,
         speakingTime: newSpeakingTime,
         groupNumber: participants.length + 1,
       };
-  
+
       const newParticipants = [...participants, newParticipant];
       const newSpeakerTimes = {
         ...speakerTimes,
@@ -626,7 +654,7 @@ export default function MeetingView(props) {
         ...individualTimes,
         [name]: 0,
       };
-  
+
       setParticipants(newParticipants);
       setSpeakerTimes(newSpeakerTimes);
       setTempSpeakerTimes(newTempSpeakerTimes);
@@ -821,7 +849,7 @@ export default function MeetingView(props) {
         setMeetingType(newType);
         const settings = meetingConfigurations[newType];
         setCurrentSettings(settings);
-  
+
         setSoundSettings((prev) => ({
           ...prev,
           ...Object.keys(prev).reduce((acc, key) => {
@@ -829,13 +857,14 @@ export default function MeetingView(props) {
             return acc;
           }, {}),
         }));
-  
+
         applyMeetingSettings(settings);
-  
+
         const updatedParticipants = participants.map((participant, index) => {
           if (newType === "briefing") {
             const newRole = index === 0 ? "longer" : "shorter";
-            const newSpeakingTime = index === 0 ? speakingTimes.longer : speakingTimes.shorter;
+            const newSpeakingTime =
+              index === 0 ? speakingTimes.longer : speakingTimes.shorter;
             return {
               ...participant,
               role: newRole,
@@ -849,24 +878,42 @@ export default function MeetingView(props) {
             };
           }
         });
-  
+
         setParticipants(updatedParticipants);
         updateSpeakerTimes(updatedParticipants);
       }
     },
-    [meetingType, applyMeetingSettings, participants, speakingTimes, meetingConfigurations]
+    [
+      meetingType,
+      applyMeetingSettings,
+      participants,
+      speakingTimes,
+      meetingConfigurations,
+    ]
   );
   const updateSpeakerTimes = (updatedParticipants) => {
     const newSpeakerTimes = {};
     const newTempSpeakerTimes = {};
-  
-    updatedParticipants.forEach(participant => {
+
+    updatedParticipants.forEach((participant) => {
       newSpeakerTimes[participant.name] = participant.speakingTime;
       newTempSpeakerTimes[participant.name] = participant.speakingTime;
     });
-  
+
     setSpeakerTimes(newSpeakerTimes);
     setTempSpeakerTimes(newTempSpeakerTimes);
+  };
+  const applyUpdatedSpeakingTimes = () => {
+    const updatedParticipants = participants.map((participant) => {
+      const timeForRole = speakingTimes[participant.role];
+      return {
+        ...participant,
+        speakingTime: timeForRole,
+      };
+    });
+
+    setParticipants(updatedParticipants);
+    updateSpeakerTimes(updatedParticipants);
   };
   return (
     <main className="meeting-facilitator main-welcome">
@@ -878,15 +925,16 @@ export default function MeetingView(props) {
         </div>
       )}
       <div className="start">
-        <h2>Hold a meeting</h2>
+        <h2>Hold a Meeting</h2>
         <div className="welcome-view">
-          <h2>Welcome to the Meeting Helper!</h2>
-
-         
+          <h2>The Meeting Helper: Hold a democratized and inclusive meeting</h2>
 
           <div className="meeting-description">
             <div>
-              <h4> <b>1. Regular meeting session with a team</b></h4>
+              <h4>
+                {" "}
+                <b>1. Regular meeting session with a team</b>
+              </h4>
               <p>
                 These could be recurring meetings with a team, for example daily
                 stand-ups, or weekly, monthly, or annual review sessions. By
@@ -905,15 +953,17 @@ export default function MeetingView(props) {
               </button>
             </div>
             <div>
-              <h4><b>2. Briefing/presentation meeting</b> </h4>
+              <h4>
+                <b>2. Briefing/presentation meeting</b>{" "}
+              </h4>
               <p>
                 These "meetings" may include technical demonstrations, company
                 policy briefings, product launches, or client presentations.
-                Presenters are allocated a standard amount of speaking time,
-                which is separate and usually longer than that of the audience,
-                who may be allowed speaking time to, for example, ask questions.
-                Manual speaker switching with verbal time warnings is used by
-                default.
+                Presenters are allocated a longer amount of speaking time,
+                separate to the shorter speaking time of the rest of the meeting
+                members, who may be allowed speaking time to, for example, ask
+                questions. Manual speaker switching with verbal time warnings is
+                used by default.
               </p>
               <button
                 class="read-aloud-button"
@@ -926,7 +976,9 @@ export default function MeetingView(props) {
               </button>
             </div>
             <div>
-              <h4><b>3. Negotiation between two parties</b> </h4>
+              <h4>
+                <b>3. Negotiation between parties</b>{" "}
+              </h4>
               <p>
                 This includes meetings such as business deal negotiations or
                 partnership discussions involving teams or businesses. Here,
@@ -947,9 +999,9 @@ export default function MeetingView(props) {
             </div>
           </div>
           <div className="meeting-setup">
-          <h3 class="rubric">
-            <b>Please select a meeting preset:</b>
-          </h3>
+            <h3 class="rubric">
+              <b>Please select a meeting preset:</b>
+            </h3>
             <div class="meeting-type-selection">
               <select
                 onChange={(e) => handleMeetingTypeChange(e.target.value)}
@@ -979,8 +1031,9 @@ export default function MeetingView(props) {
               {}
             </div>
             <h3>
-              Note: Meeting Helper settings are also customizable during
-              meeting.
+              Note: More Meeting Helper settings are{" "}
+              <u>customizable during the meeting at the bottom </u> of the
+              Meeting Helper.
             </h3>
           </div>
           <div class="intro-toggles">
@@ -998,7 +1051,10 @@ export default function MeetingView(props) {
             </label>
           </div>
 
-          <button onClick={() => setShowTimeTracker(!showTimeTracker)}>
+          <button
+            class="open-close-meeting-helper"
+            onClick={() => setShowTimeTracker(!showTimeTracker)}
+          >
             {showTimeTracker ? "Close Meeting helper" : "Open Meeting helper"}
           </button>
         </div>
@@ -1028,10 +1084,13 @@ export default function MeetingView(props) {
                   </b>{" "}
                   (
                   {Math.floor(
-                    (speakerTimes[participants[currentSpeakerIndex].name] -
-                      timer || 0) / 60
+                    Math.max(
+                      0,
+                      speakerTimes[participants[currentSpeakerIndex].name] -
+                        timer
+                    ) / 60
                   )}{" "}
-                  {" minutes) left."}
+                  minutes) left.
                 </h3>
 
                 <button onClick={toggleTimerPause}>
@@ -1085,7 +1144,7 @@ export default function MeetingView(props) {
 
                     {trackByGroup && (
                       <div className="set-speaking-time">
-                        <p>Group names (comma-separated):</p>
+                        <p>Group names, comma-separated</p>
                         <input
                           type="text"
                           value={groupNames[index] || ""}
@@ -1097,7 +1156,7 @@ export default function MeetingView(props) {
                     )}
 
                     <div className="set-speaking-time">
-                      <p>Speaking time (10 to ∞ seconds): </p>
+                      <p>Speaking time (min 10 seconds): </p>
                       <input
                         type="number"
                         value={tempSpeakerTimes[participant.name]}
@@ -1153,25 +1212,26 @@ export default function MeetingView(props) {
                   </div>
                 ))}
               </div>
-
-              <button className="reset-times-button" onClick={resetTimes}>
-                <p>Restart this speaking round</p>
-              </button>
-              {!meetingHasBegun && (
-                <>
-                  <button
-                    className="start-meeting-button"
-                    onClick={() => {
-                      setMeetingHasBegun(true);
-                      startMeeting();
-                      playAudio("start");
-                      setHasMeetingStarted(true);
-                    }}
-                  >
-                    <p>Start meeting!</p>
-                  </button>
-                </>
-              )}
+              <div class="participants-row-buttons">
+                <button className="reset-times-button" onClick={resetTimes}>
+                  <p>Reset speaking time for current speaker</p>
+                </button>
+                {!meetingHasBegun && (
+                  <>
+                    <button
+                      className="start-meeting-button"
+                      onClick={() => {
+                        setMeetingHasBegun(true);
+                        startMeeting();
+                        playAudio("start");
+                        setHasMeetingStarted(true);
+                      }}
+                    >
+                      <p>Start meeting!</p>
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           )}
           <div className="meeting-config">
@@ -1202,7 +1262,6 @@ export default function MeetingView(props) {
                 <p>Add name</p>{" "}
               </button>
             </form>
-            <h4>Remove specific participants</h4>
             <ul className="participant-list">
               {participants.map((participant, index) => (
                 <li key={index}>
@@ -1211,7 +1270,7 @@ export default function MeetingView(props) {
                     className="remove-participant-button"
                     onClick={() => removeParticipant(participant)}
                   >
-                    ✖
+                    Remove
                   </button>
                 </li>
               ))}
@@ -1236,10 +1295,12 @@ export default function MeetingView(props) {
                 <p>- 1 minute</p>{" "}
               </button>
               <button
-                onClick={restartMeeting}
                 className="restart-meeting-button"
+                onClick={() => {
+                  restartMeeting();
+                }}
               >
-                <p>Restart Meeting </p>
+                <p>Restart Meeting</p>
               </button>
             </div>
             <h3 class="rubric">
@@ -1324,6 +1385,13 @@ export default function MeetingView(props) {
                 />
               </label>
             </div>
+            <button
+              class="apply-updated-speaking-times"
+              onClick={applyUpdatedSpeakingTimes}
+            >
+              Apply updated speaking times
+            </button>
+
             <div>
               <label>
                 <h3 class="rubric">
