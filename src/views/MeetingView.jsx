@@ -630,7 +630,15 @@ export default function MeetingView(props) {
       alert("A participant with that name already exists.");
     }
   };
-
+  const removeParticipant = (participant) => {
+    const newParticipants = participants.filter((p) => p !== participant); //filter-metoden går igenom varje element i listan och inkluderar det i den nya listan endast om det uppfyller det angivna villkoret.
+    setParticipants(newParticipants);
+    if (currentSpeakerIndex >= participants.indexOf(participant)) {
+      setCurrentSpeakerIndex((prevIndex) =>
+        prevIndex > 0 ? prevIndex - 1 : 0
+      );
+    }
+  };
   const handleRoleChange = (index, newRole) => {
     const participantName = participants[index].name;
     const currentTempTime = tempSpeakerTimes[participantName];
@@ -848,13 +856,11 @@ export default function MeetingView(props) {
         <div className="welcome-view">
           <h2>Welcome to the Meeting Helper!</h2>
 
-          <h3 class="rubric">
-            <b>Please select a meeting preset</b>
-          </h3>
+         
 
           <div className="meeting-description">
             <div>
-              <h4>1. Regular meeting session with a team</h4>
+              <h4> <b>1. Regular meeting session with a team</b></h4>
               <p>
                 These could be recurring meetings with a team, for example daily
                 stand-ups, or weekly, monthly, or annual review sessions. By
@@ -873,7 +879,7 @@ export default function MeetingView(props) {
               </button>
             </div>
             <div>
-              <h4>2. Briefing/presentation meeting</h4>
+              <h4><b>2. Briefing/presentation meeting</b> </h4>
               <p>
                 These "meetings" may include technical demonstrations, company
                 policy briefings, product launches, or client presentations.
@@ -894,7 +900,7 @@ export default function MeetingView(props) {
               </button>
             </div>
             <div>
-              <h4>3. Negotiation between two parties</h4>
+              <h4><b>3. Negotiation between two parties</b> </h4>
               <p>
                 This includes meetings such as business deal negotiations or
                 partnership discussions involving teams or businesses. Here,
@@ -915,6 +921,9 @@ export default function MeetingView(props) {
             </div>
           </div>
           <div className="meeting-setup">
+          <h3 class="rubric">
+            <b>Please select a meeting preset:</b>
+          </h3>
             <div class="meeting-type-selection">
               <select
                 onChange={(e) => handleMeetingTypeChange(e.target.value)}
