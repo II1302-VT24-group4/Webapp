@@ -917,7 +917,7 @@ export default function MeetingView(props) {
               </p>
               <button
                 class="read-aloud-button"
-                onClick={() => playAudio("meetingType1")}
+                onClick={() => playAudio("meetingType2")}
               >
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg"
