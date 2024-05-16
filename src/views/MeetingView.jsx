@@ -592,21 +592,27 @@ export default function MeetingView(props) {
     event.preventDefault();
     const name = event.target.participantName.value.trim();
     if (name && !participants.some((p) => p.name === name)) {
+  
       const isFirstParticipant = participants.length === 0;
-      const newRole =
-        meetingType === "briefing" && isFirstParticipant ? "longer" : "shorter";
-      const newSpeakingTime =
-        meetingType === "briefing" && isFirstParticipant
-          ? speakingTimes.longer
-          : speakingTimes.shorter;
-
+      let newRole;
+      let newSpeakingTime;
+  
+      if (meetingType === "briefing" && isFirstParticipant) {
+        newRole = "longer";
+        newSpeakingTime = speakingTimes.longer;
+      } else {
+  
+        newRole = "default";
+        newSpeakingTime = speakingTimes.default;
+      }
+  
       const newParticipant = {
-        name: name,
+        name,
         role: newRole,
         speakingTime: newSpeakingTime,
         groupNumber: participants.length + 1,
       };
-
+  
       const newParticipants = [...participants, newParticipant];
       const newSpeakerTimes = {
         ...speakerTimes,
@@ -620,7 +626,7 @@ export default function MeetingView(props) {
         ...individualTimes,
         [name]: 0,
       };
-
+  
       setParticipants(newParticipants);
       setSpeakerTimes(newSpeakerTimes);
       setTempSpeakerTimes(newTempSpeakerTimes);
@@ -815,7 +821,7 @@ export default function MeetingView(props) {
         setMeetingType(newType);
         const settings = meetingConfigurations[newType];
         setCurrentSettings(settings);
-
+  
         setSoundSettings((prev) => ({
           ...prev,
           ...Object.keys(prev).reduce((acc, key) => {
@@ -823,25 +829,45 @@ export default function MeetingView(props) {
             return acc;
           }, {}),
         }));
-
+  
         applyMeetingSettings(settings);
-
-        if (newType === "briefing") {
-          const updatedParticipants = participants.map(
-            (participant, index) => ({
+  
+        const updatedParticipants = participants.map((participant, index) => {
+          if (newType === "briefing") {
+            const newRole = index === 0 ? "longer" : "shorter";
+            const newSpeakingTime = index === 0 ? speakingTimes.longer : speakingTimes.shorter;
+            return {
               ...participant,
-              speakingTime:
-                index === 0 ? speakingTimes.longer : speakingTimes.shorter,
-              role: index === 0 ? "longer" : "shorter",
-            })
-          );
-          setParticipants(updatedParticipants);
-        }
+              role: newRole,
+              speakingTime: newSpeakingTime,
+            };
+          } else {
+            return {
+              ...participant,
+              role: "default",
+              speakingTime: speakingTimes.default,
+            };
+          }
+        });
+  
+        setParticipants(updatedParticipants);
+        updateSpeakerTimes(updatedParticipants);
       }
     },
-    [meetingType, applyMeetingSettings, participants, speakingTimes]
+    [meetingType, applyMeetingSettings, participants, speakingTimes, meetingConfigurations]
   );
-
+  const updateSpeakerTimes = (updatedParticipants) => {
+    const newSpeakerTimes = {};
+    const newTempSpeakerTimes = {};
+  
+    updatedParticipants.forEach(participant => {
+      newSpeakerTimes[participant.name] = participant.speakingTime;
+      newTempSpeakerTimes[participant.name] = participant.speakingTime;
+    });
+  
+    setSpeakerTimes(newSpeakerTimes);
+    setTempSpeakerTimes(newTempSpeakerTimes);
+  };
   return (
     <main className="meeting-facilitator main-welcome">
       <audio ref={audioRef} preload="all"></audio>
