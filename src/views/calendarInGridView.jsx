@@ -27,7 +27,8 @@ export default function CalendarInGridView(props) {
 
   const [calendarInitialized, setCalendarInitialized] = useState(false);
   const [participants, setParticipants] = useState([]);
-
+  const [search, setSearch] = useState("");
+  const [filteredEmails, setFilteredEmails] = useState([]);
   const isOverlapping = async (newEvent) => {
     const events = await calendar.getEvents();
     for (const oldEvent in events) {
@@ -41,15 +42,44 @@ export default function CalendarInGridView(props) {
     }
     return false;
   };
-
-  const handleAddParticipant = (e) => {
-    e.preventDefault();
-    const participantName = e.target.elements.participantName.value.trim();
-    if (participantName) {
-      setParticipants([...participants, { name: participantName }]);
-      e.target.elements.participantName.value = "";
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+    if (value.length > 1) {
+      const filtered = keepOnlyEmails(props.users).filter((email) =>
+        email.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setFilteredEmails(filtered);
+    } else {
+      setFilteredEmails([]);
     }
   };
+  function keepOnlyEmails(users) {
+    const emailArray = [];
+    for (let i = 0; i < users.length; i++) {
+      emailArray.push(users[i].email);
+    }
+    return emailArray;
+  }
+
+  const addParticipantByEmail = (email) => {
+    const emailLowerCase = email.toLowerCase();
+    if (!participants.some((p) => p.name.toLowerCase() === emailLowerCase)) {
+      setParticipants((prev) => [...prev, { name: emailLowerCase }]);
+      setSearch("");
+      setFilteredEmails([]);
+    } else {
+      alert("This email is already added.");
+    }
+  };
+
+  function keepOnlyEmails(users) {
+    const emailArray = [];
+    for (let i = 0; i < users.length; i++) {
+      emailArray.push(users[i].email);
+    }
+    return emailArray;
+  }
 
   const removeParticipant = (participant) => {
     const updatedParticipants = participants.filter(
@@ -464,6 +494,7 @@ export default function CalendarInGridView(props) {
             className="calendar-popup"
           >
             <div
+              class="edit-event-popup"
               style={{
                 padding: "20px",
                 background: "white",
@@ -474,7 +505,7 @@ export default function CalendarInGridView(props) {
               }}
             >
               <h2 style={{ marginBottom: "20px" }}>Edit Event</h2>
-              <div>
+              <div class="event-title">
                 <label htmlFor="title">Title:&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <input
                   type="text"
@@ -509,6 +540,51 @@ export default function CalendarInGridView(props) {
                     dateFormat="yyyy-MM-dd HH:mm"
                   />
                 )}
+                <div>
+                  <h4>Add participants by email</h4>
+                  <input
+                    type="text"
+                    placeholder="Enter email prefix"
+                    value={search}
+                    onChange={handleSearchChange}
+                    style={{ marginBottom: "10px" }}
+                  />
+                  {filteredEmails.length > 0 && (
+                    <div>
+                      <h4>Search Results:</h4>
+                      <ul style={{ listStyleType: "none", padding: 0 }}>
+                        {filteredEmails.map((email) => (
+                          <li
+                            key={email}
+                            style={{
+                              padding: "8px",
+                              cursor: "pointer",
+                              backgroundColor: "#f4f4f4",
+                              borderBottom: "1px solid #ddd",
+                            }}
+                            onClick={() => addParticipantByEmail(email)}
+                          >
+                            {email}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <h4>Current participants</h4>
+                  <ul>
+                    {participants.map((participant, index) => (
+                      <li key={index} class="li-with-button">
+                        {participant.name}
+                        <button
+                          onClick={() => removeParticipant(participant)}
+                          class="remove-button"
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               {selectedEvent &&
                 selectedEvent.extendedProps &&
@@ -529,42 +605,13 @@ export default function CalendarInGridView(props) {
                     )}
                   </div>
                 )}
-              <div>
-                {/* Render participants list and form for adding/removing participants */}
-                <h4>Add participants</h4>
-                <form onSubmit={handleAddParticipant}>
-                  <input
-                    name="participantName"
-                    type="text"
-                    placeholder="Enter name"
-                    required
-                  />
-                  <button type="submit">Add name</button>
-                </form>
-                <h4>Remove specific participants</h4>
-                <ul>
-                  {participants.map((participant, index) => (
-                    <li key={index}>
-                      {participant.name}
-                      <button onClick={() => removeParticipant(participant)}>
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                {/* Other JSX and component logic */}
-              </div>
 
               <div>
-                <input
-                  type="file"
-                  id="file"
-                  onChange={handleFileChange}
-                  multiple
-                />
+                <input type="file" id="file" onChange={handleFileChange} />
                 <button
                   onClick={handleFileUpload}
-                  disabled={uploading || selectedFiles.length === 0}
+                  disabled={uploading}
+                  class="wide-button"
                 >
                   Upload
                 </button>
@@ -572,15 +619,9 @@ export default function CalendarInGridView(props) {
                 {uploading && <p>Uploading...</p>}
                 {uploadComplete && <p>Uploading finished!</p>}
               </div>
-              {selectedFiles.length > 0 && (
-                <div style={{ textAlign: "left", marginBottom: "10px" }}>
-                  Selected Files:
-                  {renderFileList()}
-                </div>
-              )}
-
               <div style={{ marginTop: "20px" }}>
                 <button
+                  class="wide-button"
                   style={{ marginRight: "35px", backgroundColor: "white" }}
                   onClick={() => {
                     setSelectedEvent(null);
@@ -589,6 +630,7 @@ export default function CalendarInGridView(props) {
                   Cancel
                 </button>
                 <button
+                  class="wide-button"
                   style={{ marginRight: "35px", backgroundColor: "white" }}
                   onClick={() => {
                     setConfirmationPopup("remove");
@@ -597,6 +639,7 @@ export default function CalendarInGridView(props) {
                   Remove
                 </button>
                 <button
+                  class="wide-button"
                   style={{ marginRight: "10px", backgroundColor: "white" }}
                   onClick={() => {
                     setConfirmationPopup("update");

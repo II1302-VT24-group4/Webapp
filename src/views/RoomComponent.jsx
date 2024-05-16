@@ -1,5 +1,6 @@
 import CalendarInGridView from "./calendarInGridView";
 import React, { useState } from "react";
+import { dbUsers } from "/src/firebaseModel";
 
 function RoomComponent({
   room,
@@ -120,6 +121,7 @@ function RoomComponent({
           getMeetings={getMeetings}
           id={room.id}
           name={room.name}
+          users={dbUsers}
         />
       </div>
     </div>

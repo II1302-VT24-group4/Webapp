@@ -66,23 +66,6 @@ export default function SingleRoomColumnView(props) {
     return emailArray;
   }
 
-  const handleAddParticipant = (e) => {
-    e.preventDefault();
-    const participantName = e.target.elements.participantName.value
-      .trim()
-      .toLowerCase();
-
-    if (
-      participantName &&
-      !participants.some((p) => p.name.toLowerCase() === participantName)
-    ) {
-      setParticipants([...participants, { name: participantName }]);
-      e.target.elements.participantName.value = "";
-    } else {
-      alert("This participant is already added.");
-    }
-  };
-
   const removeParticipant = (participant) => {
     const updatedParticipants = participants.filter(
       (p) => p.name !== participant.name
