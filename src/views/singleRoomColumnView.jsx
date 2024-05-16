@@ -12,7 +12,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function SingleRoomColumnView(props) {
-  console.log(props.users);
+  //console.log(props.users);
 
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
@@ -164,6 +164,13 @@ export default function SingleRoomColumnView(props) {
     const startDate = dateToStrings(startTime);
     const endDate = dateToStrings(endTime);
     const owner = props.user.user;
+    let participant = [];
+    for(const userInArray of props.users){
+      if(userInArray.id === owner){
+        participant.push(userInArray);
+        break;
+      }
+    }
     const eventData = {
       title: eventTitle,
       startDate: startDate.date,
@@ -173,6 +180,7 @@ export default function SingleRoomColumnView(props) {
       id: props.id,
       name: props.name,
       owner: owner,
+      participants: participant
     };
 
     if (await isOverlapping(eventData)) {
@@ -190,6 +198,16 @@ export default function SingleRoomColumnView(props) {
   };
 
   const handleUpdateEvent = async () => {
+    let participantUsersObjs = [];
+    for(const participant of participants){
+      for(const userInArray of props.users){
+        console.log(userInArray.email, participant.name, props.user.user);
+        if(userInArray.email === participant.name || props.user.user === participant.name ){
+          participantUsersObjs.push(userInArray);
+        }
+      }
+    }
+
     const startDate = dateToStrings(startTime);
     let oldStartDate = null;
     if (oldStartTime === "") {
@@ -211,6 +229,7 @@ export default function SingleRoomColumnView(props) {
       id: props.id,
       name: props.name,
       owner: owner,
+      participants: participantUsersObjs
     };
 
     if (await isOverlapping(eventData)) {
