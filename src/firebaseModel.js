@@ -87,7 +87,7 @@ const usersData = await getDocs(usersRef);
 export const dbUsers = usersData.docs.map((doc) => ({
   id: doc.id,
   ...doc.data(),
-}));
+})).filter((user) => user.rfid !== undefined);;
 //console.log(dbUsers);
 
 
