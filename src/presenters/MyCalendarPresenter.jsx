@@ -13,20 +13,20 @@ const MyCalendarPresenter = observer((props) => {
     const endTime = event.endTime;
     const title = event.title;
 
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "startTime", startTime, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "endDate", endDate, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "endTime", endTime, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "title", title, true);
-    props.model.firebaseInsert('rooms', room, startDate, startTime, "owner", user, true);
-    props.model.firebaseInsert('rooms', room, 'meetingIndex', startDate, null, null, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, null, null, "startTime", startTime, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, null, null, "endDate", endDate, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, null, null, "endTime", endTime, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, null, null, "title", title, true);
+    props.model.firebaseInsert('rooms', room, startDate, startTime, null, null, "owner", user, true);
+    props.model.firebaseInsert('rooms', room, 'meetingIndex', startDate, null, null, null, null, true);
 
-    props.model.firebaseInsert('users', user, startDate, startTime, "startTime", startTime, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "endDate", endDate, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "endTime", endTime, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "title", title, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "room", room, true);
-    props.model.firebaseInsert('users', user, startDate, startTime, "owner", user, true);
-    props.model.firebaseInsert('users', user, 'meetingIndex', startDate, null, null, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, null, null, "startTime", startTime, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, null, null, "endDate", endDate, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, null, null, "endTime", endTime, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, null, null, "title", title, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, null, null, "room", room, true);
+    props.model.firebaseInsert('users', user, startDate, startTime, null, null, "owner", user, true);
+    props.model.firebaseInsert('users', user, 'meetingIndex', startDate, null, null, null, null, true);
   };
 
   const updateMeetingDB = async (event) => {

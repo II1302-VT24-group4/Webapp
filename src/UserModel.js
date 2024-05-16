@@ -27,6 +27,8 @@ export default {
     entity,
     subCollection,
     subEntity,
+    subSubCollection,
+    subSubEntity,
     attribute,
     data,
     merge
@@ -36,6 +38,8 @@ export default {
       entity,
       subCollection,
       subEntity,
+      subSubCollection,
+      subSubEntity,
       attribute,
       data,
       merge
