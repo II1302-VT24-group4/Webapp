@@ -91,7 +91,7 @@ function RoomComponent({
         Room ID: <b>{room.id}</b> with <b>{room.seats}</b> seats
       </p>
       <p>
-        Available: <b>{room.available}</b>
+        Available: <b>{room.available ? "Yes" : "No"}</b>
       </p>
       {alert && (
         <div className="alert-box">
@@ -111,9 +111,6 @@ function RoomComponent({
           </div>
         </div>
       </div>
-      <p>ID: {room.id}</p>
-      <p>Seats: {room.seats}</p>
-      <p>Available: {room.available}</p>
       <div class="description">
         <CalendarInGridView
           user={user}

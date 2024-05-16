@@ -352,16 +352,18 @@ export default function MyCalendarView(props) {
               />
             )}
           </div>
-          <div style={{ textAlign: "left", marginBottom: "10px" }}>
-            Download Files:
-            {selectedEvent.extendedProps.downloads.map((download, index) => (
-              <div key={index}>
-                <a href={download.downloadURL} download={download.name}>
-                  {download.name}
-                </a>
-              </div>
-            ))}
-          </div>
+          {selectedEvent && selectedEvent.extendedProps && selectedEvent.extendedProps.downloads && (
+            <div style={{ textAlign: "left", marginBottom: "10px" }}>
+              Download Files:
+              {selectedEvent.extendedProps.downloads.map((download, index) => (
+                <div key={index}>
+                  <a href={download.downloadURL} download={download.name}>
+                    {download.name}
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
           <div>
         <input type="file" id="file" onChange={handleFileChange} multiple />
         <button onClick={handleFileUpload} disabled={uploading || selectedFiles.length === 0}>

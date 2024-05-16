@@ -105,7 +105,11 @@ function WelcomeView(props) {
               }}
             />
             {/* Content */}
-            <p className="custom-welcome-view-paragraph">asd</p>
+            <p className="custom-welcome-view-paragraph">
+              My Calendar shows all of the meetings you are attending.
+              If you are an owner of an event, you can also modify times 
+              or add documents that you wish to share with the people attending.
+            </p>
             <button
               class="read-aloud-button"
               onClick={() => playAudio("page1")}
@@ -135,7 +139,20 @@ function WelcomeView(props) {
               }}
             />
             {/* Content */}
-            <p className="custom-welcome-view-paragraph">asd</p>
+            <p className="custom-welcome-view-paragraph">
+              In the Bookable Rooms section you can find and book rooms
+              in your organization. There are two different views, one is
+              the grid view where you can view all rooms to quickly find
+              a room to book. If you press book by specific view, you can 
+              see all rooms described in further detail, and of course also 
+              book them. Just like in my calendar, you can also edit events 
+              you have created here.
+              <br></br><br></br>
+              You can filter rooms in either of these two to only show the 
+              rooms that are available at the moment of booking if you need 
+              a room immediately. You can also search for a specific room or 
+              office if your organization has multiple offices.
+            </p>
             <button
               class="read-aloud-button"
               onClick={() => playAudio("page2")}
@@ -147,13 +164,13 @@ function WelcomeView(props) {
             </button>
           </div>
           {/* Third grid item */}
-          <div className="custom-welcome-item">
+          {/* <div className="custom-welcome-item">
             {/* Title */}
-            <h3 className="custom-welcome-view-heading">
+            {/* <h3 className="custom-welcome-view-heading">
               Page 3. Room Favourites List
-            </h3>
+            </h3> */}
             {/* Image - Discussion Icon */}
-            <img
+            {/* <img
               src="/src/styles/discussion.png"
               alt="Discussion Icon"
               style={{
@@ -163,9 +180,9 @@ function WelcomeView(props) {
                 margin: "0 auto",
                 marginTop: "0px", // Adjusted margin to reduce space
               }}
-            />
+            /> */}
             {/* Content */}
-            <p className="custom-welcome-view-paragraph">
+            {/* <p className="custom-welcome-view-paragraph">
               <p>
                 At the "Room Favourites List", you can quickly access and book
                 rooms you prefer or find the most convenient. To add rooms to
@@ -178,8 +195,8 @@ function WelcomeView(props) {
                   Press "Add to Favourites" on one of your preferred rooms.
                 </li>
               </ol>
-            </p>
-            <button
+            </p> */}
+            {/* <button
               class="read-aloud-button"
               onClick={() => playAudio("page3")}
             >
@@ -187,12 +204,13 @@ function WelcomeView(props) {
                 src="https://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg"
                 alt=""
               />
-            </button>
-          </div>
+            </button> */}
+          {/*</div> */}
+
           <div className="custom-welcome-item">
             {/* Title */}
             <h3 className="custom-welcome-view-heading">
-              Page 4. Hold a Meeting
+              Page 3. Hold a Meeting
             </h3>
             {/* Image - Discussion Icon */}
             <img
@@ -228,7 +246,7 @@ function WelcomeView(props) {
             <div className="meeting-technique-guidance">
               <p className="custom-welcome-view-paragraph">
                 <b>
-                  Note: This page can, unlike Pages 1-3 be used independently of
+                  Note: This page can, unlike Pages 1 and 2, be used independently of
                   any meeting rooms.
                 </b>
               </p>
