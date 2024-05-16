@@ -9,6 +9,7 @@ import { uploadFileToStorage } from "../firebaseModel";
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
+
 export default function CalendarInGridView(props) {
   
   const calendarRef = useRef(null);
@@ -27,6 +28,7 @@ export default function CalendarInGridView(props) {
   const [confirmationPopup, setConfirmationPopup] = useState("");
 
   const [calendarInitialized, setCalendarInitialized] = useState(false);
+  const [participants, setParticipants] = useState([]);
 
   const isOverlapping = async (newEvent) => {
     const events = await calendar.getEvents();
@@ -37,6 +39,23 @@ export default function CalendarInGridView(props) {
     }
     return false;
   };
+
+  const handleAddParticipant = (e) => {
+    e.preventDefault();
+    const participantName = e.target.elements.participantName.value.trim();
+    if (participantName) {
+      setParticipants([...participants, { name: participantName }]);
+      e.target.elements.participantName.value = "";
+    }
+  };
+
+  const removeParticipant = (participant) => {
+    const updatedParticipants = participants.filter(
+      (p) => p.name !== participant.name
+    );
+    setParticipants(updatedParticipants);
+  };
+
 
   function dateToStrings(value){
     const [date, time] = value.split('T');
@@ -268,7 +287,7 @@ export default function CalendarInGridView(props) {
       headerToolbar: {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,listWeek",
+        right: "",
       },
       eventTimeFormat: {
         hour: "2-digit",
@@ -472,17 +491,44 @@ export default function CalendarInGridView(props) {
                 dateFormat="yyyy-MM-dd HH:mm"
               />
             )}
+  
           </div>
-          <div style={{ textAlign: "left", marginBottom: "10px" }}>
-            Download Files:
-            {selectedEvent.extendedProps.downloads.map((download, index) => (
-              <div key={index}>
-                <a href={download.downloadURL} download={download.name}>
-                  {download.name}
-                </a>
-              </div>
-            ))}
-          </div>
+          {selectedEvent && selectedEvent.extendedProps && selectedEvent.extendedProps.downloads && (
+            <div style={{ textAlign: "left", marginBottom: "10px" }}>
+              Download Files:
+              {selectedEvent.extendedProps.downloads.map((download, index) => (
+                <div key={index}>
+                  <a href={download.downloadURL} download={download.name}>
+                    {download.name}
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+  <div>
+      {/* Render participants list and form for adding/removing participants */}
+      <h4>Add participants</h4>
+      <form onSubmit={handleAddParticipant}>
+        <input
+          name="participantName"
+          type="text"
+          placeholder="Enter name"
+          required
+        />
+        <button type="submit">Add name</button>
+      </form>
+      <h4>Remove specific participants</h4>
+      <ul>
+        {participants.map((participant, index) => (
+          <li key={index}>
+            {participant.name}
+            <button onClick={() => removeParticipant(participant)}>Remove</button>
+          </li>
+        ))}
+      </ul>
+      {/* Other JSX and component logic */}
+    </div>
+  
         <div>
         <input type="file" id="file" onChange={handleFileChange} multiple />
         <button onClick={handleFileUpload} disabled={uploading || selectedFiles.length === 0}>
@@ -498,6 +544,8 @@ export default function CalendarInGridView(props) {
           {renderFileList()}
         </div>
         )}
+
+        
           <div style={{marginTop: "20px"}}>
             <button
               style={{ marginRight: "35px", backgroundColor: "white" }}

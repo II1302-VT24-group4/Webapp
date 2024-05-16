@@ -30,13 +30,39 @@ export default function SingleRoomColumnView(props) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [confirmationPopup, setConfirmationPopup] = useState("");
+  const [participants, setParticipants] = useState([]);
+
+
+
+
+  const handleAddParticipant = (e) => {
+    e.preventDefault();
+    const participantName = e.target.elements.participantName.value.trim();
+    if (participantName) {
+      setParticipants([...participants, { name: participantName }]);
+      e.target.elements.participantName.value = "";
+    }
+  };
+
+  const removeParticipant = (participant) => {
+    const updatedParticipants = participants.filter(
+      (p) => p.name !== participant.name
+    );
+    setParticipants(updatedParticipants);
+  };
 
   const updateDayCellBackground = () => {
     const calendarEl = calendarRef.current;
-    const dayCells = calendarEl.querySelectorAll('.fc-day');
-    dayCells.forEach(cell => {
-      cell.style.backgroundColor = '#81a59c'; // Change to your desired background color
-    });
+    const dayRows = calendarEl.querySelectorAll('.fc-timegrid-slots tr'); // Selecting rows
+    for (let i = 0; i < dayRows.length; i++) {
+      const cell = dayRows[i];
+    
+      if (i % 2 === 0) {
+        cell.style.backgroundColor = '#81a59c'; // Set background color for even index cells
+      } else {
+        cell.style.backgroundColor = '#648A7A'; // Set background color for odd index cells
+      }
+    }
   };
 
   const isOverlapping = async (newEvent) => {
@@ -525,17 +551,43 @@ export default function SingleRoomColumnView(props) {
                 dateFormat="yyyy-MM-dd HH:mm"
               />
             )}
+             <div>
+      <h4>Add participants</h4>
+      <form onSubmit={handleAddParticipant}>
+        <input
+          name="participantName"
+          type="text"
+          placeholder="Enter name"
+          required
+        />
+        <button type="submit">Add name</button>
+      </form>
+      <h4>Remove specific participants</h4>
+      <ul>
+        {participants.map((participant, index) => (
+          <li key={index}>
+            {participant.name}
+            <button onClick={() => removeParticipant(participant)}>Remove</button>
+          </li>
+        ))}
+      </ul>
+      {/* Other JSX and component logic */}
+    </div>
+  
           </div>
-          <div style={{ textAlign: "left", marginBottom: "10px" }}>
-            Download Files:
-            {selectedEvent.extendedProps.downloads.map((download, index) => (
-              <div key={index}>
-                <a href={download.downloadURL} download={download.name}>
-                  {download.name}
-                </a>
-              </div>
-            ))}
-          </div>
+          {selectedEvent && selectedEvent.extendedProps && selectedEvent.extendedProps.downloads && (
+            <div style={{ textAlign: "left", marginBottom: "10px" }}>
+              Download Files:
+              {selectedEvent.extendedProps.downloads.map((download, index) => (
+                <div key={index}>
+                  <a href={download.downloadURL} download={download.name}>
+                    {download.name}
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div>
             <input type="file" id="file" onChange={handleFileChange} />
             <button onClick={handleFileUpload} disabled={uploading}>

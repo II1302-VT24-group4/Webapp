@@ -2,8 +2,8 @@ import React from "react";
 
 export default function NavView(props) {
   return (
-    <nav class="nav">
-      <div class="nav-section links-nav-section">
+    <nav className="nav">
+      <div className="nav-section links-nav-section">
         <button onClick={props.handleResetButtonClick}>
           <h4>Welcome Page</h4>
         </button>
@@ -20,21 +20,21 @@ export default function NavView(props) {
             >
               <h4>Bookable Rooms</h4>
             </button>
-            <button
+            {/*<button
               onClick={() => {
                 window.location.hash = "#/roomFavouritesList";
                 props.onRoomListClicked();
               }}
             >
               <h4>Room Favourites List</h4>
-            </button>
+            </button>*/}
             <button onClick={() => (window.location.hash = "#/meeting")}>
               <h4>Hold a Meeting</h4>
             </button>
           </>
         )}
       </div>
-      <div class="nav-section log-in-nav-section">
+      <div className="nav-section log-in-nav-section">
         {props.renderLoggedInContent && props.renderLoggedInContent()}
       </div>
     </nav>

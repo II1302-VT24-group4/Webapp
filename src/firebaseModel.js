@@ -264,7 +264,9 @@ function connectToFirebase(model) {
       for(let i = 0; i < model.mediaFavourites.length; i++){
         const docRef = doc(db, "rooms", model.mediaFavourites[i].id);
         const docSnapshot = await getDoc(docRef);
-        favouriteRooms.push(docSnapshot.data());
+        const data = docSnapshot.data();
+        data.id = model.mediaFavourites[i].id;
+        favouriteRooms.push(data);
       }
 
       model.favouriteRooms = favouriteRooms;
