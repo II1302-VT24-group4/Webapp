@@ -976,3 +976,48 @@ button {
 .move-buttons {
   margin-top: 1vw;
 }
+.li-with-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.test {
+  color: #456a6b !important;
+}
+.edit-event-popup {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.edit-event-popup div {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: left !important;
+  justify-items: left !important;
+  justify-self: left !important;
+  width: 100% !important;
+}
+.edit-event-popup input,
+.li-with-button,
+.edit-event-popup .wide-button,
+.edit-event-popup div {
+  width: 100% !important;
+}
+.edit-event-popup button {
+  margin-top: 0.5vw;
+}
+.remove-button {
+  width: min-content !important;
+}
+.edit-event-popup label {
+  display: block;
+  text-align: center;
+  margin: auto;
+}
+.edit-event-popup h4,
+.edit-event-popup label {
+  margin-bottom: 0.2vw;
+  margin-top: 0.2vw;
+}
+ul {
+}
