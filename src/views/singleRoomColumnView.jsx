@@ -13,7 +13,7 @@ import "react-datepicker/dist/react-datepicker.css"
 
 export default function SingleRoomColumnView(props) {
   console.log(props.users);
-  
+
 
   const calendarRef = useRef(null);
   const [calendar, setCalendar] = useState(null);
@@ -33,8 +33,15 @@ export default function SingleRoomColumnView(props) {
   const [confirmationPopup, setConfirmationPopup] = useState("");
   const [participants, setParticipants] = useState([]);
 
-
-
+  function keepOnlyEmails(users){
+    const emailArray = [];
+    for(let i = 0; i < users.length; i++){
+      emailArray.push(users[i].email);
+      
+    }
+    return emailArray;
+  }
+  
 
   const handleAddParticipant = (e) => {
     e.preventDefault();
@@ -279,6 +286,9 @@ export default function SingleRoomColumnView(props) {
     handleUpload(); // Call handleUpload function when upload button is clicked
   };
 
+  const emails = keepOnlyEmails(props.users);
+  
+ 
   //Calendar creation
   useEffect(() => {
     const calendarEl = calendarRef.current;
@@ -554,12 +564,13 @@ export default function SingleRoomColumnView(props) {
             )}
              <div>
       <h4>Add participants</h4>
-      <form onSubmit={handleAddParticipant}>
+      <form onSubmit={handleAddParticipant} autoComplete="off">
         <input
           name="participantName"
           type="text"
           placeholder="Enter name"
           required
+          
         />
         <button type="submit">Add name</button>
       </form>
