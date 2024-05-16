@@ -30,6 +30,26 @@ export default function SingleRoomColumnView(props) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [confirmationPopup, setConfirmationPopup] = useState("");
+  const [participants, setParticipants] = useState([]);
+
+
+
+
+  const handleAddParticipant = (e) => {
+    e.preventDefault();
+    const participantName = e.target.elements.participantName.value.trim();
+    if (participantName) {
+      setParticipants([...participants, { name: participantName }]);
+      e.target.elements.participantName.value = "";
+    }
+  };
+
+  const removeParticipant = (participant) => {
+    const updatedParticipants = participants.filter(
+      (p) => p.name !== participant.name
+    );
+    setParticipants(updatedParticipants);
+  };
 
   const updateDayCellBackground = () => {
     const calendarEl = calendarRef.current;
@@ -531,6 +551,29 @@ export default function SingleRoomColumnView(props) {
                 dateFormat="yyyy-MM-dd HH:mm"
               />
             )}
+             <div>
+      <h4>Add participants</h4>
+      <form onSubmit={handleAddParticipant}>
+        <input
+          name="participantName"
+          type="text"
+          placeholder="Enter name"
+          required
+        />
+        <button type="submit">Add name</button>
+      </form>
+      <h4>Remove specific participants</h4>
+      <ul>
+        {participants.map((participant, index) => (
+          <li key={index}>
+            {participant.name}
+            <button onClick={() => removeParticipant(participant)}>Remove</button>
+          </li>
+        ))}
+      </ul>
+      {/* Other JSX and component logic */}
+    </div>
+  
           </div>
           {selectedEvent && selectedEvent.extendedProps && selectedEvent.extendedProps.downloads && (
             <div style={{ textAlign: "left", marginBottom: "10px" }}>
@@ -544,6 +587,7 @@ export default function SingleRoomColumnView(props) {
               ))}
             </div>
           )}
+
           <div>
             <input type="file" id="file" onChange={handleFileChange} />
             <button onClick={handleFileUpload} disabled={uploading}>
