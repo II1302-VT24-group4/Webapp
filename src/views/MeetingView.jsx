@@ -957,13 +957,13 @@ export default function MeetingView(props) {
                 <b>2. Briefing/presentation meeting</b>{" "}
               </h4>
               <p>
-                These "meetings" may include technical demonstrations, company
-                policy briefings, product launches, or client presentations. The
-                first speaker is considered the presenter and is allocated a
-                longer amount of speaking time, separate to the shorter speaking
-                time of the rest of the meeting members, who may be allowed
-                speaking time to, for example, ask questions. Manual speaker
-                switching with verbal time warnings is used by default.
+                These meetings may include technical demonstrations, company
+                policy briefings, product launches, or client presentations.
+                Presenters are allocated a longer amount of speaking time,
+                separate to the shorter speaking time of the rest of the meeting
+                members, who may be allowed speaking time to, for example, ask
+                questions. Manual speaker switching with verbal time warnings is
+                used by default.
               </p>
               <button
                 class="read-aloud-button"
@@ -1117,7 +1117,7 @@ export default function MeetingView(props) {
           {participants.length > 1 && (
             <div className="dashboard-parent">
               <h3 className="rubric">
-                {meetingConfigurations[currentMeetingType].title}
+                <b>{meetingConfigurations[currentMeetingType].title}</b>
               </h3>
 
               <div className="dashboard">

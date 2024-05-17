@@ -104,11 +104,14 @@ export async function dbInsert(
   entity,
   subColl,
   subEntity,
+  subSubColl,
+  subSubEntity,
   attribute,
   data,
   merge
 ) {
   const userRef = doc(db, coll, entity);
+
   if (
     subColl === null ||
     subColl === undefined ||
@@ -116,12 +119,22 @@ export async function dbInsert(
     subEntity === undefined
   ) {
     await setDoc(userRef, { [attribute]: data }, { merge: merge });
-  } else {
+  } else if (
+    subSubColl === null ||
+    subSubColl === undefined ||
+    subSubEntity === null ||
+    subSubEntity === undefined
+  ) {
     const subcollectionRef = collection(userRef, subColl);
     const docRef = doc(subcollectionRef, subEntity);
     await setDoc(docRef, { [attribute]: data }, { merge: merge });
+  } else {
+    const subSubcollectionRef = collection(doc(collection(userRef, subColl), subEntity), subSubColl);
+    const docRef = doc(subSubcollectionRef, subSubEntity);
+    await setDoc(docRef, { [attribute]: data }, { merge: merge });
   }
 }
+
 
 export async function dbRead(coll, entity, subColl, subEntity) {
   let query = collection(db, coll);

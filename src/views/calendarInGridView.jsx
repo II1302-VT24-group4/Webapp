@@ -541,7 +541,7 @@ export default function CalendarInGridView(props) {
                   />
                 )}
                 <div>
-                  <h4>Add participants by email</h4>
+                  <h4>Add participants</h4>
                   <input
                     type="text"
                     placeholder="Enter email prefix"

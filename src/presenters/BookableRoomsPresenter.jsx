@@ -38,12 +38,15 @@ const BookableRoomsPresenter = observer((props) => {
     const endDate = event.endDate;
     const endTime = event.endTime;
     const title = event.title;
-
+    const participants = event.participants;
+    
     props.model.firebaseInsert(
       "rooms",
       room,
       startDate,
       startTime,
+      null,
+      null,
       "startTime",
       startTime,
       true
@@ -53,6 +56,8 @@ const BookableRoomsPresenter = observer((props) => {
       room,
       startDate,
       startTime,
+      null,
+      null,
       "endDate",
       endDate,
       true
@@ -62,6 +67,8 @@ const BookableRoomsPresenter = observer((props) => {
       room,
       startDate,
       startTime,
+      null,
+      null,
       "endTime",
       endTime,
       true
@@ -71,6 +78,8 @@ const BookableRoomsPresenter = observer((props) => {
       room,
       startDate,
       startTime,
+      null,
+      null,
       "title",
       title,
       true
@@ -80,6 +89,8 @@ const BookableRoomsPresenter = observer((props) => {
       room,
       startDate,
       startTime,
+      null,
+      null,
       "owner",
       user,
       true
@@ -91,72 +102,101 @@ const BookableRoomsPresenter = observer((props) => {
       startDate,
       null,
       null,
-      true
-    );
-
-    props.model.firebaseInsert(
-      "users",
-      user,
-      startDate,
-      startTime,
-      "startTime",
-      startTime,
-      true
-    );
-    props.model.firebaseInsert(
-      "users",
-      user,
-      startDate,
-      startTime,
-      "endDate",
-      endDate,
-      true
-    );
-    props.model.firebaseInsert(
-      "users",
-      user,
-      startDate,
-      startTime,
-      "endTime",
-      endTime,
-      true
-    );
-    props.model.firebaseInsert(
-      "users",
-      user,
-      startDate,
-      startTime,
-      "title",
-      title,
-      true
-    );
-    props.model.firebaseInsert(
-      "users",
-      user,
-      startDate,
-      startTime,
-      "room",
-      room,
-      true
-    );
-    props.model.firebaseInsert(
-      "users",
-      user,
-      startDate,
-      startTime,
-      "owner",
-      user,
-      true
-    );
-    props.model.firebaseInsert(
-      "users",
-      user,
-      "meetingIndex",
-      startDate,
       null,
       null,
       true
     );
+    console.log("participants", participants);
+    for(const participant of participants){
+      props.model.firebaseInsert(
+        "rooms",
+        room,
+        startDate,
+        startTime,
+        "rfid",
+        participant.rfid,
+        "owner",
+        participant.id,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        startDate,
+        startTime,
+        null,
+        null,
+        "startTime",
+        startTime,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        startDate,
+        startTime,
+        null,
+        null,
+        "endDate",
+        endDate,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        startDate,
+        startTime,
+        null,
+        null,
+        "endTime",
+        endTime,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        startDate,
+        startTime,
+        null,
+        null,
+        "title",
+        title,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        startDate,
+        startTime,
+        null,
+        null,
+        "room",
+        room,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        startDate,
+        startTime,
+        null,
+        null,
+        "owner",
+        user,
+        true
+      );
+      props.model.firebaseInsert(
+        "users",
+        participant.id,
+        "meetingIndex",
+        startDate,
+        null,
+        null,
+        null,
+        null,
+        true
+      );
+    }
   };
 
   const updateMeetingDB = async (event) => {

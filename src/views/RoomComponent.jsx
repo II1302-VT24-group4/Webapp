@@ -61,7 +61,9 @@ function RoomComponent({
           backgroundPosition: "center",
         }}
       >
-        <button
+        {
+          /**
+           *  <button
           className="add-to-room-list-button"
           onClick={() => addToRoomList(room)}
           style={{
@@ -74,6 +76,9 @@ function RoomComponent({
         >
           <h5>{roomListButtonText}</h5>
         </button>
+           */
+        }
+       
         {/**
          *  <button
           onClick={openPopup}
