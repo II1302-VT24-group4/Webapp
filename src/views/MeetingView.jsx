@@ -958,12 +958,12 @@ export default function MeetingView(props) {
               </h4>
               <p>
                 These "meetings" may include technical demonstrations, company
-                policy briefings, product launches, or client presentations.
-                Presenters are allocated a longer amount of speaking time,
-                separate to the shorter speaking time of the rest of the meeting
-                members, who may be allowed speaking time to, for example, ask
-                questions. Manual speaker switching with verbal time warnings is
-                used by default.
+                policy briefings, product launches, or client presentations. The
+                first speaker is considered the presenter and is allocated a
+                longer amount of speaking time, separate to the shorter speaking
+                time of the rest of the meeting members, who may be allowed
+                speaking time to, for example, ask questions. Manual speaker
+                switching with verbal time warnings is used by default.
               </p>
               <button
                 class="read-aloud-button"
@@ -982,10 +982,8 @@ export default function MeetingView(props) {
               <p>
                 This includes meetings such as business deal negotiations or
                 partnership discussions involving teams or businesses. Here,
-                speaking time is organized by groups of one to many individuals,
-                facilitating structured dialogue between the negotiating
-                parties. Automatic speaker switching is enabled by default to
-                ensure a fair debate.
+                speaking time is organized by groups/individuals, with automatic
+                speaker switching enabled by default to ensure a fair debate.
               </p>
               <button
                 class="read-aloud-button"
